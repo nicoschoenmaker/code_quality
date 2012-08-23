@@ -1,0 +1,515 @@
+{% include 'HostnetCodeQualityBundle:Default:navigationBar.html.twig' %}
+
+<h1 style="margin:25px 0px 0px 25px;">Code Quality Overview</h1>
+
+<div id="general_code_quality_options" style="margin:25px 0px 0px 7.5%;background-color:white;width:85%;height:24px;border-radius: 8px 8px 1px 1px;padding:10px;border-bottom-style:solid;border-width:thin;">
+  <div style="float:left;">
+    <button>Update</button>
+  </div>
+  <div style="float:left;margin:0px 5% 0px 5%">
+    <span>Show statistics of </span>
+    <select>
+      <option selected="selected">Grades</option>
+      <option onclick="jQuery('#metric_selection').show();">Metrics</option>
+    </select>
+    <span>per </span>
+    <select>
+      <option>Year</option>
+      <option selected="selected">Month</option>
+      <option>Day</option>
+    </select>
+  </div>
+  <!-- Manager -->
+  <div style="float:left;margin:0px 5% 0px 5%">
+    <span>Filter on</span>
+    <select>
+      <option>Department</option>
+      <option>Team</option>
+      <option selected="selected">Project</option>
+      <option>Individual</option>
+    </select>
+  </div>
+  <div style="float:right;">
+    <span style="margin-right:5px;">Show:</span>
+    <span>Table</span>
+    <input type="checkbox" checked="checked" onclick="jQuery('#code_quality_table').fadeToggle('fast');">
+    <span>Graph</span>
+    <input type="checkbox" checked="checked" onclick="jQuery('#code_quality_graph').fadeToggle('fast');">
+    <span>Top-10 Metrics</span>
+    <input type="checkbox" checked="checked" onclick="jQuery('#metric_warnings_top_10').fadeToggle('fast');">
+  </div>
+</div>
+
+<!-- <div style="background-color:white;margin:0px 7.5% 0px 7.5%;border-radius: 1px 1px 1px 1px;width:85%;height:20%;padding:10px;">
+  <div id="code_quality_available_metric_options" style="float:left;background-color:white;">
+    <p style="text-align:center;font-size:medium;">Selected Metrics:</p>
+    <span>Metric 1:</span>
+    <input type="checkbox" value="Metric 1">
+    <br />
+    <span>Metric 2:</span>
+    <input type="checkbox" value="Metric 2">
+    <br />
+    <span>Metric 3:</span>
+    <input type="checkbox" value="Metric 3">
+  </div>
+</div> -->
+
+<div id="metric_warnings_top_10" style="background-color:white;margin:0px 7.5% 0px 7.5%;border-radius: 1px 1px 1px 1px;width:85%;height:20%;padding:10px;border-bottom-style:solid;border-width:thin;">
+  <p style="text-align:center;font-size:medium;">Top 10 metric warnings</p>
+  <table style="margin-left:10%;text-align:center;">
+    <thead>
+      <tr>
+        <th style="font-weight:bold;">
+          #
+        </th>
+        <th style="font-weight:bold;">
+          Metric
+        </th>
+        <th style="font-weight:bold;">
+          Amount of occurences
+        </th>
+        <th style="width:15%;background-color:white;"></th>
+        <th style="font-weight:bold;">
+          #
+        </th>
+        <th style="font-weight:bold;">
+          Metric
+        </th>
+        <th style="font-weight:bold;">
+          Amount of occurences
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          1
+        </td>
+        <td>
+          Unused Private Variable
+        </td>
+        <td>
+          20
+        </td>
+        <td style="width:15%;"></td>
+        <td>
+          6
+        </td>
+        <td>
+          Unused Formal Parameter
+        </td>
+        <td>
+          7
+        </td>
+      </tr>
+      <tr>
+        <td>
+          2
+        </td>
+        <td>
+          Too Many Methods
+        </td>
+        <td>
+          16
+        </td>
+        <td style="width:15%;"></td>
+        <td>
+          7
+        </td>
+        <td>
+          NPath Complexity
+        </td>
+        <td>
+          5
+        </td>
+      </tr>
+      <tr>
+        <td>
+          3
+        </td>
+        <td>
+          Cyclomatic Complexicty
+        </td>
+        <td>
+          12
+        </td>
+        <td style="width:15%;"></td>
+        <td>
+          8
+        </td>
+        <td>
+          Excessive Method Length
+        </td>
+        <td>
+          3
+        </td>
+      </tr>
+      <tr>
+        <td>
+          4
+        </td>
+        <td>
+          UnusedLocalVariable
+        </td>
+        <td>
+          10
+        </td>
+        <td style="width:15%;"></td>
+        <td>
+          9
+        </td>
+        <td>
+          ExcessiveClassLength
+        </td>
+        <td>
+          2
+        </td>
+      </tr>
+      <tr>
+        <td>
+          5
+        </td>
+        <td>
+          ExcessiveClassComplexity
+        </td>
+        <td>
+          8
+        </td>
+        <td style="width:15%;"></td>
+        <td>
+          10
+        </td>
+        <td>
+          ExcessiveParameterList
+        </td>
+        <td>
+          1
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div id="code_quality_table" style="clear:both;background-color:white;width:85%;height:20%;margin:0px 0px 0px 7.5%;border-radius: 1px 1px 1px 1px;padding:10px;border-bottom-style:solid;border-width:thin;">
+  <p style="text-align:center;font-size:medium;margin-bottom:25px;">Grade per Month</p>
+  <table style="border:thin;border-width:thin;border-style:outset;">
+    <thead>
+      <tr>
+        <th style="background-color:white;"></th>
+        <th style="font-weight:bold;">
+          Jan - 2012
+        </th>
+        <th style="font-weight:bold;">
+          Feb - 2012
+        </th>
+        <th style="font-weight:bold;">
+          Mar - 2012
+        </th>
+        <th style="font-weight:bold;">
+          Apr - 2012
+        </th>
+        <th style="font-weight:bold;">
+          May - 2012
+        </th>
+        <th style="font-weight:bold;">
+          Jun - 2012
+        </th>
+        <th style="font-weight:bold;">
+          Jul - 2012
+        </th>
+        <th style="font-weight:bold;">
+          Aug - 2012
+        </th>
+        <th style="font-weight:bold;">
+          Sep - 2012
+        </th>
+        <th style="font-weight:bold;">
+          Oct - 2012
+        </th>
+        <th style="font-weight:bold;">
+          Nov - 2012
+        </th>
+        <th style="font-weight:bold;">
+          Dec - 2012
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td  style="font-weight:bold;">
+          Project #1
+        </td>
+        <td>
+          5,5
+        </td>
+        <td>
+          6
+        </td>
+        <td>
+          7
+        </td>
+        <td>
+          6,4
+        </td>
+        <td>
+          8
+        </td>
+        <td>
+          7,2
+        </td>
+        <td>
+          9
+        </td>
+        <td>
+          7,5
+        </td>
+        <td>
+          6,7
+        </td>
+        <td>
+          10
+        </td>
+        <td>
+          8,1
+        </td>
+        <td>
+          6,9
+        </td>
+      </tr>
+      <tr>
+        <td style="font-weight:bold;">
+          Project #2
+        </td>
+        <td>5,3</td>
+        <td>5,1</td>
+        <td>6,2</td>
+        <td>64</td>
+        <td>7</td>
+        <td>6,5</td>
+        <td>6,2</td>
+        <td>7,4</td>
+        <td>7,1</td>
+        <td>9</td>
+        <td>7,3</td>
+        <td>7,8</td>
+    </tbody>
+  </table>
+  <br />
+</div>
+
+<div id="code_quality_graph" style="background-color:white;width:85%;margin-left:7.5%;padding:10px;">
+  <p></p>
+  <div id="code_quality_graph_container" style="height:300px;"></div>
+</div>
+
+<div id="pointer_information" style="float:left;width:30%;height:25%;background-color:white;border-radius: 1px 1px 8px 8px;margin-left:7.5%;padding:10px;display:none;border-top-style:solid;border-width:thin;">
+  <p>Your code patches statistics on <b>Aug - 2012</b>:</p>
+
+  <table style="text-align:center;">
+    <thead>
+      <tr>
+        <th style="font-weight:bold;">
+          Code patch number
+        </th>
+        <th style="font-weight:bold;">
+          Grade
+        </th>
+        <th style="font-weight:bold;">
+          Code Quality Metric warnings
+        </th>
+        <th style="background-color:white;"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          #1
+        </td>
+        <td>
+          5
+        </td>
+        <td>
+          10
+        </td>
+        <td onclick="jQuery(this).parent().css('background-color', 'lightblue');slideHorizontal(jQuery('#metric_warnings'));">
+          <input type="button" value="Show warnings">
+        </td>
+      </tr>
+      <tr>
+        <td>
+          #2
+        </td>
+        <td>
+          7
+        </td>
+        <td>
+          7
+        </td>
+        <td onclick="jQuery(this).parent().css('background-color', 'lightblue');slideHorizontal(jQuery('#metric_warnings'));">
+          <input type="button" value="Show warnings">
+        </td>
+      </tr>
+      <tr>
+        <td>
+          #3
+        </td>
+        <td>
+          8
+        </td>
+        <td>
+          5
+        </td>
+        <td onclick="jQuery(this).parent().css('background-color', 'lightblue');slideHorizontal(jQuery('#metric_warnings'));">
+          <input type="button" value="Show warnings">
+        </td>
+      </tr>
+      <tr>
+        <td>
+          #4
+        </td>
+        <td>
+          10
+        </td>
+        <td>
+          0
+        </td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+
+<div id="metric_warnings" style="float:left;height:25%;background-color:white;border-radius: 1px 8px 8px 1px;margin:25px 7.5% 0px 0px;padding:10px;display:none;">
+  <p>Code Quality Metric warnings for code patch #1:</p>
+
+  <table style="text-align:center;">
+    <thead>
+      <tr>
+        <th style="font-weight:bold;">
+          File
+        </th>
+        <th style="font-weight:bold;">
+          Line
+        </th>
+        <th style="font-weight:bold;">
+          Type
+        </th>
+        <th style="font-weight:bold;">
+          Category
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          codeQualityOverviewSuccess.php
+        </td>
+        <td>
+          315
+        </td>
+        <td>
+          CyclomaticComplexity
+        </td>
+        <td>
+          Code Size Rules
+        </td>
+      </tr>
+      <tr>
+        <td>
+          codeQualityOverviewSuccess.php
+        </td>
+        <td>
+          330
+        </td>
+        <td>
+          UnusedPrivateField
+        </td>
+        <td>
+          Unused Code Rules
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<script type="text/javascript">
+  function slideHorizontal(element)
+  {
+    $(element).animate({opacity: 1, width:'45%'},{duration:1000}).show();
+  }
+
+  var chart;
+  jQuery(document).ready(function() {
+    chart = new Highcharts.Chart({
+      chart: {
+          renderTo: 'code_quality_graph_container',
+          marginTop: 25,
+          borderRadius: 1//,
+          //width: 80
+      },
+
+      xAxis: {
+          categories: ['Jan - 2012', 'Feb - 2012', 'Mar - 2012', 'Apr - 2012', 'May - 2012', 'Jun - 2012', 'Jul - 2012', 'Aug - 2012', 'Sep - 2012', 'Oct - 2012', 'Nov - 2012', 'Dec - 2012'],
+          min: 6
+      },
+
+      yAxis: {
+        title: {
+            text: null
+        }
+      },
+
+      tooltip: {
+        /*formatter: function() {
+            return 'Your grade on <b>'+ this.x +
+                '</b> was a <b>'+ this.y +'</b>';
+        }*/
+        formatter: function() {
+          return '<b>' + this.series.name + '</b>\'s grade was a <b>'+ this.y +'</b>';
+        }
+      },
+
+      plotOptions: {
+        series: {
+            cursor: 'pointer',
+            point: {
+                events: {
+                    click: function() {
+                      jQuery('#pointer_information').slideDown('slow');
+                    }
+                }
+            }
+        }
+      },
+
+      title : {
+        text: null
+      },
+
+      scrollbar: {
+        enabled: true
+      },
+
+      legend: {
+        //enabled: false
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'midle'
+      },
+
+      credits: {
+        enabled: false
+      },
+
+      series: [{
+        name: 'Project #1',
+        data: [5.5, 6, 7, 6.4, 8, 7.2, 9, 7.5, 6.7, 10, 8.1, 6.9]
+      },
+      {
+        name: 'Project #2',
+        data: [3, 4.4, 4.7, 5.7, 6.3, 6.5, 7, 7.2, 7.1, 6.4, 8, 7.5]
+      }]
+    });
+  });
+</script>

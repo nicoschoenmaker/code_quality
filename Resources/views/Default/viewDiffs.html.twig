@@ -1,0 +1,324 @@
+{% include 'HostnetCodeQualityBundle:Default:navigationBar.html.twig' %}
+
+<style>
+  .diff_div {
+    clear: both;
+  }
+
+  .diff_info {
+    margin-bottom: 20px;
+    float: left;
+  }
+
+  table.diff_info tr {
+    margin-left: 25px;
+  }
+
+  .diff {
+    overflow: auto;
+  }
+
+  .diff_compare {
+    float: right;
+  }
+
+  .loadDiffCompareFeedback {
+    disabled;
+  }
+
+  a.enable_Compare_1, a.toggleDiffFeedbackTab, span.toggleDiffFeedbackTab, h4.toggleDiffFeedbackTab, a.diffFeedbackLineNumber {
+    cursor: hand;
+    cursor: pointer;
+    display: block;
+  }
+
+  h4.toggleDiffFeedbackTab {
+    height: 26px;
+  }
+
+  .toggle_diff_feedback_tab_div {
+    margin: 5px 0px 0px 25px;
+    display: none;
+  }
+
+  h3 {
+    height: 19px;
+  }
+
+  .diff_progress {
+    margin-left: 15px;
+  }
+
+  .metric_feedback_warning {
+    display: block;
+  }
+
+  .new_metric_feedback_warning {
+    color: red;
+  }
+
+  .old_metric_feedback_warning {
+    color: orange;
+  }
+
+  .fixed_metric_feedback_warning {
+    color: green;
+  }
+
+  .diff_feedback_at_line_div {
+    width: auto;
+    height: auto;
+    border-style: dashed;
+    border-width: thin;
+    background-color: lightgrey;
+    margin-right: 25px;
+    padding: 1%;
+  }
+
+  .diff_feedback_line_code {
+    display: block;
+    margin: 0px 0px 0px 0px;
+  }
+</style>
+
+<h1 style="margin:25px 0px 0px 25px;">View Diffs</h1>
+
+<div id="view_diffs" style="margin:50px 0px 0px 50px;">
+  <div id="diff_options" style="background-color:white;border-radius:8px 8px 1px 1px;padding:1%;height:24px;width:89%;border-bottom-style:solid;border-width:thin;">
+      <div style="float:left;">
+        <button>Update</button>
+      </div>
+      <div style="float:left;margin-left:25px;">
+        <span>Diffs From: </span>
+        <input type="text" value="15-07-2012" style="width:75px;"/>
+        <span>To: </span>
+        <input type="text" value="16-07-2012" style="width:75px;"/>
+      </div>
+  </div>
+  <div style="float:left;background-color:white;border-radius: 1px 1px 1px 6px;width:15%;height:600px;overflow:auto;padding:1%;">
+    <div class="diff_div">
+      <p>16-07-2012</p>
+      <table class="diff_info">
+        <tbody>
+          <tr class="diff_info_tr">
+            <td>
+              <a class="enable_Compare_1">Diff 09:40</a>
+            </td>
+            <td></td>
+            <td>
+              <input class="loadDiffFeedback" type="radio" name="Compare_1" title="View Diff"/>
+            </td>
+            <td>
+              <input class="loadDiffCompareFeedback" type="radio" name="Compare_2" title="Compare With" disabled/>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a class="enable_Compare_1">Diff 10:20</a>
+            </td>
+            <td>
+              <?= image_tag('decreasement.png', array('class' => 'diff_progress')) ?>
+            </td>
+            <td>
+              <input class="loadDiffFeedback" type="radio" name="Compare_1" title="Compare"/>
+            </td>
+            <td>
+              <input class="loadDiffCompareFeedback" type="radio" name="Compare_2" title="Compare With" disabled/>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a class="enable_Compare_1">Diff 10:53</a>
+            </td>
+            <td>
+              <?= image_tag('increasement.png', array('class' => 'diff_progress')) ?>
+            </td>
+            <td>
+              <input class="loadDiffFeedback" type="radio" name="Compare_1" title="Compare"/>
+            </td>
+            <td>
+              <input class="loadDiffCompareFeedback" type="radio" name="Compare_2" title="Compare With" disabled/>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="diff_div">
+      <p>16-07-2012</p>
+      <table class="diff_info">
+        <tbody>
+          <tr class="diff_info_tr">
+            <td>
+              <a class="enable_Compare_1">Diff 10:00</a>
+            </td>
+            <td></td>
+            <td>
+              <input class="loadDiffFeedback" type="radio" name="Compare_1" title="View Diff"/>
+            </td>
+            <td>
+              <input class="loadDiffCompareFeedback" type="radio" name="Compare_2" title="Compare With" disabled/>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a class="enable_Compare_1">Diff 10:50</a>
+            </td>
+            <td>
+              <?= image_tag('increasement.png', array('class' => 'diff_progress')) ?>
+            </td>
+            <td>
+              <input class="loadDiffFeedback" type="radio" name="Compare_1" title="Compare"/>
+            </td>
+            <td>
+              <input class="loadDiffCompareFeedback" type="radio" name="Compare_2" title="Compare With" disabled/>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="diff_div">
+      <p>17-07-2012</p>
+      <table class="diff_info">
+        <tbody>
+          <tr class="diff_info_tr">
+            <td>
+              <a class="enable_Compare_1">Diff 12:05</a>
+            </td>
+            <td></td>
+            <td>
+              <input class="loadDiffFeedback" type="radio" name="Compare_1" title="View Diff"/>
+            </td>
+            <td>
+              <input class="loadDiffCompareFeedback" type="radio" name="Compare_2" title="Compare With" disabled/>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a class="enable_Compare_1">Diff 10:50</a>
+            </td>
+            <td>
+              <?= image_tag('increasement.png', array('class' => 'diff_progress')) ?>
+            </td>
+            <td>
+              <input class="loadDiffFeedback" type="radio" name="Compare_1" title="Compare"/>
+            </td>
+            <td>
+              <input class="loadDiffCompareFeedback" type="radio" name="Compare_2" title="Compare With" disabled/>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="diff diff_feedback" style="float:left;background-color:white;border-radius: 1px 1px 1px 1px;width:72%;height:600px;padding:12px;display:none;border-left-style:solid;border-width:thin;">
+      <h3 style="margin-left:25px;">16-07-2012 Diff 09:40</h3>
+      <h4 class="toggleDiffFeedbackTab"><?= image_tag('closed.gif') ?> indexSuccess.php [Warnings: 4 New found]</h4>
+      <div class="toggle_diff_feedback_tab_div">
+        <span class="metric_feedback_warning new_metric_feedback_warning toggleDiffFeedbackTab"><?= image_tag('closed.gif') ?> Unused Private Variable</span>
+        <div class="toggle_diff_feedback_tab_div">
+          <span class="metric_feedback_warning new_metric_feedback_warning toggleDiffFeedbackTab"><?= image_tag('closed.gif') ?> Line 20</span>
+          <div class="toggle_diff_feedback_tab_div diff_feedback_at_line_div">
+            <span class="diff_feedback_line_code">20. private $txt1="Hello World!";</span>
+          </div>
+          <span class="metric_feedback_warning new_metric_feedback_warning toggleDiffFeedbackTab"><?= image_tag('closed.gif') ?> Line 21</span>
+          <div class="toggle_diff_feedback_tab_div diff_feedback_at_line_div">
+            <span class="diff_feedback_line_code">21. private $txt2="What a nice day!";</span>
+          </div>
+        </div>
+        <span class="metric_feedback_warning new_metric_feedback_warning toggleDiffFeedbackTab"><?= image_tag('closed.gif') ?> Too Many Methods</span>
+        <span class="metric_feedback_warning new_metric_feedback_warning toggleDiffFeedbackTab"><?= image_tag('closed.gif') ?> Cyclomatic Complexity</span>
+        <span class="metric_feedback_warning new_metric_feedback_warning toggleDiffFeedbackTab"><?= image_tag('closed.gif') ?> Unused Local Variable</span>
+      </div>
+  </div>
+  <div class="diff diff_compare_feedback" style="float:left;background-color:white;border-radius: 1px 1px 6px 1px;width:1%;height:600px;padding:12px;display:none;border-left-style:solid;border-width:thin;right:0;">
+      <h3 style="margin-left:25px;">16-07-2012 Diff 10:20 <?= image_tag('decreasement.png', array('class' => 'diff_progress')) ?></h3>
+      <h4 class="toggleDiffFeedbackTab" style="height:26px;"><?= image_tag('closed.gif') ?> indexSuccess.php [Warnings: 1 New, 3 Old and 1 Fixed found]</h4>
+      <div class="toggle_diff_feedback_tab_div">
+        <span class="metric_feedback_warning new_metric_feedback_warning toggleDiffFeedbackTab"><?= image_tag('closed.gif') ?> Excessive Class Length</span>
+        <span class="metric_feedback_warning old_metric_feedback_warning toggleDiffFeedbackTab"><?= image_tag('closed.gif') ?> Unused Private Variable</span>
+        <span class="metric_feedback_warning old_metric_feedback_warning toggleDiffFeedbackTab"><?= image_tag('closed.gif') ?> Too Many Methods</span>
+        <span class="metric_feedback_warning old_metric_feedback_warning toggleDiffFeedbackTab"><?= image_tag('closed.gif') ?> Cyclomatic Complexity</span>
+        <div class="toggle_diff_feedback_tab_div">
+          <span class="metric_feedback_warning old_metric_feedback_warning toggleDiffFeedbackTab"><?= image_tag('closed.gif') ?> Line 88</span>
+          <div class="toggle_diff_feedback_tab_div diff_feedback_at_line_div">
+            <pre class="diff_feedback_line_code">88.  if(8 > 7)</pre>
+            <pre class="diff_feedback_line_code">89.  {</pre>
+            <pre class="diff_feedback_line_code">90.    if(7 > 6)</pre>
+            <pre class="diff_feedback_line_code">91.    {</pre>
+            <pre class="diff_feedback_line_code">92.      if(6 > 5)</pre>
+            <pre class="diff_feedback_line_code">93.      {</pre>
+            <pre class="diff_feedback_line_code">94.        if(5 > 4)</pre>
+            <pre class="diff_feedback_line_code">95.        {</pre>
+            <pre class="diff_feedback_line_code">96.          if(4 > 3)</pre>
+            <pre class="diff_feedback_line_code">97.          {</pre>
+            <pre class="diff_feedback_line_code">98.            if(3 > 2)</pre>
+            <pre class="diff_feedback_line_code">99.            {</pre>
+            <pre class="diff_feedback_line_code">100.             if(2 > 1)</pre>
+            <pre class="diff_feedback_line_code">101.             {</pre>
+            <pre class="diff_feedback_line_code">102.               if(1 > 0)</pre>
+            <pre class="diff_feedback_line_code">103.               {</pre>
+            <pre class="diff_feedback_line_code">104.                 die();</pre>
+            <pre class="diff_feedback_line_code">105.               }</pre>
+            <pre class="diff_feedback_line_code">106.             }</pre>
+            <pre class="diff_feedback_line_code">107.           }</pre>
+            <pre class="diff_feedback_line_code">108.         }</pre>
+            <pre class="diff_feedback_line_code">109.       }</pre>
+            <pre class="diff_feedback_line_code">110.     }</pre>
+            <pre class="diff_feedback_line_code">111.   }</pre>
+            <pre class="diff_feedback_line_code">112. }</pre>
+          </div>
+          <span class="metric_feedback_warning fixed_metric_feedback_warning">Line 150</span>
+        </div>
+        <span class="metric_feedback_warning fixed_metric_feedback_warning">Unused Local Variable</span>
+      </div>
+  </div>
+</div>
+
+<script>
+  (function($) {
+    $('.enable_Compare_1').click(function()
+    {
+      $(this).parent().next().next().find('[name="Compare_1"]').click();
+    });
+
+    $('.loadDiffFeedback').click(function()
+    {
+      $('[name="Compare_2"]').attr('disabled', 'disabled');
+      $(this).parent().parent().parent().children().children().find('[name="Compare_2"]').removeAttr('disabled');
+      slideDiffHorizontal($('.diff_compare_feedback'), '1%', $('.diff_compare_feedback'));
+      var diff_feedback_div = $('.diff_feedback');
+      slideDiffHorizontal(diff_feedback_div, '72%');
+      if(diff_feedback_div.css('display') == 'none') diff_feedback_div.show();
+    });
+
+    $('.loadDiffCompareFeedback').click(function()
+    {
+      slideDiffHorizontal($('.diff_feedback'), '35%');
+      $('.diff_compare_feedback').show();
+      slideDiffHorizontal($('.diff_compare_feedback'), '35%');
+    });
+
+    $('.toggleDiffFeedbackTab').click(function()
+    {
+      var diff_tab_button = $(this);
+      var toggle_img = diff_tab_button.find('img');
+      var diff_tab_div = diff_tab_button.next();
+      (diff_tab_div.css('display') == 'none') ? toggle_img.attr('src', '/images/open.gif') : toggle_img.attr('src', '/images/closed.gif');
+      diff_tab_div.slideToggle('fast');
+    });
+
+    function slideDiffHorizontal(element, new_width, hide_after_completion)
+    {
+      $(element).animate({opacity: 1, width: new_width}, 'fast', 'linear', function()
+      {
+        if($(hide_after_completion) != 'undefined')
+        {
+          $(hide_after_completion).hide();
+        }
+      });
+    }
+  }(jQuery));
+</script>

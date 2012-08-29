@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% block head %}
+            <link rel="stylesheet" href="/bundles/hostnetcodequality/css/style.css" />
+            <script src="{{ asset('/bundles/hostnetcodequality/js/jquery-latest.js') }}" type="text/javascript"></script>
+            <title>Code Quality Review Platform - {% block title %}{% endblock %}</title>
+        {% endblock %}
+    </head>
+    <body>
+        {% include 'HostnetCodeQualityBundle:Default:navigationBar.html.twig' %}
+        <h1>{{ block('title') }}</h1>
+        <div id="content">{% block content %}{% endblock %}</div>
+        <div id="footer" class="footer">
+            {% block footer %}
+                &copy; Copyright 2012 by <a href="http://hostnet.nl/">Hostnet B.V.</a>
+            {% endblock %}
+        </div>
+    </body>
+</html>

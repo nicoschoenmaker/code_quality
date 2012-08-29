@@ -1,7 +1,8 @@
-{% include 'HostnetCodeQualityBundle:Default:navigationBar.html.twig' %}
+{% extends 'HostnetCodeQualityBundle:Default:base.html.twig' %}
 
-<h1 style="margin:25px 0px 0px 25px;">Code Quality Overview</h1>
 
+{% block title %}Code Quality Overview{% endblock %}
+{% block content %}
 <div id="general_code_quality_options" style="margin:25px 0px 0px 7.5%;background-color:white;width:85%;height:24px;border-radius: 8px 8px 1px 1px;padding:10px;border-bottom-style:solid;border-width:thin;">
   <div style="float:left;">
     <button>Update</button>
@@ -433,7 +434,7 @@
   </table>
 </div>
 
-<script type="text/javascript">
+<script type="text/javascript" src="{{ asset('/bundles/hostnetcodequality/js/highstock/highstock.js') }}">
   function slideHorizontal(element)
   {
     $(element).animate({opacity: 1, width:'45%'},{duration:1000}).show();
@@ -513,3 +514,4 @@
     });
   });
 </script>
+{% endblock %}

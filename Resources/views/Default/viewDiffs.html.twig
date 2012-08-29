@@ -1,5 +1,6 @@
-{% include 'HostnetCodeQualityBundle:Default:navigationBar.html.twig' %}
+{% extends 'HostnetCodeQualityBundle:Default:base.html.twig' %}
 
+{% block head %}
 <style>
   .diff_div {
     clear: both;
@@ -80,9 +81,11 @@
     margin: 0px 0px 0px 0px;
   }
 </style>
+{% endblock %}
 
-<h1 style="margin:25px 0px 0px 25px;">View Diffs</h1>
+{% block title %}View Diffs{% endblock %}
 
+{% block content %}
 <div id="view_diffs" style="margin:50px 0px 0px 50px;">
   <div id="diff_options" style="background-color:white;border-radius:8px 8px 1px 1px;padding:1%;height:24px;width:89%;border-bottom-style:solid;border-width:thin;">
       <div style="float:left;">
@@ -322,3 +325,4 @@
     }
   }(jQuery));
 </script>
+{% endblock %}

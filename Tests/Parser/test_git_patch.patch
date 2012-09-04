@@ -1,0 +1,52 @@
+diff --git a/test1/test2/builtin-http-fetch.php b/test1/test2/http-fetch.php
+similarity index 95%
+rename from builtin-http-fetch.php
+rename to http-fetch.php
+index f3e63d7..e8f44ba 100644
+--- a/test1/test2/builtin-http-fetch.php
++++ b/test1/test2/http-fetch.php
+@@ -1,8 +1,9 @@
+ #include "cache.h"
+ #include "walker.h"
+
+-int cmd_http_fetch(int argc, const char **argv, const char *prefix)
++int main(int argc, const char **argv)
+ {
++       const char *prefix;
+        struct walker *walker;
+        int commits_on_stdin = 0;
+        int commits;
+@@ -18,6 +19,8 @@ int cmd_http_fetch(int argc, const char **argv, const char *prefix)
+        int get_verbosely = 0;
+        int get_recover = 0;
+
++       prefix = setup_git_directory();
++
+        git_config(git_default_config, NULL);
+
+        while (arg < argc && argv[arg][0] == '-') {
+				
+diff --git a/test1/test2/een_test_bestand.php a/test1/test2/een_test_bestand.php
+index a3e63d9..a8f44b9 100640
+--- a/test1/test2/een_test_bestand.php
++++ a/test1/test2/een_test_bestand.php
+@@ -10,8 +10,9 @@
+ #include "cache.h"
+ #include "walker.h"
+
+-int cmd_http_fetch(int argc, const char **argv, const char *prefix)
++int main(int argc, const char **argv)
+ {
++       const char *prefix;
+        struct walker *walker;
+        int commits_on_stdin = 0;
+        int commits;
+@@ -180,6 +190,8 @@ int cmd_http_fetch(int argc, const char **argv, const char *prefix)
+        int get_verbosely = 0;
+        int get_recover = 0;
+
++       prefix = setup_git_directory();
++
+        git_config(git_default_config, NULL);
+
+        while (arg < argc && argv[arg][0] == '-') {

@@ -2,6 +2,7 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Tests\Controller;
 
+use Hostnet\HostnetCodeQualityBundle\Parser\SVNDiffParser;
 use Hostnet\HostnetCodeQualityBundle\Controller\DefaultController;
 use Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityTool;
 use Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityReview;
@@ -12,49 +13,6 @@ class DefaultControllerTest extends \PHPUnit_Framework_TestCase
   {
 
   }*/
-
-  /**
-   * Check if the diff is correctly parsed into CodeFile objects containing CodeBlock objects
-   */
-  public function testParseDiff()
-  {
-    //Load test patch file
-    $diff_location = 'http://codequality.rickp.ontw.hostnetbv.nl/test_patch.patch';
-    $diff = file_get_contents($diff_location);
-    $code_files = DefaultController::parseDiff($diff);
-
-    //first code file
-    $code_file = $code_files[0];
-    $this->assertEquals('apps/aurora/modules/uml/actions/components.class.php', $code_file->getIndex());
-    $this->assertEquals('components.class.php', $code_file->getName());
-    $this->assertEquals('php', $code_file->getExtension());
-    $this->assertEquals('apps/aurora/modules/uml/actions/components.class.php', $code_file->getSource());
-    $this->assertEquals('9347', $code_file->getSourceRevisionNumber());
-    $this->assertEquals('apps/aurora/modules/uml/actions/components.class.php', $code_file->getDestination());
-    $code_blocks = $code_file->getCodeBlocks();
-    //first code block of first code file
-    $code_block = $code_blocks[0];
-    $this->assertEquals('21,11', $code_block->getBeginLine());
-    $this->assertEquals('21,14', $code_block->getEndLine());
-
-    //second code file
-    $code_file = $code_files[4];
-    $this->assertEquals('lib/classes/tracXmlRpcTickets.php', $code_file->getIndex());
-    $this->assertEquals('tracXmlRpcTickets.php', $code_file->getName());
-    $this->assertEquals('php', $code_file->getExtension());
-    $this->assertEquals('lib/classes/tracXmlRpcTickets.php', $code_file->getSource());
-    $this->assertEquals('9347', $code_file->getSourceRevisionNumber());
-    $this->assertEquals('lib/classes/tracXmlRpcTickets.php', $code_file->getDestination());
-    $code_blocks = $code_file->getCodeBlocks();
-    //first code block of second code file
-    $code_block = $code_blocks[0];
-    $this->assertEquals('7,8', $code_block->getBeginLine());
-    $this->assertEquals('7,13', $code_block->getEndLine());
-    //second code blockof second code file
-    $code_block = $code_blocks[2];
-    $this->assertEquals('78,7', $code_block->getBeginLine());
-    $this->assertEquals('88,7', $code_block->getEndLine());
-  }
 
   /*public function find_all_occurences()
   {

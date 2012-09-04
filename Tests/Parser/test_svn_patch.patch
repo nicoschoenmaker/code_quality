@@ -1,0 +1,34 @@
+Index: rules.txt
+===================================================================
+--- rules.txt	(revision 2)
++++ rules.txt	(revision 3)
+@@ -1,4 +1,4 @@
+ Be kind to others
+-Freedom = Chocolate Ice Cream
++Freedom = Responsibility
+ Everything in moderation
+ Chew with your mouth open
+@@ -100,45 +105,55 @@
+ Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+ Vivamus libero elit, placerat eget egestas in, dignissim vel nisl. 
+ Suspendisse potenti. Nullam est libero, pellentesque ut scelerisque non, 
+ blandit quis felis. Aenean nisi lacus, luctus vitae semper vel, vehicula sit amet ipsum. 
+ Integer non vestibulum dolor. Sed sodales nisl quis ipsum rutrum ullamcorper. 
+ Quisque mollis elementum sem, sit amet condimentum ligula rhoncus vitae. 
+ Cras sit amet ornare tortor. Quisque vel purus massa. Pellentesque at consectetur massa. 
+ Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; 
+ Vivamus id felis a elit vehicula congue.
+Index: Test/TestBundle/Tests/test.php
+===================================================================
+--- Test/TestBundle/Tests/test.php	(revision 200)
++++ Test/TestBundle/Tests/test2.php	(working copy)
+@@ -50,6 +50,9 @@
+ Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+ Vivamus libero elit, placerat eget egestas in, dignissim vel nisl. 
+ Suspendisse potenti. Nullam est libero, pellentesque ut scelerisque non, 
+ blandit quis felis. Aenean nisi lacus, luctus vitae semper vel, vehicula sit amet ipsum. 
+ Integer non vestibulum dolor. Sed sodales nisl quis ipsum rutrum ullamcorper. 
+ Quisque mollis elementum sem, sit amet condimentum ligula rhoncus vitae. 
+ Cras sit amet ornare tortor. Quisque vel purus massa. Pellentesque at consectetur massa. 
+ Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; 
+ Vivamus id felis a elit vehicula congue.

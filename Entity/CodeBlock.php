@@ -2,43 +2,20 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-
-/**
- * Hostnet\HostnetCodeQualityBundle\Entity\CodeBlock
- *
- * @ORM\Table()
- * @ORM\Entity
- */
 class CodeBlock
 {
     /**
-     * @var integer $id
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
-
-    /**
      * @var string $begin_line
-     *
-     * @ORM\Column(name="begin_line", type="string", length=8)
      */
     private $begin_line;
 
     /**
      * @var string $end_line
-     *
-     * @ORM\Column(name="end_line", type="string", length=8)
      */
     private $end_line;
 
     /**
      * @var string $code
-     *
-     * @ORM\Column(name="code", type="string")
      */
     private $code;
 
@@ -46,7 +23,7 @@ class CodeBlock
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -62,14 +39,14 @@ class CodeBlock
     public function setBeginLine($beginLine)
     {
         $this->begin_line = $beginLine;
-    
+
         return $this;
     }
 
     /**
      * Get begin_line
      *
-     * @return string 
+     * @return string
      */
     public function getBeginLine()
     {
@@ -85,14 +62,14 @@ class CodeBlock
     public function setEndLine($endLine)
     {
         $this->end_line = $endLine;
-    
+
         return $this;
     }
 
     /**
      * Get end_line
      *
-     * @return string 
+     * @return string
      */
     public function getEndLine()
     {
@@ -108,14 +85,14 @@ class CodeBlock
     public function setCode($code)
     {
         $this->code = $code;
-    
+
         return $this;
     }
 
     /**
      * Get code
      *
-     * @return string 
+     * @return string
      */
     public function getCode()
     {

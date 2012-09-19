@@ -2,80 +2,50 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-
-/**
- * Hostnet\HostnetCodeQualityBundle\Entity\CodeFile
- *
- * @ORM\Table()
- * @ORM\Entity
- */
 class CodeFile
 {
   /**
    * @var integer $id
-   *
-   * @ORM\Column(name="id", type="integer")
-   * @ORM\Id
-   * @ORM\GeneratedValue(strategy="AUTO")
    */
   private $id;
 
   /**
    * @var string $name
-   *
-   * @ORM\Column(name="name", type="string", length=50)
    */
   private $name;
 
   /**
    * @var string $extension
-   *
-   * @ORM\Column(name="extension", type="string", length=20)
    */
   private $extension;
 
   /**
    * @var string $index
-   *
-   * @ORM\Column(name="index", type="string", length=255)
    */
   private $index;
 
   /**
    * @var string $source
-   *
-   * @ORM\Column(name="source", type="string", length=255)
    */
   private $source;
 
   /**
    * @var string $source_revision
-   *
-   * @ORM\Column(name="source_revision", type="string", length=20)
    */
   private $source_revision;
 
   /**
    * @var string $destination
-   *
-   * @ORM\Column(name="destination", type="string", length=255)
    */
   private $destination;
 
   /**
    * @var string $destination_revision
-   *
-   * @ORM\Column(name="destination_revision", type="string", length=20)
    */
   private $destination_revision;
 
-
-
   /**
    * @var \Hostnet\HostnetCodeQualityBundle\Entity\CodeBlock
-   *
-   * @ORM\OneToMany(targetEntity="CodeBlock", mappedBy="path", cascade={"all"})
    */
   private $code_blocks;
 
@@ -272,5 +242,19 @@ class CodeFile
   public function getCodeBlocks()
   {
       return $this->code_blocks;
+  }
+
+  /**
+   * Returns all the code in a code file
+   *
+   * @return string
+   */
+  public function getEntireCode()
+  {
+    $entire_code = '';
+    foreach($this->code_blocks as $code_block) {
+      $entire_code .= $code_block->getCode();
+    }
+    return $entire_code;
   }
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Parser;
+namespace Hostnet\HostnetCodeQualityBundle\Parser\DiffParser;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\DiffParserInterface;
+use Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\DiffParserInterface;
 use Hostnet\HostnetCodeQualityBundle\Entity\CodeFile;
 use Hostnet\HostnetCodeQualityBundle\Entity\CodeBlock;
 
@@ -22,23 +22,23 @@ class SVNDiffParser implements DiffParserInterface
    */
   public function parseDiff($diff)
   {
-    //Split the patch file into seperate files
+    // Split the patch file into seperate files
     $files = preg_split(self::START_OF_FILE_PATTERN, $diff);
-    //Parse files into CodeFile objects
+    // Parse files into CodeFile objects
     $code_files = array();
-    //The 1st record consists of nothing but whitespace so we start at the 2nd record
-    for($i = 1 ; $i < count($files) ; $i++) {
+    // The 1st record consists of nothing but whitespace so we start at the 2nd record
+    for($i = 1; $i < count($files); $i++) {
       $file_string = $files[$i];
       $code_file = new CodeFile;
-      //Split each file into different code blocks based on the file range pattern
+      // Split each file into different code blocks based on the file range pattern
       $code_block_strings = preg_split(self::FILE_RANGE_PATTERN, $file_string);
       $header_string = $code_block_strings[0];
-      //Explode each header into lines so we can easily gather the header data, it removes the "Index: " pattern
+      // Explode each header into lines so we can easily gather the header data, it removes the "Index: " pattern
       $lines = explode(PHP_EOL, $header_string);
-      //As the Index pattern got removed we can simply retrieve the whole line
+      // As the Index pattern got removed we can simply retrieve the whole line
       $code_file->setIndex($lines[0]);
-      //Fill the rest of the header data
-      //If the Index contains slashes we extract the name after the last slash, otherwise just take the whole line(name remains)
+      // Fill the rest of the header data
+      // If the Index contains slashes we extract the name after the last slash, otherwise just take the whole line(name remains)
       $is_sub_path = (strpos($lines[0], self::FORWARD_SLASH) !== false) ? true : false;
       $code_file->setName($is_sub_path ? substr($lines[0], strrpos($lines[0], self::FORWARD_SLASH)+strlen(self::FORWARD_SLASH)) : $lines[0]);
       $code_file->setExtension(substr($lines[0], strrpos($lines[0], self::DOT)+strlen(self::DOT)));
@@ -56,19 +56,19 @@ class SVNDiffParser implements DiffParserInterface
           strrpos($full_destination__and_revision, self::OPEN_PARENTHESIS)+strlen(self::OPEN_PARENTHESIS),
           strrpos($full_destination__and_revision, self::CLOSE_PARENTHESIS)-strlen(self::CLOSE_PARENTHESIS)-strrpos($full_destination__and_revision, self::OPEN_PARENTHESIS)));
 
-      //Parse code blocks into CodeBlock objects
+      // Parse code blocks into CodeBlock objects
       $code_blocks = array();
-      //Same as the for-loop above, the 1st record consists of nothing but whitespace so we start at the 2nd record
+      // Same as the for-loop above, the 1st record consists of nothing but whitespace so we start at the 2nd record
       for($j = 1 ; $j < count($code_block_strings) ; $j++) {
         $code_block_string = $code_block_strings[$j];
-        //Retrieving the begin and endline of each code block as the split functionality to split each file into code blocks removes the
-        //begin and endline used as the delimiter
+        // Retrieving the begin and endline of each code block as the split functionality to split each file into code blocks removes the
+        // begin and endline used as the delimiter
         $startpos_of_code_block = strpos($file_string, $code_block_string);
         $start_of_delimiter = strrpos(substr($file_string, 0 , $startpos_of_code_block),
             self::FILE_RANGE_BRACKETS, -(strlen(self::FILE_RANGE_BRACKETS)+self::SPACE_LENGTH));
         $begin_and_end_line = substr($file_string, $start_of_delimiter, $startpos_of_code_block-$start_of_delimiter);
         $code_block = new CodeBlock;
-        //Extract all the code block data and fill the CodeBlock object
+        // Extract all the code block data and fill the CodeBlock object
         $code_block->setBeginLine(substr($begin_and_end_line, strpos($begin_and_end_line, self::MINUS)+strlen(self::MINUS),
             strpos($begin_and_end_line, self::PLUS)-(strlen(self::PLUS)+self::SPACE_LENGTH)-strpos($begin_and_end_line, self::MINUS)));
         $code_block->setEndLine(substr($begin_and_end_line, strpos($begin_and_end_line, self::PLUS)+strlen(self::PLUS),

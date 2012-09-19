@@ -1,8 +1,8 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Tests\Parser;
+namespace Hostnet\HostnetCodeQualityBundle\Tests\Parser\DiffParser;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\SVNDiffParser;
+use Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\SVNDiffParser;
 
 class SVNDiffParserTest extends \PHPUnit_Framework_TestCase
 {
@@ -12,7 +12,7 @@ class SVNDiffParserTest extends \PHPUnit_Framework_TestCase
   public function testParseDiff()
   {
     //Load test patch file
-    $diff_location = __DIR__ . '/test_svn_patch.patch';
+    $diff_location = __DIR__ . '/../../test_svn_patch.patch';
     $diff = file_get_contents($diff_location);
     $svnDiffParser = new SVNDiffParser();
     $code_files = $svnDiffParser->parseDiff($diff);

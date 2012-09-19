@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<pmd version="1.3.3" timestamp="2012-09-17T13:49:12+02:00">
+  <file name="/tmp/codequality/http-fetchxDTfCJ">
+    <violation beginline="5" endline="8" rule="ConstructorWithNameAsEnclosingClass" ruleset="Naming Rules" package="+global" externalInfoUrl="http://phpmd.org/rules/naming.html#constructorwithnameasenclosingclass" class="HelloWorld" method="helloWorld" priority="3">
+      Classes should not have a constructor method with the same name as the class
+    </violation>
+    <violation beginline="7" endline="7" rule="UnusedLocalVariable" ruleset="Unused Code Rules" externalInfoUrl="http://phpmd.org/rules/unusedcode.html#unusedlocalvariable" priority="3">
+      Avoid unused local variables such as '$this_is_an_unused_and_very_long_variable_name'.
+    </violation>
+    <violation beginline="7" endline="7" rule="LongVariable" ruleset="Naming Rules" externalInfoUrl="http://phpmd.org/rules/naming.html#longvariable" priority="3">
+      Avoid excessively long variable names like $this_is_an_unused_and_very_long_variable_name. Keep variable name length under 20.
+    </violation>
+  </file>
+  <error filename="/tmp/codequality/http-fetchxDTfCJ" msg="Unexpected token: class, line: 12, col: 1, file: /tmp/codequality/http-fetchxDTfCJ." />
+</pmd>
+

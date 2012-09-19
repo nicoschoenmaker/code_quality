@@ -1,8 +1,8 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Tests\Parser;
+namespace Hostnet\HostnetCodeQualityBundle\Tests\Parser\DiffParser;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\GitDiffParser;
+use Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\GitDiffParser;
 
 class GitDiffParserTest extends \PHPUnit_Framework_TestCase
 {
@@ -12,15 +12,15 @@ class GitDiffParserTest extends \PHPUnit_Framework_TestCase
   public function testParseDiff()
   {
     //Load test patch file
-    $diff_location = __DIR__ . '/test_git_patch.patch';
+    $diff_location = __DIR__ . '/../../test_git_patch.patch';
     $diff = file_get_contents($diff_location);
     $gitDiffParser = new GitDiffParser();
     $code_files = $gitDiffParser->parseDiff($diff);
 
     //first code file
     $code_file = $code_files[0];
-    //$this->assertEquals('', $code_file->getName());
-    //$this->assertEquals('', $code_file->getExtension());
+    $this->assertEquals('http-fetch', $code_file->getName());
+    $this->assertEquals('php', $code_file->getExtension());
     $this->assertEquals('test1/test2/builtin-http-fetch.php', $code_file->getSource());
     $this->assertEquals('f3e63d7', $code_file->getSourceRevision());
     $this->assertEquals('test1/test2/http-fetch.php', $code_file->getDestination());
@@ -37,6 +37,8 @@ class GitDiffParserTest extends \PHPUnit_Framework_TestCase
 
     //second code file
     $code_file = $code_files[1];
+    $this->assertEquals('een_test_bestand', $code_file->getName());
+    $this->assertEquals('php', $code_file->getExtension());
     $this->assertEquals('test1/test2/een_test_bestand.php', $code_file->getSource());
     $this->assertEquals('a3e63d9', $code_file->getSourceRevision());
     $this->assertEquals('test1/test2/een_test_bestand.php', $code_file->getDestination());

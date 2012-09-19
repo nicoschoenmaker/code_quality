@@ -22,13 +22,6 @@ class CodeQualityReview
     private $id;
 
     /**
-     * @var integer $user_id
-     *
-     * @ORM\Column(name="user_id", type="integer")
-     */
-    private $user_id;
-
-    /**
      * @var string $file_name
      *
      * @ORM\Column(name="file_name", type="string", length=50)
@@ -36,18 +29,25 @@ class CodeQualityReview
     private $file_name;
 
     /**
-     * @var double $total_grade
-     *
-     * @ORM\Column(name="total_grade", type="double")
-     */
-    private $total_grade;
-
-    /**
      * @var \DateTime $created_at
      *
      * @ORM\Column(name="created_at", type="date")
      */
     private $created_at;
+
+    /**
+     * @var \Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityReviewUser
+     *
+     * @ORM\OneToMany(targetEntity="CodeQualityReviewUser", mappedBy="codequalityreview")
+     */
+    private $code_quality_review_user;
+
+    /**
+     * @var \Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityReviewViolation
+     *
+     * @ORM\OneToMany(targetEntity="CodeQualityReviewViolation", mappedBy="codequalityreview")
+     */
+    private $code_quality_review_violations;
 
 
     /**
@@ -58,29 +58,6 @@ class CodeQualityReview
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set user_id
-     *
-     * @param integer $userId
-     * @return CodeQualityReview
-     */
-    public function setUserId($userId)
-    {
-        $this->user_id = $userId;
-
-        return $this;
-    }
-
-    /**
-     * Get user_id
-     *
-     * @return integer
-     */
-    public function getUserId()
-    {
-        return $this->user_id;
     }
 
     /**
@@ -107,29 +84,6 @@ class CodeQualityReview
     }
 
     /**
-     * Set total_grade
-     *
-     * @param double $totalGrade
-     * @return CodeQualityReview
-     */
-    public function setTotalGrade($totalGrade)
-    {
-        $this->total_grade = $totalGrade;
-
-        return $this;
-    }
-
-    /**
-     * Get total_grade
-     *
-     * @return double
-     */
-    public function getTotalGrade()
-    {
-        return $this->total_grade;
-    }
-
-    /**
      * Set created_at
      *
      * @param \DateTime $createdAt
@@ -150,5 +104,97 @@ class CodeQualityReview
     public function getCreatedAt()
     {
         return $this->created_at;
+    }
+
+    /**
+     * Set code_quality_review_user
+     *
+     * @param CodeQualityReviewUser $code_quality_review_user
+     * @return CodeQualityReview
+     */
+    public function setCodeQualityReviewUser($code_quality_review_user)
+    {
+      $this->code_quality_review_user = $code_quality_review_user;
+
+      return $this;
+    }
+
+    /**
+     * Get code_quality_review_user
+     *
+     * @return CodeQualityReviewUser
+     */
+    public function getCodeQualityReviewUser()
+    {
+      return $this->code_quality_review_user;
+    }
+
+    /**
+     * Set code quality review violations
+     *
+     * @param string $code_quality_review_violation
+     * @return CodeQualityReview
+     */
+    public function setCodeQualityReviewViolations($code_quality_review_violations)
+    {
+      $this->code_quality_review_violations = $code_quality_review_violations;
+
+      return $this;
+    }
+
+    /**
+     * Get code quality review violations
+     *
+     * @return array
+     */
+    public function getCodeQualityReviewViolations()
+    {
+      return $this->code_quality_review_violations;
+    }
+
+    /**
+     * Add code_quality_review_user
+     *
+     * @param Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityReviewUser $codeQualityReviewUser
+     * @return CodeQualityReview
+     */
+    public function addCodeQualityReviewUser(\Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityReviewUser $codeQualityReviewUser)
+    {
+        $this->code_quality_review_user[] = $codeQualityReviewUser;
+
+        return $this;
+    }
+
+    /**
+     * Remove code_quality_review_user
+     *
+     * @param Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityReviewUser $codeQualityReviewUser
+     */
+    public function removeCodeQualityReviewUser(\Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityReviewUser $codeQualityReviewUser)
+    {
+        $this->code_quality_review_user->removeElement($codeQualityReviewUser);
+    }
+
+    /**
+     * Add code_quality_review_violations
+     *
+     * @param Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityReviewViolation $codeQualityReviewViolations
+     * @return CodeQualityReview
+     */
+    public function addCodeQualityReviewViolation(\Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityReviewViolation $codeQualityReviewViolations)
+    {
+        $this->code_quality_review_violations[] = $codeQualityReviewViolations;
+
+        return $this;
+    }
+
+    /**
+     * Remove code_quality_review_violations
+     *
+     * @param Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityReviewViolation $codeQualityReviewViolations
+     */
+    public function removeCodeQualityReviewViolation(\Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityReviewViolation $codeQualityReviewViolations)
+    {
+        $this->code_quality_review_violations->removeElement($codeQualityReviewViolations);
     }
 }

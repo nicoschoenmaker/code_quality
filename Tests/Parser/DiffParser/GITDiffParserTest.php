@@ -2,9 +2,9 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Tests\Parser\DiffParser;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\GitDiffParser;
+use Hostnet\HostnetCodeQualityBundle\Parser\ParserFactory;
 
-class GitDiffParserTest extends \PHPUnit_Framework_TestCase
+class GITDiffParserTest extends \PHPUnit_Framework_TestCase
 {
   /**
    * Check if the svn diff is correctly parsed into CodeFile objects containing CodeBlock objects
@@ -14,7 +14,9 @@ class GitDiffParserTest extends \PHPUnit_Framework_TestCase
     //Load test patch file
     $diff_location = __DIR__ . '/../../test_git_patch.patch';
     $diff = file_get_contents($diff_location);
-    $gitDiffParser = new GitDiffParser();
+    $parser_factory = ParserFactory::getInstance();
+    $gitDiffParser = $parser_factory
+      ->getParserInstance('GITDiffParser', $parser_factory::DIFF_PARSER_DIR);
     $code_files = $gitDiffParser->parseDiff($diff);
 
     //first code file

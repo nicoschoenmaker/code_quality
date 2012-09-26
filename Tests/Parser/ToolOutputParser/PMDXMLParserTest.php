@@ -2,11 +2,13 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Tests\Parser\ToolOutputParser;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\PMDXMLParser,
-    Hostnet\HostnetCodeQualityBundle\Entity\CodeFile;
+use Hostnet\HostnetCodeQualityBundle\Parser\ParserFactory,
+    Hostnet\HostnetCodeQualityBundle\lib\CodeFile;
 
 class PMDXMLParserTest extends \PHPUnit_Framework_TestCase
 {
+  //extends KernelAwareTest
+
   public function testToolOutputParser()
   {
     // Retrieve the test xml output
@@ -15,12 +17,14 @@ class PMDXMLParserTest extends \PHPUnit_Framework_TestCase
     $tool_output = file_get_contents($tool_output_path);
 
     // Initialize the required code_file data
-    $code_file = new CodeFile;
+    $code_file = new CodeFile();
     $code_file->setName($test_file_name);
     $code_file->setExtension('php');
 
     // Initialize the pmd xml parser and parse the test tool output
-    $pmd_xml_parser = PMDXMLParser::getInstance();
+    //$this->container->getParameter('scm');
+    $pmd_xml_parser = ParserFactory::getInstance()->getParserInstance('PMDXMLParser', ParserFactory::TOOL_OUTPUT_PARSER_DIR);
+
     $code_quality_review = $pmd_xml_parser->parseToolOutput($tool_output, $code_file);
     $code_quality_review_violations = $code_quality_review->getCodeQualityReviewViolations();
 

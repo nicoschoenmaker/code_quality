@@ -2,8 +2,8 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\DependencyInjection;
 
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\Config\Definition\Builder\TreeBuilder,
+    Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
  * This is the class that validates and merges configuration from your app/config files
@@ -20,9 +20,15 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('hostnet_code_quality');
 
-        // Here you should define the parameters that are allowed to
-        // configure your bundle. See the documentation linked above for
-        // more information on that topic.
+        $rootNode
+          ->children()
+            ->scalarNode('scm')
+              ->defaultNull()
+                ->end()
+            ->scalarNode('raw_file_url_mask')
+              ->defaultNull()
+                ->end()
+          ->end();
 
         return $treeBuilder;
     }

@@ -1,14 +1,9 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Entity;
+namespace Hostnet\HostnetCodeQualityBundle\lib;
 
 class CodeFile
 {
-  /**
-   * @var integer $id
-   */
-  private $id;
-
   /**
    * @var string $name
    */
@@ -25,40 +20,38 @@ class CodeFile
   private $index;
 
   /**
+   * The full path of the original file
+   *
    * @var string $source
    */
   private $source;
 
   /**
+   * The revision index of the original file
+   *
    * @var string $source_revision
    */
   private $source_revision;
 
   /**
+   * The full path of the file after the changes, the file could be moved
+   *
    * @var string $destination
    */
   private $destination;
 
   /**
+   * The revision index of the file after the changes
+   *
    * @var string $destination_revision
    */
   private $destination_revision;
 
   /**
-   * @var \Hostnet\HostnetCodeQualityBundle\Entity\CodeBlock
+   * @var array $code_blocks
    */
   private $code_blocks;
 
-
-  /**
-   * Get id
-   *
-   * @return integer
-   */
-  public function getId()
-  {
-      return $this->id;
-  }
 
   /**
    * Set name
@@ -69,8 +62,6 @@ class CodeFile
   public function setName($name)
   {
       $this->name = $name;
-
-      return $this;
   }
 
   /**
@@ -92,8 +83,6 @@ class CodeFile
   public function setExtension($extension)
   {
     $this->extension = $extension;
-
-    return $this;
   }
 
   /**
@@ -115,8 +104,6 @@ class CodeFile
   public function setIndex($index)
   {
     $this->index = $index;
-
-    return $this;
   }
 
   /**
@@ -138,8 +125,6 @@ class CodeFile
   public function setSource($source)
   {
     $this->source = $source;
-
-    return $this;
   }
 
   /**
@@ -161,8 +146,6 @@ class CodeFile
   public function setSourceRevision($source_revision)
   {
     $this->source_revision = $source_revision;
-
-    return $this;
   }
 
   /**
@@ -184,8 +167,6 @@ class CodeFile
   public function setDestination($destination)
   {
     $this->destination = $destination;
-
-    return $this;
   }
 
   /**
@@ -207,8 +188,6 @@ class CodeFile
   public function setDestinationRevision($destination_revision)
   {
     $this->destination_revision = $destination_revision;
-
-    return $this;
   }
 
   /**
@@ -230,8 +209,6 @@ class CodeFile
   public function setCodeBlocks($code_blocks)
   {
       $this->code_blocks = $code_blocks;
-
-      return $this;
   }
 
   /**

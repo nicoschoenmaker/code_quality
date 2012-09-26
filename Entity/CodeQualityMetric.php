@@ -4,184 +4,138 @@ namespace Hostnet\HostnetCodeQualityBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityReviewViolation,
+    Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityMetricRuleset;
+
 /**
- * Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityMetric
- *
- * @ORM\Table()
+ * @ORM\Table
  * @ORM\Entity
  */
 class CodeQualityMetric
 {
-    /**
-     * @var integer $id
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
+  /**
+   * @var integer $id
+   *
+   * @ORM\Column(name="id", type="integer")
+   * @ORM\Id
+   * @ORM\GeneratedValue(strategy="AUTO")
+   */
+  private $id;
 
-    /**
-     * @var \Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityReviewViolation
-     *
-     * @ORM\OneToMany(targetEntity="CodeQualityReviewViolation", mappedBy="codequalitymetric")
-     */
-    private $code_quality_review_violations;
+  /**
+   * @var CodeQualityReviewViolation
+   *
+   * @ORM\OneToMany(targetEntity="CodeQualityReviewViolation", mappedBy="code_quality_metric_id")
+   *
+   */
+  private $code_quality_review_violations;
 
-    /**
-     * @var \Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityMetricRuleset
-     *
-     * @ORM\ManyToOne(targetEntity="CodeQualityMetricRuleset", inversedBy="codequalitymetricruleset")
-     */
-    private $code_quality_metric_ruleset;
+  /**
+   * @var CodeQualityMetricRuleset
+   *
+   * @ORM\ManyToOne(targetEntity="CodeQualityMetricRuleset", inversedBy="code_quality_metric_ruleset_id")
+   * @ORM\JoinColumn(name="code_quality_metric_ruleset_id", referencedColumnName="id")
+   */
+  private $code_quality_metric_ruleset;
 
-    /**
-     * @var \Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityMetricCodeLanguage
-     *
-     * @ORM\ManyToOne(targetEntity="CodeQualityMetricCodeLanguage", inversedBy="codequalitymetriccodelanguage")
-     */
-    private $code_quality_metric_code_language;
+  /**
+   * @var CodeQualityMetricCodeLanguage
+   *
+   * @ORM\ManyToOne(targetEntity="CodeQualityMetricCodeLanguage", inversedBy="code_quality_metric_code_language_id")
+   * @ORM\JoinColumn(name="code_quality_metric_code_language_id", referencedColumnName="id")
+   */
+  private $code_quality_metric_code_language;
 
-    /**
-     * @var boolean $enabled
-     *
-     * @ORM\Column(name="enabled", type="boolean")
-     */
-    private $enabled;
+  /**
+   * @var boolean $enabled
+   *
+   * @ORM\Column(name="enabled", type="boolean")
+   */
+  private $enabled;
 
 
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
+  public function __construct()
+  {
+    $this->code_quality_review_violations = new \Doctrine\Common\Collections\ArrayCollection();
+  }
 
-    /**
-     * Set code_quality_metric_code_language
-     *
-     * @param string $codeQualityMetricCodeLanguage
-     * @return CodeQualityMetric
-     */
-    public function setCodeQualityMetricCodeLanguage($codeQualityMetricCodeLanguage)
-    {
-        $this->code_quality_metric_code_language = $codeQualityMetricCodeLanguage;
+  /**
+   * Get id
+   *
+   * @return integer
+   */
+  public function getId()
+  {
+    return $this->id;
+  }
 
-        return $this;
-    }
+  /**
+   * Set code_quality_metric_code_language
+   *
+   * @param CodeQualityMetricCodelanguage $code_quality_metric_code_language
+   */
+  public function setCodeQualityMetricCodeLanguage(CodeQualityMetricCodelanguage $code_quality_metric_code_language)
+  {
+    $this->code_quality_metric_code_language = $code_quality_metric_code_language;
+  }
 
-    /**
-     * Get code_quality_metric_code_language
-     *
-     * @return string
-     */
-    public function getCodeQualityMetricCodeLanguage()
-    {
-        return $this->code_quality_metric_code_language;
-    }
+  /**
+   * Get code_quality_metric_code_language
+   *
+   * @return CodeQualityMetricCodelanguage
+   */
+  public function getCodeQualityMetricCodeLanguage()
+  {
+    return $this->code_quality_metric_code_language;
+  }
 
-    /**
-     * Set code_quality_review_violation
-     *
-     * @param string $codeQualityReviewViolation
-     * @return CodeQualityMetric
-     */
-    public function setCodeQualityReviewViolation($codeQualityReviewViolation)
-    {
-        $this->code_quality_review_violation = $codeQualityReviewViolation;
+  /**
+   * Get code_quality_review_violations
+   *
+   * @return CodeQualityReviewViolation array
+   */
+  public function getCodeQualityReviewViolations()
+  {
+    return $this->code_quality_review_violations;
+  }
 
-        return $this;
-    }
+  /**
+   * Set code_quality_metric_ruleset
+   *
+   * @param CodeQualityMetricRuleset $codeQualityMetricRuleset
+   */
+  public function setCodeQualityMetricRuleset(CodeQualityMetricRuleset $code_quality_metric_ruleset)
+  {
+    $this->code_quality_metric_ruleset = $code_quality_metric_ruleset;
+  }
 
-    /**
-     * Get code_quality_review_violation
-     *
-     * @return string
-     */
-    public function getCodeQualityReviewViolation()
-    {
-        return $this->code_quality_review_violation;
-    }
+  /**
+   * Get code_quality_metric_ruleset
+   *
+   * @return CodeQualityMetricRuleset
+   */
+  public function getCodeQualityMetricRuleset()
+  {
+    return $this->code_quality_metric_ruleset;
+  }
 
-    /**
-     * Set enabled
-     *
-     * @param boolean $enabled
-     * @return CodeQualityMetric
-     */
-    public function setEnabled($enabled)
-    {
-        $this->enabled = $enabled;
+  /**
+   * Set enabled
+   *
+   * @param boolean $enabled
+   */
+  public function setEnabled($enabled)
+  {
+    $this->enabled = $enabled;
+  }
 
-        return $this;
-    }
-
-    /**
-     * Get enabled
-     *
-     * @return boolean
-     */
-    public function getEnabled()
-    {
-        return $this->enabled;
-    }
-
-    /**
-     * Add code_quality_review_violations
-     *
-     * @param Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityReviewViolation $codeQualityReviewViolations
-     * @return CodeQualityMetric
-     */
-    public function addCodeQualityReviewViolation(\Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityReviewViolation $codeQualityReviewViolations)
-    {
-        $this->code_quality_review_violations[] = $codeQualityReviewViolations;
-
-        return $this;
-    }
-
-    /**
-     * Remove code_quality_review_violations
-     *
-     * @param Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityReviewViolation $codeQualityReviewViolations
-     */
-    public function removeCodeQualityReviewViolation(\Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityReviewViolation $codeQualityReviewViolations)
-    {
-        $this->code_quality_review_violations->removeElement($codeQualityReviewViolations);
-    }
-
-    /**
-     * Get code_quality_review_violations
-     *
-     * @return Doctrine\Common\Collections\Collection
-     */
-    public function getCodeQualityReviewViolations()
-    {
-        return $this->code_quality_review_violations;
-    }
-
-    /**
-     * Set code_quality_metric_ruleset
-     *
-     * @param Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityMetricRuleset $codeQualityMetricRuleset
-     * @return CodeQualityMetric
-     */
-    public function setCodeQualityMetricRuleset(\Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityMetricRuleset $codeQualityMetricRuleset = null)
-    {
-        $this->code_quality_metric_ruleset = $codeQualityMetricRuleset;
-
-        return $this;
-    }
-
-    /**
-     * Get code_quality_metric_ruleset
-     *
-     * @return Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityMetricRuleset
-     */
-    public function getCodeQualityMetricRuleset()
-    {
-        return $this->code_quality_metric_ruleset;
-    }
+  /**
+   * Get enabled
+   *
+   * @return boolean
+   */
+  public function getEnabled()
+  {
+    return $this->enabled;
+  }
 }

@@ -2,26 +2,21 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Controller;
 
-use Hostnet\HostnetCodeQualityBundle\Rest\RestRequest,
-    Hostnet\HostnetCodeQualityBundle\Rest\RestUtils,
-    Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityTool,
-    Hostnet\HostnetCodeQualityBundle\Entity\SettingsManager,
-    Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityReview,
-    Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\ToolOutputParserFactory;
+use Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityTool,
+    Hostnet\HostnetCodeQualityBundle\Parser\ParserFactory;
 
-use Symfony\Component\HttpFoundation\Request,
-    Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller,
+    Symfony\Component\HttpFoundation\Request;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route,
     Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-use FOS\RestBundle\Controller\FOSRestController,
-    FOS\RestBundle\View\View,
-    FOS\RestBundle\View\ViewHandler,
-    FOS\RestBundle\View\RouteRedirectView;
-
-class DefaultController extends FOSRestController
+class DefaultController extends Controller
 {
+  private $code_quality_tools = array();
+  private $scm = '';
+  private $raw_file_url_mask = '';
+
   /**
    * @Route("/index")
    * @Template()
@@ -67,59 +62,104 @@ class DefaultController extends FOSRestController
     return $this->render('HostnetCodeQualityBundle:Default:toolManagement.html.twig');
   }
 
-  /*
-   * @Route("/sendDiff")
-   */
-  /*public function sendDiff()
-  {
-    //$request = Request::createFromGlobals();
-    //$diff = $request->files->get('diff');
-    //$register = $request->request->get('register');
-  }*/
-
   /**
-   * @Route("/performCodeQualityReview")
+   * @Route("/performCodeQualityReviewAction")
    */
-  public function performCodeQualityReview()
+  public function performCodeQualityReviewAction(Request $request)
   {
+    $this->readConfigSettings();
+
     // Retrieve the Diff file and the Registration bool out of the Request object.
-    $rest_request = RestUtils::processRequest();
-    $diff = $rest_request->getRequestVars('diff');
-    $register = $rest_request->getRequestVars('register');
-    // TODO Display a loading bar as long as the system is processing the diff, Ajax?
+    $diff = $request->get('diff');
+    $register = $request->get('register');
+
+    // Call the ParserFactory to create the Parsers
+    $parser_factory = ParserFactory::getInstance();
 
     // Parse the diff into CodeFile objects
-    $diff_parser = SettingsManager::getInstance()->getDiffParser();
+    $diff_parser = $parser_factory->getParserInstance($this->scm . 'DiffParser', $parser_factory::DIFF_PARSER_DIR);
     $code_files = $diff_parser->parseDiff($diff);
 
-    // Call the ToolOutputParserFactory to create the ToolOutputParser
-    $tool_output_parser_factory = ToolOutputParserFactory::getInstance();
-    $code_quality_tools = SettingsManager::getInstance()->getCodeQualityTools();
-
-    // Save the reviews if they should be registered
-    //$em = $this->getDoctrine()->getManager();
-
+    // Retrieve the Code Quality Tools
+    $code_quality_tools = $this->getCodeQualityTools();
+    // Get the Doctrine Entity Manager
+    $em = $this->getDoctrine()->getManager();
     $code_quality_reviews = array();
-    // Send each code file to a code quality review tool
+    // Send each code file to their specific code quality review tool based on the extension
     foreach($code_files as $code_file) {
       foreach($code_quality_tools as $code_language => $code_quality_tool) {
         if($code_file->getExtension() == $code_language) {
+          // Retrieve the original code file based on the repository raw file url mask
+          // and the new diff file name + parent revision number
+          $original_file = file_get_contents($this->raw_file_url_mask);
+          //$original_file = file_get_contents($this->raw_file_url_mask
+          //  . $code_file->getSource()
+          //  . '?id2='
+          //  . $code_file->getSourceRevision());
           // Let the appropriate static code quality tool process the file and return the output
-          $tool_output = $code_quality_tool->processFile($code_file);
+          $tool_output = $code_quality_tool->processFile($code_file, $original_file);
+          // Generate the Tool Output Parser with a Factory and
           // Parse tool output into CodeQualityReview objects
-          // TODO FIX
-          $code_quality_tool->setName('PMD');
-          $tool_output_parser =
-            $tool_output_parser_factory->getToolOutputParser($code_quality_tool);
-          $code_quality_review =
-            $tool_output_parser->parseToolOutput($tool_output[1], $code_file);
-          //$em->persist($code_quality_review);
-          //$em->flush();
+          $tool_output_parser_class_name =
+            strtoupper($code_quality_tool->getName()
+            . $code_quality_tool->getFormat())
+            . 'Parser';
+          $tool_output_parser = $parser_factory
+            ->getParserInstance(
+              $tool_output_parser_class_name,
+              $parser_factory::TOOL_OUTPUT_PARSER_DIR
+            );
+          $code_quality_review = $tool_output_parser
+            ->parseToolOutput($tool_output['diff_output'], $code_file);
+          // Save the reviews if they should be registered
+          if($register && $code_file->getExtension() != 'js') {
+            $em->persist($code_quality_review);
+          }
           $code_quality_reviews[] = $code_quality_review;
         }
       }
     }
-    // Data has to contain the feedback that the client will visualize.
+
     return $code_quality_reviews;
+  }
+
+  /**
+   * Returns a list of code quality tools
+   *
+   * @return CodeQualityTool array
+   */
+  public function getCodeQualityTools()
+  {
+    if(!$this->code_quality_tools) {
+      // TODO Remove when the Code Quality Tools are extracted from the DB
+      $PHPMD = new CodeQualityTool();
+      $PHPMD->setName('PMD');
+      $PHPMD->setPathToTool('~/projects/code_quality_tools/phpmd');
+      $PHPMD->setCallCommand('/usr/local/zend/bin/phpmd');
+      $PHPMD->setFormat('xml');
+      $PHPMD->setRulesets('codesize,unusedcode,naming');
+      $this->code_quality_tools['php'] = $PHPMD;
+
+      // TODO Retrieve the CodeQualityTools from the DB when tools can be added through the web-ui
+      /*$this->code_quality_tools = $this->getDoctrine()
+       ->getRepository('HostnetCodeQualityBundle:CodeQualityTool')
+      ->findAll();*/
+    }
+
+    return $this->code_quality_tools;
+  }
+
+  /**
+   * Reads the hostnet_code_quality config settings set in app/config/parameters.yml
+   */
+  public function readConfigSettings()
+  {
+    if(!$this->scm) {
+      $this->scm = strtoupper($this->container->getParameter('hostnet_code_quality.scm'));
+    }
+
+    if(!$this->raw_file_url_mask) {
+      $this->raw_file_url_mask = $this->container->getParameter('hostnet_code_quality.raw_file_url_mask');
+    }
   }
 }

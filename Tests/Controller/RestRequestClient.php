@@ -1,6 +1,6 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Rest;
+namespace Hostnet\HostnetCodeQualityBundle\Tests\Controller;
 
 class RestRequestClient
 {
@@ -60,14 +60,14 @@ class RestRequestClient
           $this->executeDelete($ch);
           break;
         default:
-          throw new InvalidArgumentException('Current verb (' . $this->verb . ') is an invalid REST verb.');
+          throw new \InvalidArgumentException('Current verb (' . $this->verb . ') is an invalid REST verb.');
       }
     }
-    catch (InvalidArgumentException $e) {
+    catch (\InvalidArgumentException $e) {
       curl_close($ch);
       throw $e;
     }
-    catch (Exception $e) {
+    catch (\Exception $e) {
       curl_close($ch);
       throw $e;
     }
@@ -78,7 +78,7 @@ class RestRequestClient
     $data = ($data !== null) ? $data : $this->requestBody;
 
     if (!is_array($data)) {
-      throw new InvalidArgumentException('Invalid data input for postBody.  Array expected');
+      throw new \InvalidArgumentException('Invalid data input for postBody.  Array expected');
     }
 
     $data = http_build_query($data);

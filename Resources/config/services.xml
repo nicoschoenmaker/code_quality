@@ -4,17 +4,15 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
-    <!--
     <parameters>
-        <parameter key="hostnet_code_quality.example.class">Hostnet\HostnetCodeQualityBundle\Example</parameter>
+        <parameter key="hostnet_code_quality.scm" />
+        <parameter key="hostnet_code_quality.raw_file_url_mask" />
     </parameters>
 
     <services>
-        <service id="hostnet_code_quality.example" class="%hostnet_code_quality.example.class%">
-            <argument type="service" id="service_id" />
-            <argument>plain_value</argument>
-            <argument>%parameter_name%</argument>
+        <service id="hostnet_code_quality.test_service" class="Hostnet\HostnetCodeQualityBundle\Controller\DefaultController">
+            <argument>%hostnet_code_quality.scm%</argument>
+            <argument>%hostnet_code_quality.raw_file_url_mask%</argument>
         </service>
     </services>
-    -->
 </container>

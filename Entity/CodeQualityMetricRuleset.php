@@ -4,141 +4,99 @@ namespace Hostnet\HostnetCodeQualityBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityMetric,
+    Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityMetricRule;
+
 /**
- * Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityMetricRuleset
- *
- * @ORM\Table()
+ * @ORM\Table
  * @ORM\Entity
  */
 class CodeQualityMetricRuleset
 {
-    /**
-     * @var integer $id
-     *
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
+  /**
+   * @var integer $id
+   *
+   * @ORM\Column(name="id", type="integer")
+   * @ORM\Id
+   * @ORM\GeneratedValue(strategy="AUTO")
+   */
+  private $id;
 
-    /**
-     * @var string $name
-     *
-     * @ORM\Column(name="name", type="string", length=255)
-     */
-    private $name;
+  /**
+   * @var string $name
+   *
+   * @ORM\Column(name="name", type="string", length=255)
+   */
+  private $name;
 
-    /**
-     * @var \Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityMetric
-     *
-     * @ORM\OneToMany(targetEntity="CodeQualityMetric", mappedBy="codequalitymetricruleset")
-     */
-    private $code_quality_metrics;
+  /**
+   * @var CodeQualityMetric
+   *
+   * @ORM\OneToMany(targetEntity="CodeQualityMetric", mappedBy="code_quality_metric_ruleset_id")
+   */
+  private $code_quality_metrics;
 
-    /**
-     * @var \Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityMetricRule
-     *
-     * @ORM\OneToMany(targetEntity="CodeQualityMetricRule", mappedBy="codequalitymetricruleset")
-     */
-    private $code_quality_metric_rules;
+  /**
+   * @var CodeQualityMetricRule
+   *
+   * @ORM\OneToMany(targetEntity="CodeQualityMetricRule", mappedBy="code_quality_metric_ruleset_id")
+   */
+  private $code_quality_metric_rules;
 
 
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-      return $this->id;
-    }
+  public function __construct()
+  {
+    $this->code_quality_metrics = new \Doctrine\Common\Collections\ArrayCollection();
+    $this->code_quality_metric_rules = new \Doctrine\Common\Collections\ArrayCollection();
+  }
 
-    /**
-     * Set name
-     *
-     * @param string $name
-     * @return CodeQualityMetricRuleset
-     */
-    public function setName($name)
-    {
-      $this->name = $name;
+  /**
+   * Get id
+   *
+   * @return integer
+   */
+  public function getId()
+  {
+    return $this->id;
+  }
 
-      return $this;
-    }
+  /**
+   * Set name
+   *
+   * @param string $name
+   */
+  public function setName($name)
+  {
+    $this->name = $name;
+  }
 
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getName()
-    {
-      return $this->name;
-    }
+  /**
+   * Get name
+   *
+   * @return string
+   */
+  public function getName()
+  {
+    return $this->name;
+  }
 
-    /**
-     * Add code_quality_metrics
-     *
-     * @param Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityMetric $codeQualityMetrics
-     * @return CodeQualityMetricRuleset
-     */
-    public function addCodeQualityMetric(\Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityMetric $codeQualityMetrics)
-    {
-        $this->code_quality_metrics[] = $codeQualityMetrics;
+  /**
+   * Get code_quality_metrics
+   *
+   * @return CodeQualityMetric array
+   */
+  public function getCodeQualityMetrics()
+  {
+      return $this->code_quality_metrics;
+  }
 
-        return $this;
-    }
-
-    /**
-     * Remove code_quality_metrics
-     *
-     * @param Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityMetric $codeQualityMetrics
-     */
-    public function removeCodeQualityMetric(\Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityMetric $codeQualityMetrics)
-    {
-        $this->code_quality_metrics->removeElement($codeQualityMetrics);
-    }
-
-    /**
-     * Get code_quality_metrics
-     *
-     * @return Doctrine\Common\Collections\Collection
-     */
-    public function getCodeQualityMetrics()
-    {
-        return $this->code_quality_metrics;
-    }
-
-    /**
-     * Add code_quality_metric_rules
-     *
-     * @param Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityMetricRule $codeQualityMetricRules
-     * @return CodeQualityMetricRuleset
-     */
-    public function addCodeQualityMetricRule(\Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityMetricRule $codeQualityMetricRules)
-    {
-        $this->code_quality_metric_rules[] = $codeQualityMetricRules;
-
-        return $this;
-    }
-
-    /**
-     * Remove code_quality_metric_rules
-     *
-     * @param Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityMetricRule $codeQualityMetricRules
-     */
-    public function removeCodeQualityMetricRule(\Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityMetricRule $codeQualityMetricRules)
-    {
-        $this->code_quality_metric_rules->removeElement($codeQualityMetricRules);
-    }
-
-    /**
-     * Get code_quality_metric_rules
-     *
-     * @return Doctrine\Common\Collections\Collection
-     */
-    public function getCodeQualityMetricRules()
-    {
-        return $this->code_quality_metric_rules;
-    }
+  /**
+   * Get code_quality_metric_rules
+   *
+   * @return CodeQualityMetricRule array
+   */
+  public function getCodeQualityMetricRules()
+  {
+      return $this->code_quality_metric_rules;
+  }
 }

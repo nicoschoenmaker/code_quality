@@ -2,10 +2,10 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\DependencyInjection;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\DependencyInjection\ContainerBuilder,
+    Symfony\Component\Config\FileLocator,
+    Symfony\Component\HttpKernel\DependencyInjection\Extension,
+    Symfony\Component\DependencyInjection\Loader;
 
 /**
  * This is the class that loads and manages your bundle configuration
@@ -24,5 +24,17 @@ class HostnetCodeQualityExtension extends Extension
 
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
+
+        if(isset($config['scm'])) {
+          $container->setParameter('hostnet_code_quality.scm', $config['scm']);
+        } else {
+          throw new \InvalidArgumentException("The 'scm' setting must be set in the main paramateres.yml config file.");
+        }
+
+        if(isset($config['raw_file_url_mask'])) {
+          $container->setParameter('hostnet_code_quality.raw_file_url_mask', $config['raw_file_url_mask']);
+        } else {
+          throw new \InvalidArgumentException("The 'raw_file_url_mask' setting must be set in the main paramateres.yml config file.");
+        }
     }
 }

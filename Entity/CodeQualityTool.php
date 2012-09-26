@@ -21,12 +21,11 @@ namespace Hostnet\HostnetCodeQualityBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Hostnet\HostnetCodeQualityBundle\Entity\SettingsManager;
+use Hostnet\HostnetCodeQualityBundle\Entity\SettingsManager,
+    Hostnet\HostnetCodeQualityBundle\lib\CodeFile;
 
 /**
- * Hostnet\HostnetCodeQualityBundle\Entity\CodeQualityTool
- *
- * @ORM\Table()
+ * @ORM\Table
  * @ORM\Entity
  */
 class CodeQualityTool
@@ -94,13 +93,10 @@ class CodeQualityTool
    * Set name
    *
    * @param string $name
-   * @return CodeQualityTool
    */
   public function setName($name)
   {
       $this->name = $name;
-
-      return $this;
   }
 
   /**
@@ -116,14 +112,11 @@ class CodeQualityTool
   /**
    * Set path_to_tool
    *
-   * @param string $pathToTool
-   * @return CodeQualityTool
+   * @param string $path_to_tool
    */
-  public function setPathToTool($pathToTool)
+  public function setPathToTool($path_to_tool)
   {
-      $this->path_to_tool = $pathToTool;
-
-      return $this;
+      $this->path_to_tool = $path_to_tool;
   }
 
   /**
@@ -140,13 +133,10 @@ class CodeQualityTool
    * Set call command
    *
    * @param string call_command
-   * @return CodeQualityTool
    */
   public function setCallCommand($call_command)
   {
       $this->call_command = $call_command;
-
-      return $this;
   }
 
   /**
@@ -163,13 +153,10 @@ class CodeQualityTool
    * Set format
    *
    * @param string $format
-   * @return CodeQualityTool
    */
   public function setFormat($format)
   {
       $this->format = $format;
-
-      return $this;
   }
 
   /**
@@ -202,43 +189,81 @@ class CodeQualityTool
     return $this->rulesets;
   }
 
-  public function __construct()
+  /**
+   * @param String $temp_dir_name
+   */
+  public function __construct($temp_dir_name = self::TEMP_CQ_DIR_NAME)
   {
-    $this->temp_code_quality_dir_path = sys_get_temp_dir() . self::TEMP_CQ_DIR_NAME;
+    $this->createTempDir($temp_dir_name);
+  }
+
+  /**
+   * Creates the temp code quality directory so temp code files can be inserted
+   * for the code quality tool processing of the code.
+   *
+   * @param String $temp_dir_name
+   * @throws Exception
+   */
+  private function createTempDir($temp_dir_name)
+  {
+    $this->temp_code_quality_dir_path = sys_get_temp_dir() . $temp_dir_name;
     if(!(is_dir($this->temp_code_quality_dir_path))) {
-      mkdir($this->temp_code_quality_dir_path);
+      if(!is_file($this->temp_code_quality_dir_path)) {
+        try {
+          mkdir($this->temp_code_quality_dir_path);
+        } catch(\Exception $e) {
+          throw $e;
+        }
+      } else {
+        throw new \Exception("The Code Quality Temp directory at " . $this->temp_code_quality_dir_path
+            . " couldn't be created because a file already exists at the given path.");
+      }
     }
     clearstatcache();
   }
 
   /**
+   * Process both the diff file as the original file through the scan process
    *
    * @param CodeFile $diff_code_file
    *
-   * @return string
+   * @return String
    */
-  public function processFile(CodeFile $diff_code_file)
+  public function processFile(CodeFile $diff_code_file, $original_file)
   {
-    // Retrieve the original code file based on the repository raw file url mask and the new diff file name + parent revision number
-    $original_code_file = file_get_contents('http://cgit.hostnetbv.nl/cgit/aurora/www.git/plain/apps/aurora/modules/uml/actions/actions.class.php');
-    //$original_code_file = file_get_contents(SettingsManager::getInstance()->getRawFileUrlMask() . $diff_code_file->getSource() .
-    //    '?id2=' . $diff_code_file->getSourceRevision());
-
     $diff_output = $this->scanCode($diff_code_file->getEntireCode());
-    $original_output = $this->scanCode($original_code_file);
+    $original_output = $this->scanCode($original_file);
 
-    return array($diff_output, $original_output);
+    return array('diff_output' => $diff_output,
+      'original_diff_output' => $original_output);
   }
 
+  /**
+   * Writes the code into a
+   *
+   * @param String $code
+   * @return String
+   */
   private function scanCode($code)
   {
-    $temp_code_file_path = tempnam($this->temp_code_quality_dir_path, self::TEMP_CODE_FILE_PREFIX);
+    // Creates the temp file
+    $temp_code_file_path =
+      tempnam($this->temp_code_quality_dir_path, self::TEMP_CODE_FILE_PREFIX);
+    // Changes the permissions of the temp file to 777
     chmod($temp_code_file_path, 0777);
+    // Opens a file stream reader with write permissions
     $temp_code_file = fopen($temp_code_file_path, 'w');
+    // Write the code into the temp file
     fwrite($temp_code_file, $code);
     fclose($temp_code_file);
-    $code_output = shell_exec($this->getCallCommand() . ' ' . $temp_code_file_path . ' ' .
-        $this->getFormat() . ' ' . $this->getRulesets());
+    // Let the temp file go through the Code Quality Tool scan process by
+    // executing the following command line command
+    $code_output = shell_exec(
+      $this->getCallCommand() .          ' '
+      . $temp_code_file_path .           ' '
+      . strtolower($this->getFormat()) . ' '
+      . $this->getRulesets());
+    // Remove the temp file
     unlink($temp_code_file_path);
 
     return $code_output;

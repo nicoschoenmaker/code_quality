@@ -16,8 +16,6 @@ class HelloWorld
 	}
 }
 @@ -18,6 +19,8 @@
-<?php
-
 class HelloWorld
 {
 	public function helloWorld()
@@ -31,6 +29,8 @@ index a3e63d9..a8f44b9 100640
 --- a/test1/test2/een_test_bestand.php
 +++ a/test1/test2/een_test_bestand.php
 @@ -10,8 +10,9 @@
+<?php
+
  #include "cache.h"
  #include "walker.h"
 

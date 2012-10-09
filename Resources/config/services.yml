@@ -11,7 +11,7 @@ services:
 ##############################
 # The Entity Factory service #
 ##############################
-    
+
   entity_factory:
     class: Hostnet\HostnetCodeQualityBundle\Lib\EntityFactory
     arguments: [@doctrine.orm.entity_manager]
@@ -35,18 +35,17 @@ services:
       - [ addParserInstance, [@diff_parser.svn_diff_parser] ]
       - [ addParserInstance, [@tool_output_parser.xml.pmd_xml_parser] ]
       - [ addParserInstance, [@tool_output_parser.xml.jslint_xml_parser] ]
-    
+
   diff_parser.git_diff_parser:
     class: Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\GITDiffParser
-      
+
   diff_parser.svn_diff_parser:
     class: Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\SVNDiffParser
-      
+
   tool_output_parser.xml.pmd_xml_parser:
     class: Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\XML\PMDXMLParser
     arguments: [@entity_factory]
-    
+
   tool_output_parser.xml.jslint_xml_parser:
     class: Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\XML\JSLintXMLParser
     arguments: [@entity_factory]
-    

@@ -116,7 +116,7 @@ class Tool
    */
   public function getId()
   {
-      return $this->id;
+    return $this->id;
   }
 
   /**
@@ -126,7 +126,7 @@ class Tool
    */
   public function setName($name)
   {
-      $this->name = $name;
+    $this->name = $name;
   }
 
   /**
@@ -136,7 +136,7 @@ class Tool
    */
   public function getName()
   {
-      return $this->name;
+    return $this->name;
   }
 
   /**
@@ -146,7 +146,7 @@ class Tool
    */
   public function setPathToTool($path_to_tool)
   {
-      $this->path_to_tool = $path_to_tool;
+    $this->path_to_tool = $path_to_tool;
   }
 
   /**
@@ -156,7 +156,7 @@ class Tool
    */
   public function getPathToTool()
   {
-      return $this->path_to_tool;
+    return $this->path_to_tool;
   }
 
   /**
@@ -166,7 +166,7 @@ class Tool
    */
   public function setCallCommand($call_command)
   {
-      $this->call_command = $call_command;
+    $this->call_command = $call_command;
   }
 
   /**
@@ -176,7 +176,7 @@ class Tool
    */
   public function getCallCommand()
   {
-      return $this->call_command;
+    return $this->call_command;
   }
 
   /**
@@ -186,7 +186,7 @@ class Tool
    */
   public function setFormat($format)
   {
-      $this->format = $format;
+    $this->format = $format;
   }
 
   /**
@@ -196,7 +196,7 @@ class Tool
    */
   public function getFormat()
   {
-      return $this->format;
+    return $this->format;
   }
 
   /**
@@ -226,7 +226,7 @@ class Tool
    */
   public function getRules()
   {
-  	return $this->rules;
+    return $this->rules;
   }
 
   /**
@@ -246,19 +246,19 @@ class Tool
    * @return array
    */
   public function processFile(CodeFile $diff_code_file,
-      $original_file, $temp_code_quality_dir_path)
+    $original_file, $temp_code_quality_dir_path)
   {
     $diff_output = $this->scanCode(
-        $diff_code_file->getEntireCode(),
-        $temp_code_quality_dir_path
+      $diff_code_file->getEntireCode(),
+      $temp_code_quality_dir_path
     );
     $original_output = $this->scanCode(
-        $original_file,
-        $temp_code_quality_dir_path
+      $original_file,
+      $temp_code_quality_dir_path
     );
 
     return array('diff_output' => $diff_output,
-        'original_diff_output' => $original_output);
+      'original_diff_output' => $original_output);
   }
 
   /**
@@ -298,23 +298,23 @@ class Tool
     unlink($temp_code_file_path);
 
     return $process->getOutput();
-    }
+  }
 
-    /**
-    * Checks if the CodeQualityTool supports the given CodeFile.
-    *
-    * @param CodeFile $code_file
-    * @return boolean
-    */
-    public function supports(CodeFile $code_file)
-    {
-      $result = false;
-      foreach($this->getSupportedLanguages() as $code_language) {
-        if($code_file->getExtension() == $code_language) {
-          $result = true;
-        }
+  /**
+  * Checks if the CodeQualityTool supports the given CodeFile.
+  *
+  * @param CodeFile $code_file
+  * @return boolean
+  */
+  public function supports(CodeFile $code_file)
+  {
+    $result = false;
+    foreach($this->getSupportedLanguages() as $code_language) {
+      if($code_file->getExtension() == $code_language) {
+        $result = true;
       }
-
-      return $result;
     }
+
+    return $result;
+  }
 }

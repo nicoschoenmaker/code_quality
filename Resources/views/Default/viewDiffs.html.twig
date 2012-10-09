@@ -1,93 +1,10 @@
 {% extends 'HostnetCodeQualityBundle:Default:base.html.twig' %}
 
-{% block head %}
-<style>
-  .diff_div {
-    clear: both;
-  }
-
-  .diff_info {
-    margin-bottom: 20px;
-    float: left;
-  }
-
-  table.diff_info tr {
-    margin-left: 25px;
-  }
-
-  .diff {
-    overflow: auto;
-  }
-
-  .diff_compare {
-    float: right;
-  }
-
-  .loadDiffCompareFeedback {
-    disabled;
-  }
-
-  a.enable_Compare_1, a.toggleDiffFeedbackTab, span.toggleDiffFeedbackTab, h4.toggleDiffFeedbackTab, a.diffFeedbackLineNumber {
-    cursor: hand;
-    cursor: pointer;
-    display: block;
-  }
-
-  h4.toggleDiffFeedbackTab {
-    height: 26px;
-  }
-
-  .toggle_diff_feedback_tab_div {
-    margin: 5px 0px 0px 25px;
-    display: none;
-  }
-
-  h3 {
-    height: 19px;
-  }
-
-  .diff_progress {
-    margin-left: 15px;
-  }
-
-  .metric_feedback_warning {
-    display: block;
-  }
-
-  .new_metric_feedback_warning {
-    color: red;
-  }
-
-  .old_metric_feedback_warning {
-    color: orange;
-  }
-
-  .fixed_metric_feedback_warning {
-    color: green;
-  }
-
-  .diff_feedback_at_line_div {
-    width: auto;
-    height: auto;
-    border-style: dashed;
-    border-width: thin;
-    background-color: lightgrey;
-    margin-right: 25px;
-    padding: 1%;
-  }
-
-  .diff_feedback_line_code {
-    display: block;
-    margin: 0px 0px 0px 0px;
-  }
-</style>
-{% endblock %}
-
 {% block title %}View Diffs{% endblock %}
 
 {% block content %}
 <div id="view_diffs" style="margin:50px 0px 0px 50px;">
-  <div id="diff_options" style="background-color:white;border-radius:8px 8px 1px 1px;padding:1%;height:24px;width:89%;border-bottom-style:solid;border-width:thin;">
+  <div id="diff_options" class="box associated_box_header" style="height:24px;width:89%;padding:1%;">
       <div style="float:left;">
         <button>Update</button>
       </div>
@@ -98,7 +15,7 @@
         <input type="text" value="16-07-2012" style="width:75px;"/>
       </div>
   </div>
-  <div style="float:left;background-color:white;border-radius: 1px 1px 1px 6px;width:15%;height:600px;overflow:auto;padding:1%;">
+  <div class="box associated_box_footer_left" style="float:left;width:15%;height:600px;padding:1%;">
     <div class="diff_div">
       <p>16-07-2012</p>
       <table class="diff_info">
@@ -216,7 +133,7 @@
     </div>
   </div>
 
-  <div class="diff diff_feedback" style="float:left;background-color:white;border-radius: 1px 1px 1px 1px;width:72%;height:600px;padding:12px;display:none;border-left-style:solid;border-width:thin;">
+  <div class="box associated_box_footer_center diff diff_feedback" style="float:left;width:72%;height:600px;padding:12px;display:none;">
       <h3 style="margin-left:25px;">16-07-2012 Diff 09:40</h3>
       <h4 class="toggleDiffFeedbackTab"><?= image_tag('closed.gif') ?> indexSuccess.php [Warnings: 4 New found]</h4>
       <div class="toggle_diff_feedback_tab_div">
@@ -236,7 +153,7 @@
         <span class="metric_feedback_warning new_metric_feedback_warning toggleDiffFeedbackTab"><?= image_tag('closed.gif') ?> Unused Local Variable</span>
       </div>
   </div>
-  <div class="diff diff_compare_feedback" style="float:left;background-color:white;border-radius: 1px 1px 6px 1px;width:1%;height:600px;padding:12px;display:none;border-left-style:solid;border-width:thin;right:0;">
+  <div class="box associated_box_footer_right diff diff_compare_feedback" style="float:left;width:1%;height:600px;padding:12px;display:none;">
       <h3 style="margin-left:25px;">16-07-2012 Diff 10:20 <?= image_tag('decreasement.png', array('class' => 'diff_progress')) ?></h3>
       <h4 class="toggleDiffFeedbackTab" style="height:26px;"><?= image_tag('closed.gif') ?> indexSuccess.php [Warnings: 1 New, 3 Old and 1 Fixed found]</h4>
       <div class="toggle_diff_feedback_tab_div">

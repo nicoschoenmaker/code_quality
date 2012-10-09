@@ -1,6 +1,6 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\lib;
+namespace Hostnet\HostnetCodeQualityBundle\Lib;
 
 class CodeBlock
 {

@@ -3,15 +3,23 @@
 namespace Hostnet\HostnetCodeQualityBundle\Parser\DiffParser;
 
 use Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\DiffParserInterface,
-    Hostnet\HostnetCodeQualityBundle\lib\CodeFile,
-    Hostnet\HostnetCodeQualityBundle\lib\CodeBlock;
+    Hostnet\HostnetCodeQualityBundle\Lib\CodeFile,
+    Hostnet\HostnetCodeQualityBundle\Lib\CodeBlock,
+    Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\AbstractDiffParser;
 
-class GITDiffParser implements DiffParserInterface
+class GITDiffParser extends AbstractDiffParser implements DiffParserInterface
 {
   CONST T_DOUBLE_DOT = '..';
   CONST START_OF_FILE_PATTERN = 'diff --git ';
   CONST INDEX = 'index ';
   CONST UNNECESSARY_LOCATION_PART_LENGTH = 2;
+
+  protected $resource;
+
+  public function __construct()
+  {
+    $this->resource = 'git';
+  }
 
   public function parseDiff($diff)
   {
@@ -20,8 +28,8 @@ class GITDiffParser implements DiffParserInterface
     // Parse files into CodeFile objects
     $code_files = array();
     // The 1st record consists of nothing but whitespace so we start at the 2nd record
-    for($i = 1; $i < count($files); $i++) {
-      $file_string = $files[$i];
+    array_shift($files);
+    foreach($files as $file_string) {
       // Split each file into different code blocks based on the file range pattern
       $code_block_strings = preg_split(self::FILE_RANGE_PATTERN, $file_string);
       $header_string = $code_block_strings[0];
@@ -32,8 +40,8 @@ class GITDiffParser implements DiffParserInterface
       $code_blocks = array();
       // Same as the for-loop above, the 1st record consists of
       // nothing but whitespace so we start at the 2nd record
-      for($j = 1 ; $j < count($code_block_strings) ; $j++) {
-        $code_block_string = $code_block_strings[$j];
+      array_shift($code_block_strings);
+      foreach($code_block_strings as $code_block_string) {
         // Parse the body data, the actual modified code
         $code_block = $this->parseDiffBody($file_string, $code_block_string);
         $code_blocks[] = $code_block;
@@ -88,37 +96,29 @@ class GITDiffParser implements DiffParserInterface
       $destination_start_pos
         + strlen(self::DESTINATION_START)
         + self::UNNECESSARY_LOCATION_PART_LENGTH,
-        strpos(
-          $header_string,
-          PHP_EOL,
-          $destination_start_pos
-        ) - self::T_SPACE_LENGTH
-          - ($destination_start_pos
-          + strlen($destination_start_pos)
-          + self::UNNECESSARY_LOCATION_PART_LENGTH)
+      strpos(
+        $header_string,
+        PHP_EOL,
+        $destination_start_pos
+      ) - self::T_SPACE_LENGTH
+        - ($destination_start_pos
+        + strlen($destination_start_pos)
+        + self::UNNECESSARY_LOCATION_PART_LENGTH)
     );
-    $code_file->setDestination($destination);
     $startpos_of_name = strrpos(
       $destination,
       self::T_FORWARD_SLASH
     ) + strlen(self::T_FORWARD_SLASH);
     $code_file->setName(
       substr($destination, $startpos_of_name,
-      strrpos($destination, self::T_DOT) - $startpos_of_name)
+      strrpos($destination, self::T_DOT)
+        - $startpos_of_name)
     );
     $code_file->setExtension(
       substr(
         $destination,
-        strrpos($destination, self::T_DOT) + strlen(self::T_DOT)
-      )
-    );
-    $code_file->setDestinationRevision(
-      substr(
-        $index,
-        strpos($index, self::T_DOUBLE_DOT)
-          + strlen(self::T_DOUBLE_DOT),
-        strrpos($index, " ") - (strpos($index, self::T_DOUBLE_DOT)
-          + strlen(self::T_DOUBLE_DOT))
+        strrpos($destination, self::T_DOT)
+          + strlen(self::T_DOT)
       )
     );
 

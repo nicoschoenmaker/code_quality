@@ -2,41 +2,31 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Parser;
 
+use Hostnet\HostnetCodeQualityBundle\Parser\AbstractParser;
+
 class ParserFactory
 {
-  CONST DIFF_PARSER_DIR = 'DiffParser';
-  CONST TOOL_OUTPUT_PARSER_DIR = 'ToolOutputParser';
+  private $parsers = array();
 
-  private static $instance;
-  private $instantiated_parsers = array();
-
-  private function __construct(){}
-  private function __clone(){}
-
-  /**
-   * Returns the Parser singleton class
-   *
-   * @return Parser
-   */
-  public static function getInstance()
+  public function addParserInstance(AbstractParser $parser_instance)
   {
-    if(!self::$instance) {
-      self::$instance = new ParserFactory();
-    }
-    return self::$instance;
+    $this->parsers[] = $parser_instance;
   }
 
   /**
-   * Returns the Parser based on the given parser class name
+   * Returns the Parser based on the given parser resource and if required format
    *
    * @return Parser object
    */
-  public function getParserInstance($parser_class_name, $parser_dir)
+  public function getParserInstance($resource, $additional_properties = array())
   {
-    if(!in_array($parser_class_name, $this->instantiated_parsers)) {
-      $path_to_parser = __NAMESPACE__ . '\\' . $parser_dir . '\\' . $parser_class_name;
-      $this->instantiated_parsers[$parser_class_name] = new $path_to_parser();
+    foreach($this->parsers as $parser) {
+      if($parser->supports(strtolower($resource), $additional_properties)) {
+        return $parser;
+      }
     }
-    return $this->instantiated_parsers[$parser_class_name];
+
+    throw new \Exception('No parser found for the parsing request, please '
+      . 'make sure the parser classes are configured correctly e.g. $resource.');
   }
 }

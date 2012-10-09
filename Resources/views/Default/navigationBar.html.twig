@@ -1,62 +1,22 @@
-<style type="text/css">
-  .list-menu body { font: normal 11px verdana; }
-
-  .list-menu ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .list-menu li {
-    width: 175px;
-    float: left;
-    border-bottom: 1px solid #ccc;
-  }
-
-  .list-menu ul li { position: relative; }
-
-  .list-menu li ul {
-    position: absolute;
-    top: 24px;
-    display: none;
-  }
-
-  .list-menu ul li a {
-    display: block;
-    text-decoration: none;
-    color: #777;
-    background: #fff;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-bottom: 0;
-  }
-
-  .list-menu ul li a:hover { color: #E2144A; background: #f9f9f9; }
-
-  .list-menu li ul li a { padding: 2px 5px; }
-
-  .list-menu li:hover ul, li.over ul { display: block; }
-</style>
-
 <div id="navigation" style="background-color:white;border-radius: 8px 8px 6px 6px;width:95%;height:24px;margin:5% 0px 0px 2.5%;padding:6px;">
   <div class="list-menu" style="float:left;">
     <ul>
       <li>
-        <a href="http://codequality.rickp.ontw.hostnetbv.nl/app_dev.php/index">Home</a>
+        <a href="{{ path('index') }}">Home</a>
       </li>
       <li>
         <a>Analyse Results</a>
         <ul>
-          <li><a href="http://codequality.rickp.ontw.hostnetbv.nl/app_dev.php/viewDiffs">View Diffs</a></li>
-          <li><a href="http://codequality.rickp.ontw.hostnetbv.nl/app_dev.php/overview">My Code Quality Overview</a></li>
-          <li><a href="http://codequality.rickp.ontw.hostnetbv.nl/app_dev.php/overview">Global Code Quality Overview</a></li>
+          <li><a href="{{ path('view_diffs') }}">View Diffs</a></li>
+          <li><a href="{{ path('overview') }}">My Code Quality Overview</a></li>
+          <li><a href="{{ path('overview') }}">Global Code Quality Overview</a></li>
         </ul>
       </li>
       <li>
         <a>Management</a>
         <ul>
-          <li><a href="http://codequality.rickp.ontw.hostnetbv.nl/app_dev.php/companyProfile">Manage Company Profile</a></li>
-          <li><a href="http://codequality.rickp.ontw.hostnetbv.nl/app_dev.php/toolManagement">Manage Code Quality Tools</a></li>
+          <li><a href="{{ path('company_profile') }}">Manage Company Profile</a></li>
+          <li><a href="{{ path('tool_management') }}">Manage Code Quality Tools</a></li>
         </ul>
       </li>
       <li>

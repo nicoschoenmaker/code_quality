@@ -11,7 +11,7 @@ interface ToolOutputParserInterface
    *
    * @param String $tool_output
    * @param CodeFile $code_file
-   * @return CodeQualityReview
+   * @return Review
    */
   public function parseToolOutput($tool_output, CodeFile $code_file);
 }

@@ -1,0 +1,52 @@
+services:
+
+#############################################
+# The Code Quality Review Processor service #
+#############################################
+
+  code_quality_review_processor:
+    class: Hostnet\HostnetCodeQualityBundle\Lib\CodeQualityReviewProcessor
+    arguments: [@command_line_utility, @parser_factory, %hostnet_code_quality.scm%, %hostnet_code_quality.raw_file_url_mask%]
+
+##############################
+# The Entity Factory service #
+##############################
+    
+  entity_factory:
+    class: Hostnet\HostnetCodeQualityBundle\Lib\EntityFactory
+    arguments: [@doctrine.orm.entity_manager]
+
+####################################
+# The Command Line Utility service #
+####################################
+
+  command_line_utility:
+    class: Hostnet\HostnetCodeQualityBundle\Lib\CommandLineUtility
+
+
+#######################
+# The Parser services #
+#######################
+
+  parser_factory:
+    class: Hostnet\HostnetCodeQualityBundle\Parser\ParserFactory
+    calls:
+      - [ addParserInstance, [@diff_parser.git_diff_parser] ]
+      - [ addParserInstance, [@diff_parser.svn_diff_parser] ]
+      - [ addParserInstance, [@tool_output_parser.xml.pmd_xml_parser] ]
+      - [ addParserInstance, [@tool_output_parser.xml.jslint_xml_parser] ]
+    
+  diff_parser.git_diff_parser:
+    class: Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\GITDiffParser
+      
+  diff_parser.svn_diff_parser:
+    class: Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\SVNDiffParser
+      
+  tool_output_parser.xml.pmd_xml_parser:
+    class: Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\XML\PMDXMLParser
+    arguments: [@entity_factory]
+    
+  tool_output_parser.xml.jslint_xml_parser:
+    class: Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\XML\JSLintXMLParser
+    arguments: [@entity_factory]
+    

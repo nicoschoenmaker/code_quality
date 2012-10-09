@@ -1,6 +1,6 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\lib;
+namespace Hostnet\HostnetCodeQualityBundle\Lib;
 
 class CodeFile
 {
@@ -20,7 +20,7 @@ class CodeFile
   private $index;
 
   /**
-   * The full path of the original file
+   * The relative path of the original file
    *
    * @var string $source
    */
@@ -32,20 +32,6 @@ class CodeFile
    * @var string $source_revision
    */
   private $source_revision;
-
-  /**
-   * The full path of the file after the changes, the file could be moved
-   *
-   * @var string $destination
-   */
-  private $destination;
-
-  /**
-   * The revision index of the file after the changes
-   *
-   * @var string $destination_revision
-   */
-  private $destination_revision;
 
   /**
    * @var array $code_blocks
@@ -156,48 +142,6 @@ class CodeFile
   public function getSourceRevision()
   {
     return $this->source_revision;
-  }
-
-  /**
-   * Set destination
-   *
-   * @param string $destination
-   * @return CodeFile
-   */
-  public function setDestination($destination)
-  {
-    $this->destination = $destination;
-  }
-
-  /**
-   * Get destination
-   *
-   * @return string
-   */
-  public function getDestination()
-  {
-    return $this->destination;
-  }
-
-  /**
-   * Set destination_revision
-   *
-   * @param string $destination_revision
-   * @return CodeFile
-   */
-  public function setDestinationRevision($destination_revision)
-  {
-    $this->destination_revision = $destination_revision;
-  }
-
-  /**
-   * Get destination_revision
-   *
-   * @return string
-   */
-  public function getDestinationRevision()
-  {
-    return $this->destination_revision;
   }
 
   /**

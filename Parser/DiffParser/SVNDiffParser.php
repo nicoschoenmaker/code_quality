@@ -3,13 +3,21 @@
 namespace Hostnet\HostnetCodeQualityBundle\Parser\DiffParser;
 
 use Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\DiffParserInterface,
-    Hostnet\HostnetCodeQualityBundle\lib\CodeFile,
-    Hostnet\HostnetCodeQualityBundle\lib\CodeBlock;
+    Hostnet\HostnetCodeQualityBundle\Lib\CodeFile,
+    Hostnet\HostnetCodeQualityBundle\Lib\CodeBlock,
+    Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\AbstractDiffParser;
 
-class SVNDiffParser implements DiffParserInterface
+class SVNDiffParser extends AbstractDiffParser implements DiffParserInterface
 {
   CONST START_OF_FILE_PATTERN = 'Index: ';
   CONST REVISION = 'revision ';
+
+  protected $resource;
+
+  public function __construct()
+  {
+    $this->resource = 'svn';
+  }
 
   public function parseDiff($diff)
   {
@@ -91,26 +99,6 @@ class SVNDiffParser implements DiffParserInterface
       $lines[3],
       strlen(self::DESTINATION_START)
     );
-    $code_file->setDestination(substr(
-      $full_destination__and_revision,
-      0,
-      strrpos(
-        $full_destination__and_revision,
-        self::T_OPEN_PARENTHESIS
-      ) - self::T_SPACE_LENGTH
-    ));
-    $code_file->setDestinationRevision(substr(
-      $full_destination__and_revision,
-      strrpos(
-        $full_destination__and_revision,
-        self::T_OPEN_PARENTHESIS
-      ) + strlen(self::T_OPEN_PARENTHESIS),
-      strrpos(
-        $full_destination__and_revision,
-        self::T_CLOSE_PARENTHESIS
-      ) -strlen(self::T_CLOSE_PARENTHESIS)
-        - strrpos($full_destination__and_revision, self::T_OPEN_PARENTHESIS)
-    ));
 
     return $code_file;
   }

@@ -1,7 +1,161 @@
 html {
-  background-color: lightSkyBlue;
+  background-color: gray;
 }
 
 .footer {
   height: 100%;
 }
+
+.list-menu body { font: normal 11px verdana; }
+
+.list-menu ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.list-menu li {
+  width: 175px;
+  float: left;
+  border-bottom: 1px solid #ccc;
+}
+
+.list-menu ul li { position: relative; }
+
+.list-menu li ul {
+  position: absolute;
+  top: 24px;
+  display: none;
+}
+
+.list-menu ul li a {
+  display: block;
+  text-decoration: none;
+  color: #777;
+  background: #fff;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-bottom: 0;
+}
+
+.list-menu ul li a:hover { color: #E2144A; background: #f9f9f9; }
+
+.list-menu li ul li a { padding: 2px 5px; }
+
+.list-menu li:hover ul, li.over ul { display: block; }
+
+.diff_div {
+  clear: both;
+}
+
+.diff_info {
+  margin-bottom: 20px;
+  float: left;
+}
+
+table.diff_info tr {
+  margin-left: 25px;
+}
+
+.diff {
+  overflow: auto;
+}
+
+.diff_compare {
+  float: right;
+}
+
+.loadDiffCompareFeedback {
+  disabled;
+}
+
+a.enable_Compare_1, a.toggleDiffFeedbackTab, span.toggleDiffFeedbackTab, h4.toggleDiffFeedbackTab, a.diffFeedbackLineNumber {
+  cursor: hand;
+  cursor: pointer;
+  display: block;
+}
+
+h4.toggleDiffFeedbackTab {
+  height: 26px;
+}
+
+.toggle_diff_feedback_tab_div {
+  margin: 5px 0px 0px 25px;
+  display: none;
+}
+
+h3 {
+  height: 19px;
+}
+
+.diff_progress {
+  margin-left: 15px;
+}
+
+.metric_feedback_warning {
+  display: block;
+}
+
+.new_metric_feedback_warning {
+  color: red;
+}
+
+.old_metric_feedback_warning {
+  color: orange;
+}
+
+.fixed_metric_feedback_warning {
+  color: green;
+}
+
+.diff_feedback_at_line_div {
+  width: auto;
+  height: auto;
+  border-style: dashed;
+  border-width: thin;
+  background-color: lightgrey;
+  margin-right: 25px;
+  padding: 1%;
+}
+
+.diff_feedback_line_code {
+  display: block;
+  margin: 0px 0px 0px 0px;
+}
+
+/*
+ * Boxes
+ */
+.box {
+  background-color: white;
+  border-width: thin;
+}
+
+.solo_box {
+  border-radius: 8px 8px 6px 6px;
+}
+
+.associated_box_header {
+  border-radius: 8px 8px 0px 0px;
+  border-bottom-style: solid;
+}
+
+.associated_box_footer_left {
+  border-radius: 1px 1px 1px 6px;
+}
+
+.associated_box_footer_center {
+  border-radius: 1px 1px 1px 1px;
+  border-left-style:solid;
+}
+
+.associated_box_footer_right {
+  border-radius: 1px 1px 6px 1px;
+  border-left-style: solid;
+}
+
+.box_content_header {
+  border-bottom-style: solid;
+  margin-bottom: 25px;
+}
+  

@@ -19,7 +19,7 @@ class CommandLineUtility
   {
     $this->temp_code_quality_dir_path = realpath(sys_get_temp_dir() . self::TEMP_CQ_DIR_NAME);
     if(!is_writable($this->temp_code_quality_dir_path)) {
-      throw new \Exception("The Code Quality Temp directory at '" . $this->temp_code_quality_dir_path
+      throw new IOException("The Code Quality Temp directory at '" . $this->temp_code_quality_dir_path
         . "' is not writable.");
     }
     $this->createTempDir();
@@ -52,7 +52,7 @@ class CommandLineUtility
         }
       } else {
         throw new IOException("The Code Quality Temp directory at " . $this->temp_code_quality_dir_path
-            . " couldn't be created because a file already exists at the given path.");
+          . " couldn't be created because a file already exists at the given path.");
       }
     }
   }

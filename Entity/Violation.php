@@ -59,7 +59,7 @@ class Violation
   private $rule;
 
   /**
-   * @var ArrayCollection
+   * @var Collection
    *
    * @ORM\ManyToMany(targetEntity="Report", mappedBy="violations")
    */
@@ -196,7 +196,7 @@ class Violation
   /**
    * Get an array of Report objects
    *
-   * @return ArrayCollection
+   * @return Collection
    */
   public function getReports()
   {

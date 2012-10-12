@@ -37,7 +37,7 @@ class File
   private $code_language;
 
   /**
-   * @var ArrayCollection
+   * @var Collection
    *
    * @ORM\OneToMany(targetEntity="Report", mappedBy="id")
    */
@@ -85,7 +85,7 @@ class File
   /**
    * Get an array of Report objects
    *
-   * @return ArrayCollection
+   * @return Collection
    */
 
   public function getReports()

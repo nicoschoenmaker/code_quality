@@ -32,7 +32,7 @@ class Report
   private $file;
 
   /**
-   * @var ArrayCollection
+   * @var Collection
    *
    * @ORM\ManyToMany(targetEntity="Violation", inversedBy="reports")
    * @ORM\JoinTable(name="report_violation",
@@ -93,7 +93,7 @@ class Report
   /**
    * Get an array of Violation objects
    *
-   * @return ArrayCollection
+   * @return Collection
    */
   public function getViolations()
   {

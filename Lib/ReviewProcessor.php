@@ -4,6 +4,8 @@ namespace Hostnet\HostnetCodeQualityBundle\Lib;
 
 use Doctrine\ORM\EntityManager;
 
+use Symfony\Component\Filesystem\Exception\IOException;
+
 use Hostnet\HostnetCodeQualityBundle\Entity\Review,
     Hostnet\HostnetCodeQualityBundle\Parser\CommandLineUtility,
     Hostnet\HostnetCodeQualityBundle\Parser\ParserFactory;
@@ -61,11 +63,11 @@ class ReviewProcessor
           );*/
           // If the file_get_contents fails it returns false on failure which is why we throw an exception
           if(!$original_file) {
-            throw new \Exception("The file at '". $this->raw_file_url_mask . "' could not be found.");
+            throw new IOException("The file at '". $this->raw_file_url_mask . "' could not be found.");
           }
 
           // Let the file be processed by the given tool and return the output
-          $tool_output = $diff_file->processFile(
+          $diff_file->processFile(
             $tool,
             $original_file,
             $this->clu->getTempCodeQualityDirPath()
@@ -74,14 +76,12 @@ class ReviewProcessor
           // Request the Tool Output Parser from the Factory
           $additional_tool_properties = array('format' => $tool->getFormat());
           $tool_output_parser = $this->pf->getToolOutputParserInstance(
-              $tool->getName(),
-              $additional_tool_properties
+            $tool->getName(),
+            $additional_tool_properties
           );
 
           // Parse the Tool output into Report objects
-          $report = $tool_output_parser->parseToolOutput(
-            $tool_output['diff_output'], $diff_file
-          );
+          $report = $tool_output_parser->parseToolOutput($diff_file);
 
           // Add the Report object to the Review
           $review->getReports()->add($report);

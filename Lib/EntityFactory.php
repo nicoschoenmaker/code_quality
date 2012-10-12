@@ -118,7 +118,7 @@ class EntityFactory implements EntityProviderInterface
    */
   public function getCodeLanguage($name)
   {
-    if(!array_key_exists($name, $this->code_languages)) {
+    if(!isset($this->code_languages[$name])) {
       $this->code_languages[$name] = new CodeLanguage($name);
     }
     return $this->code_languages[$name];
@@ -134,7 +134,7 @@ class EntityFactory implements EntityProviderInterface
    */
   public function getRule($name, $priority)
   {
-    if(!array_key_exists($name, $this->rules)) {
+    if(!isset($this->rules[$name])) {
       $this->rules[$name] = new Rule($name, $priority);
     }
     return $this->rules[$name];

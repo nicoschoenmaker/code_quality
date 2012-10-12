@@ -5,12 +5,12 @@ namespace Hostnet\HostnetCodeQualityBundle\Parser\Diff;
 class DiffCodeBlock
 {
   /**
-   * @var string $begin_line
+   * @var integer $begin_line
    */
   private $begin_line;
 
   /**
-   * @var string $end_line
+   * @var integer $end_line
    */
   private $end_line;
 
@@ -23,8 +23,7 @@ class DiffCodeBlock
   /**
    * Set begin_line
    *
-   * @param string $beginLine
-   * @return DiffCodeBlock
+   * @param integer $beginLine
    */
   public function setBeginLine($begin_line)
   {
@@ -34,7 +33,7 @@ class DiffCodeBlock
   /**
    * Get begin_line
    *
-   * @return string
+   * @return integer
    */
   public function getBeginLine()
   {
@@ -44,8 +43,7 @@ class DiffCodeBlock
   /**
    * Set end_line
    *
-   * @param string $endLine
-   * @return DiffCodeBlock
+   * @param integer $endLine
    */
   public function setEndLine($end_line)
   {
@@ -55,7 +53,7 @@ class DiffCodeBlock
   /**
    * Get end_line
    *
-   * @return string
+   * @return integer
    */
   public function getEndLine()
   {
@@ -66,7 +64,6 @@ class DiffCodeBlock
    * Set code
    *
    * @param string $code
-   * @return DiffCodeBlock
    */
   public function setCode($code)
   {

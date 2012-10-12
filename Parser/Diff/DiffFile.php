@@ -8,7 +8,7 @@ use Hostnet\HostnetCodeQualityBundle\Entity\Tool;
 
 class DiffFile
 {
-  CONST TEMP_Diff_FILE_PREFIX = 'cq';
+  CONST TEMP_DIFF_FILE_PREFIX = 'cq';
 
   /**
    * @var string $name
@@ -43,6 +43,16 @@ class DiffFile
    * @var array $diff_code_blocks
    */
   private $diff_code_blocks;
+
+  /**
+   * @var string
+   */
+  private $diff_output;
+
+  /**
+   * @var string
+   */
+  private $original_output;
 
 
   /**
@@ -172,6 +182,31 @@ class DiffFile
   }
 
   /**
+   * Set the diff output
+   *
+   * @param string $diff_output
+   */
+  public function setDiffOutput($diff_output)
+  {
+    $this->diff_output = $diff_output;
+  }
+
+  /**
+   * Get the diff output
+   *
+   * @return string
+   */
+  public function getDiffOutput()
+  {
+    return $this->diff_output;
+  }
+
+  public function setOriginalOutput($original_output)
+  {
+
+  }
+
+  /**
    * Returns all the code in a diff file
    *
    * @return string
@@ -196,19 +231,16 @@ class DiffFile
   public function processFile(Tool $tool,
     $original_file, $temp_code_quality_dir_path)
   {
-    $diff_output = $this->scanCode(
+    $this->diff_output = $this->scanCode(
       $tool,
       $this->getEntireCode(),
       $temp_code_quality_dir_path
     );
-    $original_output = $this->scanCode(
+    $this->original_output = $this->scanCode(
       $tool,
       $original_file,
       $temp_code_quality_dir_path
     );
-
-    return array('diff_output' => $diff_output,
-      'original_diff_output' => $original_output);
   }
 
   /**
@@ -224,7 +256,7 @@ class DiffFile
   {
     // Creates the temp file
     $temp_code_file_path =
-      $this->tempnam($temp_code_quality_dir_path, self::TEMP_Diff_FILE_PREFIX);
+      $this->tempnam($temp_code_quality_dir_path, self::TEMP_DIFF_FILE_PREFIX);
 
     // Opens a file stream reader with write permissions and
     // writes the code into the temp file

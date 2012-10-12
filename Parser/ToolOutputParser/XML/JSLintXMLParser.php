@@ -36,12 +36,11 @@ class JSLintXMLParser extends AbstractToolOutputParser implements ToolOutputPars
    * Parse the output of a static code quality tool and
    * fill the Review object with the extracted data
    *
-   * @param String $tool_output
    * @param DiffFile $diff_file
    * @return Review
    * @see \Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\ToolOutputParserInterface::parseToolOutput()
    */
-  public function parseToolOutput($tool_output, DiffFile $diff_file)
+  public function parseToolOutput(DiffFile $diff_file)
   {
     $report = new Report();
     $this->efi->retrieveEntities();
@@ -60,7 +59,7 @@ class JSLintXMLParser extends AbstractToolOutputParser implements ToolOutputPars
 
     $xml = new \DomDocument();
     // Load the tool output string in the xml format as xml
-    if(!$xml->loadXML($tool_output)) {
+    if(!$xml->loadXML($diff_file->getDiffOutput())) {
       throw new XmlErrorException('Error while parsing XML, invalid XML supplied');
     }
     // Extract all the violation nodes out of the tool output

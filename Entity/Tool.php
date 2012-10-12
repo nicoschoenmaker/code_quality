@@ -68,14 +68,14 @@ class Tool
    * The rulesets that the tool should give feedback on.
    * For example PMD: 'codesize,unusedcode,naming'.
    *
-   * @var ArrayCollection
+   * @var Collection
    *
    * @ORM\OneToMany(targetEntity="Ruleset", mappedBy="id")
    */
   private $rulesets;
 
   /**
-   * @var ArrayCollection
+   * @var Collection
    *
    * @ORM\OneToMany(targetEntity="Rule", mappedBy="id")
    */
@@ -84,7 +84,7 @@ class Tool
   /**
    * The languages that the tool supports to scan
    *
-   * @var ArrayCollection
+   * @var Collection
    *
    * @ORM\ManyToMany(targetEntity="CodeLanguage", inversedBy="tools")
    * @ORM\JoinTable(name="tool_code_language",
@@ -199,7 +199,7 @@ class Tool
   /**
    * Get an array of Ruleset objects
    *
-   * @return ArrayCollection
+   * @return Collection
    */
   public function getRulesets()
   {
@@ -209,7 +209,7 @@ class Tool
   /**
    * Get an array of Rule objects
    *
-   * @return ArrayCollection
+   * @return Collection
    */
   public function getRules()
   {
@@ -219,7 +219,7 @@ class Tool
   /**
    * Get an array of CodeLanguage objects
    *
-   * @return ArrayCollection
+   * @return Collection
    */
   public function getSupportedLanguages()
   {

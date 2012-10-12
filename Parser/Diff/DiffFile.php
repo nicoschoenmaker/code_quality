@@ -298,8 +298,8 @@ class DiffFile
    */
   public function tempnam($dir, $prefix) {
 
-    if(!function_exists('tempnam')) {
-      return $this->tempnam(
+    if(function_exists('tempnam')) {
+      return tempnam(
         $dir,
         $prefix
       );

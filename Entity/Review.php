@@ -27,7 +27,7 @@ class Review
   private $created_at;
 
   /**
-   * @var Report
+   * @var ArrayCollection
    *
    * @ORM\OneToMany(targetEntity="Report", mappedBy="id")
    */
@@ -63,7 +63,7 @@ class Review
   /**
    * Get an array of Report objects
    *
-   * @return Report array
+   * @return ArrayCollection
    */
   public function getReports()
   {

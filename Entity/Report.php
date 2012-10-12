@@ -32,7 +32,7 @@ class Report
   private $file;
 
   /**
-   * @var Violation array
+   * @var ArrayCollection
    *
    * @ORM\ManyToMany(targetEntity="Violation", inversedBy="reports")
    * @ORM\JoinTable(name="report_violation",
@@ -44,8 +44,9 @@ class Report
   private $violations;
 
 
-  public function __construct()
+  public function __construct(File $file)
   {
+    $this->file = $file;
     $this->violations = new \Doctrine\Common\Collections\ArrayCollection();
   }
 
@@ -92,7 +93,7 @@ class Report
   /**
    * Get an array of Violation objects
    *
-   * @return Violation array
+   * @return ArrayCollection
    */
   public function getViolations()
   {

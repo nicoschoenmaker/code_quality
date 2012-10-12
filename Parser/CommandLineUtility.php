@@ -1,19 +1,35 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Lib;
+namespace Hostnet\HostnetCodeQualityBundle\Parser;
+
+use Symfony\Component\Filesystem\Exception\IOException;
 
 class CommandLineUtility
 {
   CONST TEMP_CQ_DIR_NAME = '/codequality';
 
+  /**
+   * The path to the temp code quality dir
+   *
+   * @var string
+   */
   private $temp_code_quality_dir_path = '';
 
   public function __construct()
   {
-    $this->temp_code_quality_dir_path = sys_get_temp_dir() . self::TEMP_CQ_DIR_NAME;
+    $this->temp_code_quality_dir_path = realpath(sys_get_temp_dir() . self::TEMP_CQ_DIR_NAME);
+    if(!is_writable($this->temp_code_quality_dir_path)) {
+      throw new \Exception("The Code Quality Temp directory at '" . $this->temp_code_quality_dir_path
+        . "' is not writable.");
+    }
     $this->createTempDir();
   }
 
+  /**
+   * Gets the temp_code_quality_dir_path
+   *
+   * @return string
+   */
   public function getTempCodeQualityDirPath()
   {
     return $this->temp_code_quality_dir_path;
@@ -30,13 +46,12 @@ class CommandLineUtility
     clearstatcache();
     if(!(is_dir($this->temp_code_quality_dir_path))) {
       if(!is_file($this->temp_code_quality_dir_path)) {
-        $result = mkdir($this->temp_code_quality_dir_path);
-        if(!$result) {
-          throw new \Exception('Failed to create the Code Quality Temp directory at '
+        if(!mkdir($this->temp_code_quality_dir_path, 0777, true)) {
+          throw new IOException('Failed to create the Code Quality Temp directory at '
             . $this->temp_code_quality_dir_path);
         }
       } else {
-        throw new \Exception("The Code Quality Temp directory at " . $this->temp_code_quality_dir_path
+        throw new IOException("The Code Quality Temp directory at " . $this->temp_code_quality_dir_path
             . " couldn't be created because a file already exists at the given path.");
       }
     }

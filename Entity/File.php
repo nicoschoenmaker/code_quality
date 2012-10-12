@@ -4,14 +4,13 @@ namespace Hostnet\HostnetCodeQualityBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Hostnet\HostnetCodeQualityBundle\Entity\CodeLanguage,
-    Hostnet\HostnetCodeQualityBundle\Entity\LookUpInterface;
+use Hostnet\HostnetCodeQualityBundle\Entity\CodeLanguage;
 
 /**
  * @ORM\Table(name="file")
  * @ORM\Entity
  */
-class File implements LookUpInterface
+class File
 {
   /**
    * @var integer $id
@@ -38,14 +37,15 @@ class File implements LookUpInterface
   private $code_language;
 
   /**
-   * @var Report
+   * @var ArrayCollection
    *
    * @ORM\OneToMany(targetEntity="Report", mappedBy="id")
    */
   private $reports;
 
-  public function __construct($name)
+  public function __construct($code_language, $name)
   {
+    $this->code_language = $code_language;
     $this->name = $name;
     $this->reports = new \Doctrine\Common\Collections\ArrayCollection();
   }
@@ -85,7 +85,7 @@ class File implements LookUpInterface
   /**
    * Get an array of Report objects
    *
-   * @return Report array
+   * @return ArrayCollection
    */
 
   public function getReports()
@@ -111,15 +111,5 @@ class File implements LookUpInterface
   public function setCodeLanguage(CodeLanguage $code_language)
   {
     $this->code_language = $code_language;
-  }
-
-  /**
-   * Checks if the File has the given name
-   *
-   * @see \Hostnet\HostnetCodeQualityBundle\Entity\LookUpInterface::hasPropertyValue()
-   */
-  public function hasPropertyValue($name)
-  {
-    return $this->name = $name ? true : false;
   }
 }

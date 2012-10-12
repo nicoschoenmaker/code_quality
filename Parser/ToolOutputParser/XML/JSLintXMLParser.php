@@ -2,14 +2,13 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\XML;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\ToolOutputParserInterface,
-    Hostnet\HostnetCodeQualityBundle\Entity\Rule,
-    Hostnet\HostnetCodeQualityBundle\Entity\CodeLanguage,
-    Hostnet\HostnetCodeQualityBundle\Entity\Review,
-    Hostnet\HostnetCodeQualityBundle\Entity\Violation,
-    Hostnet\HostnetCodeQualityBundle\Entity\Report,
-    Hostnet\HostnetCodeQualityBundle\Lib\CodeFile,
-    Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\AbstractToolOutputParser;
+use JMS\SerializerBundle\Exception\XmlErrorException;
+
+use Hostnet\HostnetCodeQualityBundle\Entity\Report,
+    Hostnet\HostnetCodeQualityBundle\Parser\DiffFile,
+    Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\AbstractToolOutputParser,
+    Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\ToolOutputParserInterface,
+    Hostnet\HostnetCodeQualityBundle\Parser\EntityProviderInterface;
 
 class JSLintXMLParser extends AbstractToolOutputParser implements ToolOutputParserInterface
 {
@@ -21,24 +20,36 @@ class JSLintXMLParser extends AbstractToolOutputParser implements ToolOutputPars
   CONST VIOLATION_TAG_NAME = 'issue';
   CONST EVIDENCE = 'evidence';
 
-  protected $resource;
-  protected $format;
+  /**
+   * @var EntityProviderInterface
+   */
+  protected $efi;
 
-  public function __construct()
+  public function __construct(EntityProviderInterface $efi)
   {
     $this->resource = 'jslint';
     $this->format = 'xml';
+    $this->efi = $efi;
   }
 
-  public function parseToolOutput($tool_output, CodeFile $code_file)
+  /**
+   * Parse the output of a static code quality tool and
+   * fill the Review object with the extracted data
+   *
+   * @param String $tool_output
+   * @param DiffFile $diff_file
+   * @return Review
+   * @see \Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\ToolOutputParserInterface::parseToolOutput()
+   */
+  public function parseToolOutput($tool_output, DiffFile $diff_file)
   {
     $report = new Report();
-    $this->ef->retrieveEntities();
+    $this->efi->retrieveEntities();
 
     // Fill the report with the File and CodeLanguage
-    $file = $this->ef->getFile($code_file->getName());
-    $code_language = $this->ef->getCodeLanguage(
-      $code_file->getExtension()
+    $file = $this->efi->getFile($diff_file->getName());
+    $code_language = $this->efi->getCodeLanguage(
+      $diff_file->getExtension()
     );
     $file->setCodeLanguage($code_language);
     $report->setFile($file);
@@ -49,20 +60,22 @@ class JSLintXMLParser extends AbstractToolOutputParser implements ToolOutputPars
 
     $xml = new \DomDocument();
     // Load the tool output string in the xml format as xml
-    $xml->loadXML($tool_output);
+    if(!$xml->loadXML($tool_output)) {
+      throw new XmlErrorException('Error while parsing XML, invalid XML supplied');
+    }
     // Extract all the violation nodes out of the tool output
     $output_violations = $xml->getElementsByTagName(self::VIOLATION_TAG_NAME);
     foreach($output_violations as $output_violation) {
 
       // Fill the Rule
-      $rule = $this->ef->getRule(
+      $rule = $this->efi->getRule(
         $output_violation->getAttribute(self::RULE),
         $output_violation->getAttribute(self::PRIORITY)
       );
 
       // Fill the Violation
       $message = trim($output_violation->firstChild->nodeValue);
-      $violation = $this->ef->getViolation(
+      $violation = $this->efi->getViolation(
         $rule,
         $output_violation->getAttribute(self::EVIDENCE),
         $output_violation->getAttribute(self::BEGINLINE),

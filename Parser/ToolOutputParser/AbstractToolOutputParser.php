@@ -9,13 +9,20 @@ abstract class AbstractToolOutputParser extends AbstractParser
   /**
    * The format the parser is supposed to parse
    *
-   * @var String
+   * @var string
    */
   protected $format;
 
+  /**
+   * Checks if the tool output parser supports the resource
+   *
+   * @param string $resource
+   * @param array $additional_properties
+   * @return boolean
+   */
   public function supports($resource, $additional_properties = array())
   {
-    return ($this->resource == $resource
-      && $this->format == $additional_properties['format']) ? true : false;
+    return ((strcasecmp($this->resource, $resource) == 0)
+      && (strcasecmp($this->format, $additional_properties['format']) == 0)) ? true : false;
   }
 }

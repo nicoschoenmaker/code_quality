@@ -2,86 +2,71 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Tests\Lib;
 
-use Hostnet\HostnetCodeQualityBundle\Lib\ReviewProcessor,
+use Hostnet\HostnetCodeQualityBundle\Entity\Tool,
+    Hostnet\HostnetCodeQualityBundle\Entity\Ruleset,
+    Hostnet\HostnetCodeQualityBundle\Entity\CodeLanguage,
+    Hostnet\HostnetCodeQualityBundle\Lib\ReviewProcessor,
+    Hostnet\HostnetCodeQualityBundle\Parser\CommandLineUtility,
     Hostnet\HostnetCodeQualityBundle\Parser\ParserFactory,
     Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\GITDiffParser,
     Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\XML\PMDXMLParser,
-    Hostnet\HostnetCodeQualityBundle\Entity\Tool,
-    Hostnet\HostnetCodeQualityBundle\Entity\File,
-    Hostnet\HostnetCodeQualityBundle\Entity\Rule,
-    Hostnet\HostnetCodeQualityBundle\Entity\Violation,
-    Hostnet\HostnetCodeQualityBundle\Entity\CodeLanguage;
+    Hostnet\HostnetCodeQualityBundle\Tests\Mock\MockEntityFactory;
 
-use Hostnet\HostnetCodeQualityBundle\Lib\EntityFactory;
+use Hostnet\HostnetCodeQualityBundle\Parser\EntityProviderInterface;
 
 class ReviewProcessorTest extends \PHPUnit_Framework_TestCase
 {
   /**
-   * @var Hostnet\HostnetCodeQualityBundle\Lib\CodeQualityReviewProcessor
+   * @var Doctrine\ORM\EntityManager
    */
-  private $processor;
-
   private $em;
 
+  /**
+   * @var CommandLineUtility
+   */
+  private $clu;
+
+  /**
+   * @var ParserFactory
+   */
+  private $pf;
+
+  /**
+   * @var MockEntityFactory
+   */
   private $ef;
+
+  /**
+   * @var ReviewProcessor
+   */
+  private $processor;
 
   // Constructs the Processor with the required construct params
   public function setUp()
   {
-    // Mock the EntityManager without calling the constructor, (the constructor is private)
-    $path_to_em = 'Doctrine\ORM\EntityManager';
-    $this->em = $this->getMock($path_to_em, array(), array(), '', false);
-    // CommandLineUtility
-    $path_to_clu = 'Hostnet\HostnetCodeQualityBundle\Lib\CommandLineUtility';
-    $clu = $this->getMock($path_to_clu);
-    // ParserFactory
-    $parser_factory = new ParserFactory();
-    // These parser objects can't be abstract / mocked as the private class variables are set manually.
-    $git_diff_parser = new GITDiffParser();
-    $path_to_ef = 'Hostnet\HostnetCodeQualityBundle\Lib\EntityFactory';
-    $this->ef = $this->getMock($path_to_ef, array(), array($this->em));
-
-    $rule1 = new Rule('LongVariable');
-    $violation1_message = 'Classes should not have a constructor method with the same name as the class';
-    $violation1 = new Violation($rule1, $violation1_message, 5, 8);
-    $rule2 = new Rule('LongVariable', 3);
-    $violation2_message = 'a message';
-    $violation2 = new Violation($rule2, $violation2_message, 7, 7);
-    $file = new File('http-fetch');
-    $code_language = new CodeLanguage('php');
-
-    $this->ef
-      ->expects($this->any())
-      ->method('getFile')
-      ->will($this->returnValue($file))
-    ;
-    $this->ef
-      ->expects($this->any())
-      ->method('getRule')
-      ->will($this->returnValue($rule1))
-    ;
-    $this->ef
-      ->expects($this->any())
-      ->method('getViolation')
-      ->will($this->returnValue($violation1))
-    ;
-    $this->ef
-      ->expects($this->any())
-      ->method('getCodeLanguage')
-      ->will($this->returnValue($code_language))
-    ;
-
-    $pmd_xml_parser = new PMDXMLParser($this->ef);
-    $parser_factory->addParserInstance($git_diff_parser);
-    $parser_factory->addParserInstance($pmd_xml_parser);
-
     // config vars
     $scm = 'git';
     // TODO Fix url
     $raw_file_url_mask = 'http://cgit.hostnetbv.nl/cgit/aurora/www.git/plain/apps/aurora/modules/uml/actions/actions.class.php';
 
+    // Mock the EntityManager without calling the constructor, (the constructor is private)
+    $path_to_em = 'Doctrine\ORM\EntityManager';
+    $this->em = $this->getMock($path_to_em, array(), array(), '', false);
+    // CommandLineUtility
+    $this->clu = new CommandLineUtility();
+    // ParserFactory
+    $this->pf = new ParserFactory($scm);
+    // These parser objects can't be abstract / mocked as the private class variables are set manually.
+    $git_diff_parser = new GITDiffParser();
+    // Entity Factory
+    $this->ef = new MockEntityFactory();
+
+    $pmd_xml_parser = new PMDXMLParser($this->ef);
+    $this->pf->addParserInstance($git_diff_parser);
+    $this->pf->addParserInstance($pmd_xml_parser);
+
     $this->processor = new ReviewProcessor(
-      $clu, $parser_factory, $scm, $raw_file_url_mask
+      $this->clu, $this->pf, $raw_file_url_mask
     );
   }
 
@@ -91,21 +76,22 @@ class ReviewProcessorTest extends \PHPUnit_Framework_TestCase
     $diff = file_get_contents(__DIR__ . '/../test_git_patch.patch');
     $register = false;
 
+    $ruleset = new Ruleset('codesize,unusedcode,naming');
     $PHPMD = new Tool(
       'pmd',
       '~/projects/code_quality_tools/phpmd',
       '/usr/local/zend/bin/phpmd',
-      'xml',
-      'codesize,unusedcode,naming'
+      'xml'
     );
-    $PHPMD->getSupportedLanguages()->add('php');
+    $PHPMD->getRulesets()->add($ruleset);
+    $code_language = new CodeLanguage('php');
+    $PHPMD->getSupportedLanguages()->add($code_language);
     $tools = array($PHPMD);
 
     $review = $this->processor->processReview(
       $diff, $register, $this->em, $tools
     );
 
-    //$this->assertEquals('test', var_dump($review));
     // Test the 1st review
     $reports = $review->getReports();
     $first_file = $reports[0]->getFile();

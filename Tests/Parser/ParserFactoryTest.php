@@ -9,6 +9,13 @@ use Hostnet\HostnetCodeQualityBundle\Parser\ParserFactory,
 class ParserFactoryTest extends \PHPUnit_Framework_TestCase
 {
   /**
+   * The configured Source Control Management system setting
+   *
+   * @var string
+   */
+  private $scm;
+
+  /**
    * @var EntityManager
    */
   private $em;
@@ -35,10 +42,11 @@ class ParserFactoryTest extends \PHPUnit_Framework_TestCase
 
   public function setUp()
   {
+    $this->scm = 'git';
     // Mock the EntityManager without calling the constructor, (the constructor is private)
     $path_to_em = 'Doctrine\ORM\EntityManager';
     $this->em = $this->getMock($path_to_em, array(), array(), '', false);
-    $this->pf = new ParserFactory();
+    $this->pf = new ParserFactory($this->scm);
     $path_to_ef = 'Hostnet\HostnetCodeQualityBundle\Lib\EntityFactory';
     $this->ef = $this->getMock($path_to_ef, array(), array($this->em));
 
@@ -52,15 +60,14 @@ class ParserFactoryTest extends \PHPUnit_Framework_TestCase
   {
     // Test if the ParserFactory accepts and processes a (Diff)Parser
     $this->pf->addParserInstance($this->diff_parser);
-    $resource = 'git';
-    $parser = $this->pf->getParserInstance($resource);
-    $this->assertTrue($parser->supports($resource));
+    $parser = $this->pf->getDiffParserInstance($this->scm);
+    $this->assertTrue($parser->supports($this->scm));
 
     // Test if the ParserFactory accepts and processes a ToolOutputParser
     $this->pf->addParserInstance($this->tool_output_parser);
     $resource = 'pmd';
     $additional_properties = array('format' => 'xml');
-    $parser = $this->pf->getParserInstance($resource, $additional_properties);
+    $parser = $this->pf->getToolOutputParserInstance($resource, $additional_properties);
     $this->assertTrue($parser->supports($resource, $additional_properties));
   }
 }

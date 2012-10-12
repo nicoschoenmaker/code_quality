@@ -2,15 +2,13 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Parser\DiffParser;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\ParserInterface;
-
 interface DiffParserInterface
 {
   /**
    * Parse the diff into an array of CodeFile objects
    *
    * @param String $diff
-   * @return CodeFile array:
+   * @return Codefile array
    */
   public function parseDiff($diff);
 

@@ -4,13 +4,11 @@ namespace Hostnet\HostnetCodeQualityBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Hostnet\HostnetCodeQualityBundle\Entity\LookUpInterface;
-
 /**
  * @ORM\Table(name="code_language")
  * @ORM\Entity
  */
-class CodeLanguage implements LookUpInterface
+class CodeLanguage
 {
   /**
    * @var integer $id
@@ -29,14 +27,14 @@ class CodeLanguage implements LookUpInterface
   private $name;
 
   /**
-   * @var Tool array
+   * @var ArrayCollection
    *
    * @ORM\ManyToMany(targetEntity="Tool", mappedBy="supported_languages")
    */
   private $tools;
 
   /**
-   * @var File array
+   * @var ArrayCollection
    *
    * @ORM\OneToMany(targetEntity="File", mappedBy="id")
    */
@@ -85,7 +83,7 @@ class CodeLanguage implements LookUpInterface
   /**
    * Get an array of Tool objects
    *
-   * @return Tool array
+   * @return ArrayCollection
    */
   public function getTools()
   {
@@ -95,20 +93,10 @@ class CodeLanguage implements LookUpInterface
   /**
    * Get an array of File objects
    *
-   * @return File array
+   * @return ArrayCollection
    */
   public function getFiles()
   {
     return $this->files;
-  }
-
-  /**
-   * Checks if the CodeLanguage has the given name
-   *
-   * @see \Hostnet\HostnetCodeQualityBundle\Entity\LookUpInterface::hasPropertyValue()
-   */
-  public function hasPropertyValue($name)
-  {
-    return $this->name = $name ? true : false;
   }
 }

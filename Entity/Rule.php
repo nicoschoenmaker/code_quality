@@ -4,15 +4,13 @@ namespace Hostnet\HostnetCodeQualityBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Hostnet\HostnetCodeQualityBundle\Entity\Tool,
-    Hostnet\HostnetCodeQualityBundle\Entity\Violation,
-    Hostnet\HostnetCodeQualityBundle\Entity\LookUpInterface;
+use Hostnet\HostnetCodeQualityBundle\Entity\Tool;
 
 /**
  * @ORM\Table(name="rule")
  * @ORM\Entity
  */
-class Rule implements LookUpInterface
+class Rule
 {
   /**
    * @var integer $id
@@ -51,14 +49,6 @@ class Rule implements LookUpInterface
    * @ORM\JoinColumn(name="tool_id", referencedColumnName="id")
    */
   private $tool;
-
-  /**
-   * @var Violation
-   *
-   * @ORM\ManyToOne(targetEntity="Violation", inversedBy="violation")
-   * @ORM\JoinColumn(name="violation_id", referencedColumnName="id")
-   */
-  private $violation;
 
 
   public function __construct($name, $priority = 3, $enabled = true)
@@ -156,35 +146,5 @@ class Rule implements LookUpInterface
   public function getTool()
   {
     return $this->tool;
-  }
-
-  /**
-   * Set violation
-   *
-   * @param Violation $violation
-   */
-  public function setViolation(Violation $violation)
-  {
-    $this->violation = $violation;
-  }
-
-  /**
-   * Get violation
-   *
-   * @return Violation
-   */
-  public function getViolation()
-  {
-    return $this->violation;
-  }
-
-  /**
-   * Checks if the Rule has the given name
-   *
-   * @see \Hostnet\HostnetCodeQualityBundle\Entity\LookUpInterface::hasPropertyValue()
-   */
-  public function hasPropertyValue($name)
-  {
-    return $this->name = $name ? true : false;
   }
 }

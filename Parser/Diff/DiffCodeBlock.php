@@ -1,8 +1,8 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Lib;
+namespace Hostnet\HostnetCodeQualityBundle\Parser\Diff;
 
-class CodeBlock
+class DiffCodeBlock
 {
   /**
    * @var string $begin_line
@@ -24,7 +24,7 @@ class CodeBlock
    * Set begin_line
    *
    * @param string $beginLine
-   * @return CodeBlock
+   * @return DiffCodeBlock
    */
   public function setBeginLine($begin_line)
   {
@@ -45,7 +45,7 @@ class CodeBlock
    * Set end_line
    *
    * @param string $endLine
-   * @return CodeBlock
+   * @return DiffCodeBlock
    */
   public function setEndLine($end_line)
   {
@@ -66,7 +66,7 @@ class CodeBlock
    * Set code
    *
    * @param string $code
-   * @return CodeBlock
+   * @return DiffCodeBlock
    */
   public function setCode($code)
   {

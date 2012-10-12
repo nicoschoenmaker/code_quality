@@ -5,14 +5,13 @@ namespace Hostnet\HostnetCodeQualityBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Hostnet\HostnetCodeQualityBundle\Entity\Rule,
-    Hostnet\HostnetCodeQualityBundle\Entity\Report,
-    Hostnet\HostnetCodeQualityBundle\Entity\LookUpInterface;
+    Hostnet\HostnetCodeQualityBundle\Entity\Report;
 
 /**
  * @ORM\Table(name="violation")
  * @ORM\Entity
  */
-class Violation implements LookUpInterface
+class Violation
 {
   /**
    * @var integer $id
@@ -60,7 +59,7 @@ class Violation implements LookUpInterface
   private $rule;
 
   /**
-   * @var ReviewFile
+   * @var ArrayCollection
    *
    * @ORM\ManyToMany(targetEntity="Report", mappedBy="violations")
    */
@@ -197,20 +196,10 @@ class Violation implements LookUpInterface
   /**
    * Get an array of Report objects
    *
-   * @return Report array
+   * @return ArrayCollection
    */
   public function getReports()
   {
     return $this->reports;
-  }
-
-  /**
-   * Checks if the Violation has the given message
-   *
-   * @see \Hostnet\HostnetCodeQualityBundle\Entity\LookUpInterface::hasPropertyValue()
-   */
-  public function hasPropertyValue($message)
-  {
-    return $this->message = $message ? true : false;
   }
 }

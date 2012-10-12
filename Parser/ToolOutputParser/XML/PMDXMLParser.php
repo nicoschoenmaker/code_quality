@@ -2,11 +2,13 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\XML;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\ToolOutputParserInterface,
-    Hostnet\HostnetCodeQualityBundle\Lib\CodeFile,
+use JMS\SerializerBundle\Exception\XmlErrorException;
+
+use Hostnet\HostnetCodeQualityBundle\Entity\Report,
+    Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile,
+    Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\ToolOutputParserInterface,
     Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\AbstractToolOutputParser,
-    Hostnet\HostnetCodeQualityBundle\Lib\EntityFactory,
-    Hostnet\HostnetCodeQualityBundle\Entity\Report;
+    Hostnet\HostnetCodeQualityBundle\Parser\EntityProviderInterface;
 
 class PMDXMLParser extends AbstractToolOutputParser implements ToolOutputParserInterface
 {
@@ -17,30 +19,33 @@ class PMDXMLParser extends AbstractToolOutputParser implements ToolOutputParserI
   CONST PRIORITY = 'priority';
   CONST VIOLATION_TAG_NAME = 'violation';
 
-  protected $resource;
-  protected $format;
-  protected $ef;
+  /**
+   * @var EntityProviderInterface
+   */
+  protected $efi;
 
-  public function __construct(EntityFactory $ef)
+  public function __construct(EntityProviderInterface $efi)
   {
     $this->resource = 'pmd';
     $this->format = 'xml';
-
-    $this->ef = $ef;
+    $this->efi = $efi;
   }
 
-  public function parseToolOutput($tool_output, CodeFile $code_file)
+  /**
+   * Parse the output of a static code quality tool and
+   * fill the Review object with the extracted data
+   *
+   * @param String $tool_output
+   * @param DiffFile $diff_file
+   * @return Review
+   * @see \Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\ToolOutputParserInterface::parseToolOutput()
+   */
+  public function parseToolOutput($tool_output, DiffFile $diff_file)
   {
-    $report = new Report();
-    $this->ef->retrieveEntities();
-
     // Fill the report with the File and CodeLanguage
-    $file = $this->ef->getFile($code_file->getName());
-    $code_language = $this->ef->getCodeLanguage(
-      $code_file->getExtension()
-    );
-    $file->setCodeLanguage($code_language);
-    $report->setFile($file);
+    $code_language = $this->efi->getCodeLanguage($diff_file->getExtension());
+    $file = $this->efi->retrieveFile($code_language, $diff_file->getName());
+    $report = new Report($file);
 
     // Retrieve the violations array in advance as
     // it's only required to add all the violations
@@ -48,20 +53,22 @@ class PMDXMLParser extends AbstractToolOutputParser implements ToolOutputParserI
 
     $xml = new \DomDocument();
     // Load the tool output string in the xml format as xml
-    $xml->loadXML($tool_output);
+    if(!$xml->loadXML($tool_output)) {
+      throw new XmlErrorException('Error while parsing XML, invalid XML supplied');
+    }
     // Extract all the violation nodes out of the tool output
     $output_violations = $xml->getElementsByTagName(self::VIOLATION_TAG_NAME);
     foreach($output_violations as $output_violation) {
 
       // Fill the Rule
-      $rule = $this->ef->getRule(
+      $rule = $this->efi->getRule(
         $output_violation->getAttribute(self::RULE),
         $output_violation->getAttribute(self::PRIORITY)
       );
 
       // Fill the Violation
       $message = trim($output_violation->firstChild->nodeValue);
-      $violation = $this->ef->getViolation(
+      $violation = $this->efi->retrieveViolation(
         $rule,
         $message,
         $output_violation->getAttribute(self::BEGINLINE),

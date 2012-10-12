@@ -4,7 +4,7 @@ namespace Hostnet\HostnetCodeQualityBundle\Parser\DiffParser;
 
 use Hostnet\HostnetCodeQualityBundle\Parser\AbstractParser;
 
-class AbstractDiffParser extends AbstractParser
+abstract class AbstractDiffParser extends AbstractParser
 {
   CONST T_SPACE_LENGTH = 1;
   CONST T_DOT = '.';
@@ -17,4 +17,15 @@ class AbstractDiffParser extends AbstractParser
   CONST SOURCE_START = '--- ';
   CONST DESTINATION_START = '+++ ';
   CONST FILE_RANGE_BRACKETS = '@@';
+
+  /**
+   * Checks if the diff parser supports the configured scm setting
+   *
+   * @param string $scm
+   * @return boolean
+   */
+  public function supports($scm)
+  {
+    return (strcasecmp($this->resource, $scm) == 0) ? true : false;
+  }
 }

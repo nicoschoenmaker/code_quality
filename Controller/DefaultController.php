@@ -8,8 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller,
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route,
     Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-use Hostnet\HostnetCodeQualityBundle\Entity\Tool,
-    Hostnet\HostnetCodeQualityBundle\Entity\Rule;
+use Hostnet\HostnetCodeQualityBundle\Entity\Tool;
 
 class DefaultController extends Controller
 {
@@ -79,7 +78,7 @@ class DefaultController extends Controller
   /**
    * Returns a list of code quality tools
    *
-   * @return Tool array
+   * @return \Doctrine\Common\Collection
    */
   private function retrieveTools()
   {

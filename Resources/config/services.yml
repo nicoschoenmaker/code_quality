@@ -6,7 +6,7 @@ services:
 
   code_quality_review_processor:
     class: Hostnet\HostnetCodeQualityBundle\Lib\CodeQualityReviewProcessor
-    arguments: [@command_line_utility, @parser_factory, %hostnet_code_quality.scm%, %hostnet_code_quality.raw_file_url_mask%]
+    arguments: [@command_line_utility, @parser_factory, %hostnet_code_quality.raw_file_url_mask%]
 
 ##############################
 # The Entity Factory service #
@@ -21,7 +21,7 @@ services:
 ####################################
 
   command_line_utility:
-    class: Hostnet\HostnetCodeQualityBundle\Lib\CommandLineUtility
+    class: Hostnet\HostnetCodeQualityBundle\Parser\CommandLineUtility
 
 
 #######################
@@ -30,6 +30,7 @@ services:
 
   parser_factory:
     class: Hostnet\HostnetCodeQualityBundle\Parser\ParserFactory
+    arguments: [%hostnet_code_quality.scm%]
     calls:
       - [ addParserInstance, [@diff_parser.git_diff_parser] ]
       - [ addParserInstance, [@diff_parser.svn_diff_parser] ]

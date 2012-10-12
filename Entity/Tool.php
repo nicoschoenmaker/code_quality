@@ -21,18 +21,12 @@ namespace Hostnet\HostnetCodeQualityBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Symfony\Component\Process\Process;
-
-use Hostnet\HostnetCodeQualityBundle\Lib\CodeFile;
-
 /**
  * @ORM\Table(name="tool")
  * @ORM\Entity
  */
 class Tool
 {
-  CONST TEMP_CODE_FILE_PREFIX = 'cq';
-
   /**
    * @var integer $id
    *
@@ -71,14 +65,17 @@ class Tool
   private $format;
 
   /**
-   * @var string
+   * The rulesets that the tool should give feedback on.
+   * For example PMD: 'codesize,unusedcode,naming'.
    *
-   * @ORM\Column(name="rulesets", type="string", length=255)
+   * @var ArrayCollection
+   *
+   * @ORM\OneToMany(targetEntity="Ruleset", mappedBy="id")
    */
   private $rulesets;
 
   /**
-   * @var Rule array
+   * @var ArrayCollection
    *
    * @ORM\OneToMany(targetEntity="Rule", mappedBy="id")
    */
@@ -87,7 +84,7 @@ class Tool
   /**
    * The languages that the tool supports to scan
    *
-   * @var CodeLanguage array
+   * @var ArrayCollection
    *
    * @ORM\ManyToMany(targetEntity="CodeLanguage", inversedBy="tools")
    * @ORM\JoinTable(name="tool_code_language",
@@ -98,13 +95,13 @@ class Tool
   private $supported_languages;
 
 
-  public function __construct($name, $path_to_tool, $call_command, $format, $rulesets)
+  public function __construct($name, $path_to_tool, $call_command, $format)
   {
     $this->name = $name;
     $this->path_to_tool = $path_to_tool;
     $this->call_command = $call_command;
     $this->format = $format;
-    $this->rulesets = $rulesets;
+    $this->rulesets = new \Doctrine\Common\Collections\ArrayCollection();
     $this->rules = new \Doctrine\Common\Collections\ArrayCollection();
     $this->supported_languages = new \Doctrine\Common\Collections\ArrayCollection();
   }
@@ -200,19 +197,9 @@ class Tool
   }
 
   /**
-   * Set rulesets
+   * Get an array of Ruleset objects
    *
-   * @param string $rulesets
-   */
-  public function setRulesets($rulesets)
-  {
-    $this->rulesets = $rulesets;
-  }
-
-  /**
-   * Get rulesets
-   *
-   * @return string
+   * @return ArrayCollection
    */
   public function getRulesets()
   {
@@ -222,7 +209,7 @@ class Tool
   /**
    * Get an array of Rule objects
    *
-   * @return Rule array
+   * @return ArrayCollection
    */
   public function getRules()
   {
@@ -232,7 +219,7 @@ class Tool
   /**
    * Get an array of CodeLanguage objects
    *
-   * @return CodeLanguage array
+   * @return ArrayCollection
    */
   public function getSupportedLanguages()
   {
@@ -240,81 +227,19 @@ class Tool
   }
 
   /**
-   * Process both the diff file as the original file through the scan process
-   *
-   * @param CodeFile $diff_code_file
-   * @return array
-   */
-  public function processFile(CodeFile $diff_code_file,
-    $original_file, $temp_code_quality_dir_path)
-  {
-    $diff_output = $this->scanCode(
-      $diff_code_file->getEntireCode(),
-      $temp_code_quality_dir_path
-    );
-    $original_output = $this->scanCode(
-      $original_file,
-      $temp_code_quality_dir_path
-    );
-
-    return array('diff_output' => $diff_output,
-      'original_diff_output' => $original_output);
-  }
-
-  /**
-   * Writes the code into a temp file to be able
-   * to scan it with the code quality tool
-   *
-   * @param String $code
-   * @return String $code_output
-   */
-  private function scanCode($code, $temp_code_quality_dir_path)
-  {
-    // Creates the temp file
-    $temp_code_file_path =
-    tempnam($temp_code_quality_dir_path, self::TEMP_CODE_FILE_PREFIX);
-    // Changes the permissions of the temp file to 777
-    chmod($temp_code_file_path, 0777);
-    // Opens a file stream reader with write permissions and
-    // writes the code into the temp file
-    file_put_contents($temp_code_file_path, $code);
-    // Let the temp file go through the Code Quality Tool scan process by
-    // executing the following command line command
-    $command_line_string =
-    $this->getCallCommand() .          ' '
-      . $temp_code_file_path .           ' '
-      . strtolower($this->getFormat()) . ' '
-      . $this->getRulesets()
-    ;
-    $process = new Process(escapeshellcmd($command_line_string));
-    $process->run();
-    // TODO Remove comments as soon as the original file retrieval works,
-    // at the moment it still throws an error as the test original file
-    // is baaad mkay
-    /*if(!$process->isSuccessful()) {
-    throw new \RuntimeException($process->getErrorOutput());
-    }*/
-    // Remove the temp file
-    unlink($temp_code_file_path);
-
-    return $process->getOutput();
-  }
-
-  /**
-  * Checks if the CodeQualityTool supports the given CodeFile.
+  * Checks if the Tool supports the given extension.
   *
-  * @param CodeFile $code_file
+  * @param string $extension
   * @return boolean
   */
-  public function supports(CodeFile $code_file)
+  public function supports($extension)
   {
-    $result = false;
     foreach($this->getSupportedLanguages() as $code_language) {
-      if($code_file->getExtension() == $code_language) {
-        $result = true;
+      if($extension == $code_language->getName()) {
+        return true;
       }
     }
 
-    return $result;
+    return false;
   }
 }

@@ -25,6 +25,19 @@ class EntityFactory implements EntityProviderInterface
   }
 
   /**
+   * Returns a list of code quality tools
+   *
+   * @return \Doctrine\Common\Collection
+   */
+  public function retrieveTools()
+  {
+    return $this->em
+      ->getRepository('HostnetCodeQualityBundle:Tool')
+      ->findAll()
+    ;
+  }
+
+  /**
    * Retrieves all the CodeLanguage objects from the DB
    * and assigns the index for easier access.
    */

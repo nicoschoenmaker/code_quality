@@ -66,7 +66,7 @@ class ReviewProcessor
             throw new IOException("The file at '". $this->raw_file_url_mask . "' could not be found.");
           }
 
-          // Let the file be processed by the given tool and return the output
+          // Let the file be processed by the given tool
           $diff_file->processFile(
             $tool,
             $original_file,

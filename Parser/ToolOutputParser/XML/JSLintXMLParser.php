@@ -5,7 +5,7 @@ namespace Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\XML;
 use JMS\SerializerBundle\Exception\XmlErrorException;
 
 use Hostnet\HostnetCodeQualityBundle\Entity\Report,
-    Hostnet\HostnetCodeQualityBundle\Parser\DiffFile,
+    Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile,
     Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\AbstractToolOutputParser,
     Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\ToolOutputParserInterface,
     Hostnet\HostnetCodeQualityBundle\Parser\EntityProviderInterface;

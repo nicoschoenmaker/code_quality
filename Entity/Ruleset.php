@@ -33,6 +33,16 @@ class Ruleset
   }
 
   /**
+   * Get id
+   *
+   * @return integer
+   */
+  public function getId()
+  {
+    return $this->id;
+  }
+
+  /**
    * Gets the name
    *
    * @return string

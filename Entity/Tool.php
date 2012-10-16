@@ -65,12 +65,13 @@ class Tool
   private $format;
 
   /**
-   * The rulesets that the tool should give feedback on.
-   * For example PMD: 'codesize,unusedcode,naming'.
-   *
    * @var Collection
    *
-   * @ORM\OneToMany(targetEntity="Ruleset", mappedBy="id")
+   * @ORM\ManyToMany(targetEntity="Ruleset")
+   * @ORM\JoinTable(name="tool_ruleset",
+   *   joinColumns={@ORM\JoinColumn(name="tool_id", referencedColumnName="id")},
+   *   inverseJoinColumns={@ORM\JoinColumn(name="ruleset_id", referencedColumnName="id")}
+   * )
    */
   private $rulesets;
 
@@ -86,7 +87,7 @@ class Tool
    *
    * @var Collection
    *
-   * @ORM\ManyToMany(targetEntity="CodeLanguage", inversedBy="tools")
+   * @ORM\ManyToMany(targetEntity="CodeLanguage")
    * @ORM\JoinTable(name="tool_code_language",
    *   joinColumns={@ORM\JoinColumn(name="tool_id", referencedColumnName="id")},
    *   inverseJoinColumns={@ORM\JoinColumn(name="code_language_id", referencedColumnName="id")}
@@ -106,7 +107,7 @@ class Tool
     $this->supported_languages = new \Doctrine\Common\Collections\ArrayCollection();
   }
 
-/**
+  /**
    * Get id
    *
    * @return integer

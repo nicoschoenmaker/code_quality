@@ -3,7 +3,6 @@
 namespace Hostnet\HostnetCodeQualityBundle\Tests\Parser\ToolOutputParser;
 
 use Hostnet\HostnetCodeQualityBundle\Parser\ParserFactory,
-    Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile,
     Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\XML\PMDXMLParser,
     Hostnet\HostnetCodeQualityBundle\Tests\Mock\MockEntityFactory;
 
@@ -34,10 +33,24 @@ class PMDXMLParserTest extends \PHPUnit_Framework_TestCase
     $tool_output_path = __DIR__ . '/' . $test_file_name;
     $tool_output = file_get_contents($tool_output_path);
 
-    $diff_file = new DiffFile();
-    $diff_file->setName($test_file_name);
-    $diff_file->setExtension('php');
-    $diff_file->setDiffOutput($tool_output);
+    // Using a mock object for the diff file as the diff_output property gets set in a dependent class.
+    $diff_file = $this->getMock('Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile');
+    $diff_file
+      ->expects($this->any())
+      ->method('getName')
+      ->will($this->returnValue($test_file_name))
+    ;
+    $diff_file
+      ->expects($this->any())
+      ->method('getExtension')
+      ->will($this->returnValue('php'))
+    ;
+    $diff_file
+      ->expects($this->any())
+      ->method('getDiffOutput')
+      ->will($this->returnValue($tool_output))
+    ;
+
 
     // Initialize the pmd xml parser and parse the test tool output
     $pmd_xml_parser = new PMDXMLParser($this->ef);

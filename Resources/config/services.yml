@@ -4,8 +4,8 @@ services:
 # The Code Quality Review Processor service #
 #############################################
 
-  code_quality_review_processor:
-    class: Hostnet\HostnetCodeQualityBundle\Lib\CodeQualityReviewProcessor
+  review_processor:
+    class: Hostnet\HostnetCodeQualityBundle\Lib\ReviewProcessor
     arguments: [@command_line_utility, @parser_factory, %hostnet_code_quality.raw_file_url_mask%]
 
 ##############################

@@ -182,16 +182,6 @@ class DiffFile
   }
 
   /**
-   * Set the diff output
-   *
-   * @param string $diff_output
-   */
-  public function setDiffOutput($diff_output)
-  {
-    $this->diff_output = $diff_output;
-  }
-
-  /**
    * Get the diff output
    *
    * @return string
@@ -201,9 +191,14 @@ class DiffFile
     return $this->diff_output;
   }
 
-  public function setOriginalOutput($original_output)
+  /**
+   * Get the original output
+   *
+   * @return string
+   */
+  public function getOriginalOutput()
   {
-
+    return $this->original_output;
   }
 
   /**

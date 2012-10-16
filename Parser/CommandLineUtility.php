@@ -6,7 +6,6 @@ use Symfony\Component\Filesystem\Exception\IOException;
 
 class CommandLineUtility
 {
-  CONST TEMP_CQ_DIR_NAME = '/codequality';
 
   /**
    * The path to the temp code quality dir
@@ -15,9 +14,10 @@ class CommandLineUtility
    */
   private $temp_code_quality_dir_path = '';
 
-  public function __construct()
+  public function __construct($temp_cq_dir_name)
   {
-    $this->temp_code_quality_dir_path = realpath(sys_get_temp_dir() . self::TEMP_CQ_DIR_NAME);
+    var_dump($temp_cq_dir_name);
+    $this->temp_code_quality_dir_path = realpath(sys_get_temp_dir() . '/' . $temp_cq_dir_name);
     if(!is_writable($this->temp_code_quality_dir_path)) {
       throw new IOException("The Code Quality Temp directory at '" . $this->temp_code_quality_dir_path
         . "' is not writable.");

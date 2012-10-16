@@ -263,10 +263,10 @@ class DiffFile
       escapeshellarg($temp_code_file_path) .             ' ' .
       escapeshellarg(strtolower($tool->getFormat())) .   ' '
     ;
-    // Each ruleset gets added as a single argument to check it separately.
+    // Each argument gets added as a single argument to check it separately.
     // Some tools have just one string arg and some have multiple.
-    foreach($tool->getRulesets() as $ruleset) {
-      $command_line_string .= escapeshellarg($ruleset->getName());
+    foreach($tool->getArguments() as $argument) {
+      $command_line_string .= escapeshellarg($argument->getName());
     }
     $process = new Process($command_line_string);
     $process->run();

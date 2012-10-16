@@ -67,13 +67,13 @@ class Tool
   /**
    * @var Collection
    *
-   * @ORM\ManyToMany(targetEntity="Ruleset")
-   * @ORM\JoinTable(name="tool_ruleset",
+   * @ORM\ManyToMany(targetEntity="Argument")
+   * @ORM\JoinTable(name="tool_argument",
    *   joinColumns={@ORM\JoinColumn(name="tool_id", referencedColumnName="id")},
-   *   inverseJoinColumns={@ORM\JoinColumn(name="ruleset_id", referencedColumnName="id")}
+   *   inverseJoinColumns={@ORM\JoinColumn(name="argument_id", referencedColumnName="id")}
    * )
    */
-  private $rulesets;
+  private $arguments;
 
   /**
    * @var Collection
@@ -102,7 +102,7 @@ class Tool
     $this->path_to_tool = $path_to_tool;
     $this->call_command = $call_command;
     $this->format = $format;
-    $this->rulesets = new \Doctrine\Common\Collections\ArrayCollection();
+    $this->arguments = new \Doctrine\Common\Collections\ArrayCollection();
     $this->rules = new \Doctrine\Common\Collections\ArrayCollection();
     $this->supported_languages = new \Doctrine\Common\Collections\ArrayCollection();
   }
@@ -198,13 +198,13 @@ class Tool
   }
 
   /**
-   * Get an array of Ruleset objects
+   * Get an array of Argument objects
    *
    * @return Collection
    */
-  public function getRulesets()
+  public function getArguments()
   {
-    return $this->rulesets;
+    return $this->arguments;
   }
 
   /**

@@ -6,7 +6,7 @@ services:
 
   review_processor:
     class: Hostnet\HostnetCodeQualityBundle\Lib\ReviewProcessor
-    arguments: [@command_line_utility, @parser_factory, %hostnet_code_quality.raw_file_url_mask%]
+    arguments: [@doctrine.orm.entity_manager, @entity_factory, @command_line_utility, @parser_factory, %hostnet_code_quality.raw_file_url_mask%]
 
 ##############################
 # The Entity Factory service #
@@ -22,6 +22,7 @@ services:
 
   command_line_utility:
     class: Hostnet\HostnetCodeQualityBundle\Parser\CommandLineUtility
+    arguments: [%hostnet_code_quality.temp_cq_dir_name%]
 
 
 #######################

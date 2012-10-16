@@ -12,24 +12,24 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder,
  */
 class Configuration implements ConfigurationInterface
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function getConfigTreeBuilder()
-    {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('hostnet_code_quality');
+  public function getConfigTreeBuilder()
+  {
+    $treeBuilder = new TreeBuilder();
+    $rootNode = $treeBuilder->root('hostnet_code_quality');
 
-        $rootNode
-          ->children()
-            ->scalarNode('scm')
-              ->defaultNull()
-                ->end()
-            ->scalarNode('raw_file_url_mask')
-              ->defaultNull()
-                ->end()
-          ->end();
+    $rootNode
+      ->children()
+        ->scalarNode('scm')
+          ->isRequired()
+            ->end()
+        ->scalarNode('raw_file_url_mask')
+          ->isRequired()
+            ->end()
+        ->scalarNode('temp_cq_dir_name')
+          ->defaultValue('codequality')
+            ->end()
+      ->end();
 
-        return $treeBuilder;
-    }
+    return $treeBuilder;
+  }
 }

@@ -5,10 +5,10 @@ namespace Hostnet\HostnetCodeQualityBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="ruleset")
+ * @ORM\Table(name="argument")
  * @ORM\Entity
  */
-class Ruleset
+class Argument
 {
   /**
    * @var integer $id

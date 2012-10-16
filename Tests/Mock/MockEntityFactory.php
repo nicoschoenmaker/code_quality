@@ -5,15 +5,31 @@ namespace Hostnet\HostnetCodeQualityBundle\Tests\Mock;
 use Hostnet\HostnetCodeQualityBundle\Entity\CodeLanguage,
     Hostnet\HostnetCodeQualityBundle\Entity\File,
     Hostnet\HostnetCodeQualityBundle\Entity\Rule,
+    Hostnet\HostnetCodeQualityBundle\Entity\Argument,
+    Hostnet\HostnetCodeQualityBundle\Entity\Tool,
     Hostnet\HostnetCodeQualityBundle\Entity\Violation,
+    Hostnet\HostnetCodeQualityBundle\Lib\EntityFactory,
     Hostnet\HostnetCodeQualityBundle\Parser\EntityProviderInterface;
 
-use Hostnet\HostnetCodeQualityBundle\Lib\EntityFactory;
 
 class MockEntityFactory extends EntityFactory implements EntityProviderInterface
 {
   public function __construct()
   {
+  }
+
+  public function retrieveTools()
+  {
+    $PHPMD = new Tool(
+      'pmd',
+      '~/projects/code_quality_tools/phpmd',
+      '/usr/local/zend/bin/phpmd',
+      'xml'
+    );
+    $PHPMD->getArguments()->add(new Argument('codesize,unusedcode,naming'));
+    $PHPMD->getSupportedLanguages()->add(new CodeLanguage('php'));
+
+    return array($PHPMD);
   }
 
   public function retrieveCodeLanguages()

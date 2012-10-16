@@ -14,27 +14,19 @@ use Symfony\Component\DependencyInjection\ContainerBuilder,
  */
 class HostnetCodeQualityExtension extends Extension
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function load(array $configs, ContainerBuilder $container)
-    {
-        $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
+  /**
+   * {@inheritDoc}
+  */
+  public function load(array $configs, ContainerBuilder $container)
+  {
+    $configuration = new Configuration();
+    $config = $this->processConfiguration($configuration, $configs);
 
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yml');
+    $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+    $loader->load('services.yml');
 
-        if(isset($config['scm'])) {
-          $container->setParameter('hostnet_code_quality.scm', $config['scm']);
-        } else {
-          throw new \InvalidArgumentException("The 'scm' setting must be set in the main paramateres.yml config file.");
-        }
-
-        if(isset($config['raw_file_url_mask'])) {
-          $container->setParameter('hostnet_code_quality.raw_file_url_mask', $config['raw_file_url_mask']);
-        } else {
-          throw new \InvalidArgumentException("The 'raw_file_url_mask' setting must be set in the main paramateres.yml config file.");
-        }
-    }
+    $container->setParameter('hostnet_code_quality.scm', $config['scm']);
+    $container->setParameter('hostnet_code_quality.raw_file_url_mask', $config['raw_file_url_mask']);
+    $container->setParameter('hostnet_code_quality.temp_cq_dir_name', $config['temp_cq_dir_name']);
+  }
 }

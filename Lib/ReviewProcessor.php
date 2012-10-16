@@ -7,11 +7,18 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Component\Filesystem\Exception\IOException;
 
 use Hostnet\HostnetCodeQualityBundle\Entity\Review,
+    Hostnet\HostnetCodeQualityBundle\Lib\EntityFactory,
     Hostnet\HostnetCodeQualityBundle\Parser\CommandLineUtility,
     Hostnet\HostnetCodeQualityBundle\Parser\ParserFactory;
 
 class ReviewProcessor
 {
+  /**
+   *
+   * @var EntityManager
+   */
+  private $em;
+
   /**
    * @var CommandLineUtility
    */
@@ -23,6 +30,11 @@ class ReviewProcessor
   private $pf;
 
   /**
+   * @var EntityFactory
+   */
+  private $ef;
+
+  /**
    * The raw file url mask setting configured which
    * is used to retrieve the original file
    *
@@ -30,17 +42,27 @@ class ReviewProcessor
    */
   private $raw_file_url_mask;
 
-  public function __construct(CommandLineUtility $clu,
-    ParserFactory $parser_factory, $raw_file_url_mask)
+  public function __construct(EntityManager $em, EntityFactory $ef,
+    CommandLineUtility $clu, ParserFactory $pf, $raw_file_url_mask)
   {
+    $this->em = $em;
+    $this->ef = $ef;
     $this->clu = $clu;
-    $this->pf = $parser_factory;
+    $this->pf = $pf;
     $this->raw_file_url_mask = $raw_file_url_mask;
   }
 
-  public function processReview($diff, $register, EntityManager $em,
-    $tools)
+  /**
+   * Processes the Diff into a Review object
+   *
+   * @param string $diff
+   * @param boolean $register
+   * @throws IOException
+   * @return \Hostnet\HostnetCodeQualityBundle\Entity\Review
+   */
+  public function processReview($diff, $register)
   {
+    $tools = $this->ef->retrieveTools();
     // Parse the diff into DiffFile objects
     $diff_parser = $this->pf->getDiffParserInstance();
     $diff_files = $diff_parser->parseDiff($diff);
@@ -88,8 +110,8 @@ class ReviewProcessor
 
           // Save the reviews if they should be registered
           if($register) {
-            $em->persist($report);
-            $em->flush();
+            $this->em->persist($report);
+            $this->em->flush();
           }
         }
       }

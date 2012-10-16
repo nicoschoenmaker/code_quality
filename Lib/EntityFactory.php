@@ -8,7 +8,8 @@ use Hostnet\HostnetCodeQualityBundle\Entity\File,
     Hostnet\HostnetCodeQualityBundle\Entity\Violation,
     Hostnet\HostnetCodeQualityBundle\Parser\EntityProviderInterface;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManager,
+    Doctrine\Common\Collection;
 
 class EntityFactory implements EntityProviderInterface
 {
@@ -27,7 +28,7 @@ class EntityFactory implements EntityProviderInterface
   /**
    * Returns a list of code quality tools
    *
-   * @return \Doctrine\Common\Collection
+   * @return Collection
    */
   public function retrieveTools()
   {

@@ -62,16 +62,10 @@ class DefaultController extends Controller
     $diff = $request->get('diff');
     $register = $request->get('register');
 
-    // Get the Doctrine Entity Manager
-    $em = $this->getDoctrine()->getManager();
-
     $processor = $this->get('review_processor');
-    $tools = $this->get('entity_factory')->retrieveTools();
     $review = $processor->processReview(
       $diff,
-      $register,
-      $em,
-      $tools
+      $register
     );
 
     $response = new Response(json_encode($review));

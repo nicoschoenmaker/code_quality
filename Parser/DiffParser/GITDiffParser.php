@@ -68,7 +68,8 @@ class GITDiffParser extends AbstractDiffParser implements DiffParserInterface
   public function parseDiffHead($header_string)
   {
     $diff_file = new DiffFile();
-    // Fill the header data
+    // Fill the DiffFile with the header data
+    // Fill the DiffFile source property
     $source_start_pos = strpos($header_string, self::SOURCE_START);
     $diff_file->setSource(
       substr(
@@ -84,6 +85,7 @@ class GITDiffParser extends AbstractDiffParser implements DiffParserInterface
           + self::UNNECESSARY_LOCATION_PART_LENGTH)
       )
     );
+    // Fill the DiffFile index property
     $index_pos = strrpos($header_string, self::INDEX);
     $index = substr(
       $header_string,
@@ -94,6 +96,7 @@ class GITDiffParser extends AbstractDiffParser implements DiffParserInterface
       ) - ($index_pos + strlen(self::INDEX)
         + self::T_SPACE_LENGTH)
     );
+    // Fill the DiffFile source revision property
     $diff_file->setSourceRevision(
       substr(
         $index,
@@ -101,6 +104,7 @@ class GITDiffParser extends AbstractDiffParser implements DiffParserInterface
         strpos($index, self::T_DOUBLE_DOT)
       )
     );
+    // Fill the DiffFile destination property
     $destination_start_pos = strpos($header_string, self::DESTINATION_START);
     $destination = substr(
       $header_string,
@@ -116,6 +120,7 @@ class GITDiffParser extends AbstractDiffParser implements DiffParserInterface
         + strlen($destination_start_pos)
         + self::UNNECESSARY_LOCATION_PART_LENGTH)
     );
+    // Fill the DiffFile name property
     $startpos_of_name = strrpos(
       $destination,
       self::T_FORWARD_SLASH
@@ -125,6 +130,7 @@ class GITDiffParser extends AbstractDiffParser implements DiffParserInterface
       strrpos($destination, self::T_DOT)
         - $startpos_of_name)
     );
+    // Fill the DiffFile extension property
     $diff_file->setExtension(
       substr(
         $destination,

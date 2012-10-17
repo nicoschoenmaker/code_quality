@@ -2,6 +2,12 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Parser;
 
+/**
+ * An abstract parser class which
+ * is extended by abstract parser classes.
+ *
+ * @author rprent
+ */
 abstract class AbstractParser
 {
   /**

@@ -44,26 +44,12 @@ class Violation
   private $end_line;
 
   /**
-   * @var string $status
-   *
-   * @ORM\Column(name="status", type="string", length=20)
-   */
-  private $status;
-
-  /**
    * @var Rule
    *
-   * @ORM\OneToOne(targetEntity="Rule", inversedBy="rule")
+   * @ORM\ManyToOne(targetEntity="Rule", cascade={"persist"})
    * @ORM\JoinColumn(name="rule_id", referencedColumnName="id")
    */
   private $rule;
-
-  /**
-   * @var Collection
-   *
-   * @ORM\ManyToMany(targetEntity="Report", mappedBy="violations")
-   */
-  private $reports;
 
 
   /**
@@ -73,13 +59,12 @@ class Violation
    * @param string $end_line
    * @param string $status
    */
-  public function __construct(Rule $rule, $message, $begin_line, $end_line, $status = 'new')
+  public function __construct(Rule $rule, $message, $begin_line, $end_line)
   {
     $this->rule = $rule;
     $this->message = $message;
     $this->begin_line = $begin_line;
     $this->end_line = $end_line;
-    $this->status = $status;
     $this->reports = new \Doctrine\Common\Collections\ArrayCollection();
   }
 
@@ -154,26 +139,6 @@ class Violation
   }
 
   /**
-   * Set status
-   *
-   * @param string $status
-   */
-  public function setStatus($status)
-  {
-    $this->status = $status;
-  }
-
-  /**
-   * Get status
-   *
-   * @return string
-   */
-  public function getStatus()
-  {
-    return $this->status;
-  }
-
-  /**
    * Set rule
    *
    * @param Rule $rule
@@ -194,12 +159,16 @@ class Violation
   }
 
   /**
-   * Get an array of Report objects
+   * Returns the contents of the Violation
    *
-   * @return Collection
+   * @return string
    */
-  public function getReports()
+  public function __toString()
   {
-    return $this->reports;
+    $output = $this->rule;
+    $output .= 'From lines ' . $this->begin_line . ' to ' . $this->end_line . "\n";
+    $output .= $this->message . "\n";
+
+    return $output;
   }
 }

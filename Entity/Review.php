@@ -29,7 +29,7 @@ class Review
   /**
    * @var Collection
    *
-   * @ORM\OneToMany(targetEntity="Report", mappedBy="id")
+   * @ORM\OneToMany(targetEntity="Report", mappedBy="id", cascade={"persist"})
    */
   private $reports;
 
@@ -68,5 +68,18 @@ class Review
   public function getReports()
   {
     return $this->reports;
+  }
+
+  /**
+   * Returns the contents of the Review
+   *
+   * @return string
+   */
+  public function __toString(){
+    $output = "\n";
+    foreach($this->getReports() as $report){
+      $output .= $report;
+    }
+    return $output;
   }
 }

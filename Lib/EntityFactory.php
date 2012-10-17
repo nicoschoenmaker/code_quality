@@ -5,17 +5,41 @@ namespace Hostnet\HostnetCodeQualityBundle\Lib;
 use Hostnet\HostnetCodeQualityBundle\Entity\File,
     Hostnet\HostnetCodeQualityBundle\Entity\Rule,
     Hostnet\HostnetCodeQualityBundle\Entity\CodeLanguage,
-    Hostnet\HostnetCodeQualityBundle\Entity\Violation,
     Hostnet\HostnetCodeQualityBundle\Parser\EntityProviderInterface;
 
 use Doctrine\ORM\EntityManager,
     Doctrine\Common\Collection;
 
+/**
+ * The Entity Factory holds the entity arrays and all
+ * the access to the database.
+ *
+ * @author rprent
+ */
 class EntityFactory implements EntityProviderInterface
 {
+  /**
+   * @var EntityManager
+   */
   private $em;
+
+  /**
+   * @var Collection
+   */
   private $code_languages = array();
+
+  /**
+   * @var Collection
+   */
   private $rules = array();
+
+  /**
+   * Whether the Review data should be saved or not.
+   *
+   * @var boolean
+   */
+  private $register = false;
+
 
   public function __construct(EntityManager $em)
   {
@@ -23,6 +47,37 @@ class EntityFactory implements EntityProviderInterface
 
     $this->retrieveCodeLanguages();
     $this->retrieveRules();
+  }
+
+  /**
+   * Sets whether the Review data should be saved or not.
+   *
+   * @param boolean $register
+   */
+  public function setRegister($register)
+  {
+    $this->register = $register;
+  }
+
+  public function persist($entity)
+  {
+    if($this->register) {
+      $this->em->persist($entity);
+    }
+  }
+
+  /**
+   * Persists and Flushes the entity if it should be registered.
+   * Required for certain entities before filling other entities.
+   *
+   * @param Object $entity
+   */
+  public function persistAndFlush($entity)
+  {
+    if($this->register) {
+      $this->em->persist($entity);
+      $this->em->flush();
+    }
   }
 
   /**
@@ -86,41 +141,16 @@ class EntityFactory implements EntityProviderInterface
   {
     $file = $this->em
       ->getRepository('HostnetCodeQualityBundle:File')
-      ->findByName($name)
+      ->findOneByName($name)
     ;
 
     // If file is null we create it
     if(!$file) {
       $file = new File($code_language, $name);
+      $this->persistAndFlush($file);
     }
 
     return $file;
-  }
-
-  /**
-   * Retrieves the Violation object from the DB
-   * based on the name.
-   * If it can't find the violation it will create it.
-   *
-   * @param Rule $rule
-   * @param string $message
-   * @param integer $begin_line
-   * @param integer $end_line
-   * @return Violation
-   */
-  public function retrieveViolation(Rule $rule, $message, $begin_line, $end_line)
-  {
-    $violation = $this->em
-      ->getRepository('HostnetCodeQualityBundle:Violation')
-      ->findByMessage($message)
-    ;
-
-    // If file is null we create it
-    if(!$violation) {
-      $violation = new Violation($rule, $message, $begin_line, $end_line);
-    }
-
-    return $violation;
   }
 
   /**

@@ -42,14 +42,6 @@ class Rule
    */
   private $enabled;
 
-  /**
-   * @var Tool
-   *
-   * @ORM\ManyToOne(targetEntity="Tool", inversedBy="tool")
-   * @ORM\JoinColumn(name="tool_id", referencedColumnName="id")
-   */
-  private $tool;
-
 
   public function __construct($name, $priority = 3, $enabled = true)
   {
@@ -129,22 +121,12 @@ class Rule
   }
 
   /**
-   * Set tool
+   * Returns the contents of the Rule
    *
-   * @param Tool $tool
+   * @return string
    */
-  public function setTool(Tool $tool)
+  public function __toString()
   {
-    $this->tool = $tool;
-  }
-
-  /**
-   * Get tool
-   *
-   * @return Tool
-   */
-  public function getTool()
-  {
-    return $this->tool;
+    return $this->getName() . "\n";
   }
 }

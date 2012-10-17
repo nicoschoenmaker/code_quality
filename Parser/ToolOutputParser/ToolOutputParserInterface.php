@@ -4,6 +4,12 @@ namespace Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser;
 
 use Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile;
 
+/**
+ * A tool output parser interface which
+ * is implemented by tool output parsers.
+ *
+ * @author rprent
+ */
 interface ToolOutputParserInterface
 {
   /**

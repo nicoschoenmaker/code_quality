@@ -4,6 +4,12 @@ namespace Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser;
 
 use Hostnet\HostnetCodeQualityBundle\Parser\AbstractParser;
 
+/**
+ * An abstract tool output parser class which
+ * is extended by tool output parsers.
+ *
+ * @author rprent
+ */
 abstract class AbstractToolOutputParser extends AbstractParser
 {
   /**

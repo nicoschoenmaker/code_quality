@@ -10,6 +10,11 @@ use Hostnet\HostnetCodeQualityBundle\Entity\Report,
     Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\ToolOutputParserInterface,
     Hostnet\HostnetCodeQualityBundle\Parser\EntityProviderInterface;
 
+/**
+ * The JSLint XML Parser parses JSLint xml format output.
+ *
+ * @author rprent
+ */
 class JSLintXMLParser extends AbstractToolOutputParser implements ToolOutputParserInterface
 {
   CONST BEGINLINE = 'beginline';

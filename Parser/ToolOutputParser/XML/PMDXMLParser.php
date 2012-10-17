@@ -5,11 +5,17 @@ namespace Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\XML;
 use JMS\SerializerBundle\Exception\XmlErrorException;
 
 use Hostnet\HostnetCodeQualityBundle\Entity\Report,
+    Hostnet\HostnetCodeQualityBundle\Entity\Violation,
     Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile,
     Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\ToolOutputParserInterface,
     Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\AbstractToolOutputParser,
     Hostnet\HostnetCodeQualityBundle\Parser\EntityProviderInterface;
 
+/**
+ * The PMD XML Parser parses PMD xml format output.
+ *
+ * @author rprent
+ */
 class PMDXMLParser extends AbstractToolOutputParser implements ToolOutputParserInterface
 {
   CONST BEGINLINE = 'beginline';
@@ -67,7 +73,7 @@ class PMDXMLParser extends AbstractToolOutputParser implements ToolOutputParserI
 
       // Fill the Violation
       $message = trim($output_violation->firstChild->nodeValue);
-      $violation = $this->efi->retrieveViolation(
+      $violation = new Violation(
         $rule,
         $message,
         $output_violation->getAttribute(self::BEGINLINE),

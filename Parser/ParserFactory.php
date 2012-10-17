@@ -4,6 +4,11 @@ namespace Hostnet\HostnetCodeQualityBundle\Parser;
 
 use Hostnet\HostnetCodeQualityBundle\Parser\AbstractParser;
 
+/**
+ * The Parser Factory holds and creates parsers.
+ *
+ * @author rprent
+ */
 class ParserFactory
 {
   /**

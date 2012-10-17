@@ -4,6 +4,12 @@ namespace Hostnet\HostnetCodeQualityBundle\Parser;
 
 use Symfony\Component\Filesystem\Exception\IOException;
 
+/**
+ * The Command Line Utility class handles command line calls
+ * like creating the temp code quality dir.
+ *
+ * @author rprent
+ */
 class CommandLineUtility
 {
 
@@ -16,7 +22,6 @@ class CommandLineUtility
 
   public function __construct($temp_cq_dir_name)
   {
-    var_dump($temp_cq_dir_name);
     $this->temp_code_quality_dir_path = realpath(sys_get_temp_dir() . '/' . $temp_cq_dir_name);
     if(!is_writable($this->temp_code_quality_dir_path)) {
       throw new IOException("The Code Quality Temp directory at '" . $this->temp_code_quality_dir_path

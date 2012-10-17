@@ -67,7 +67,7 @@ class Tool
   /**
    * @var Collection
    *
-   * @ORM\ManyToMany(targetEntity="Argument")
+   * @ORM\ManyToMany(targetEntity="Argument", cascade={"persist"})
    * @ORM\JoinTable(name="tool_argument",
    *   joinColumns={@ORM\JoinColumn(name="tool_id", referencedColumnName="id")},
    *   inverseJoinColumns={@ORM\JoinColumn(name="argument_id", referencedColumnName="id")}
@@ -87,7 +87,7 @@ class Tool
    *
    * @var Collection
    *
-   * @ORM\ManyToMany(targetEntity="CodeLanguage")
+   * @ORM\ManyToMany(targetEntity="CodeLanguage", cascade={"persist"})
    * @ORM\JoinTable(name="tool_code_language",
    *   joinColumns={@ORM\JoinColumn(name="tool_id", referencedColumnName="id")},
    *   inverseJoinColumns={@ORM\JoinColumn(name="code_language_id", referencedColumnName="id")}

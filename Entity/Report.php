@@ -14,32 +14,34 @@ use Hostnet\HostnetCodeQualityBundle\Entity\Review,
 class Report
 {
   /**
+   * @var integer $id
+   *
+   * @ORM\Column(name="id", type="integer")
+   * @ORM\Id
+   * @ORM\GeneratedValue(strategy="AUTO")
+   */
+  private $id;
+
+  /**
    * @var Review
    *
-   * @ORM\ManyToOne(targetEntity="Rule", inversedBy="review")
+   * @ORM\ManyToOne(targetEntity="Review", inversedBy="review", cascade={"persist"})
    * @ORM\JoinColumn(name="review_id", referencedColumnName="id")
-   * @ORM\Id
    */
   private $review;
 
   /**
    * @var File
    *
-   * @ORM\ManyToOne(targetEntity="File", inversedBy="file")
+   * @ORM\ManyToOne(targetEntity="File", inversedBy="file", cascade={"persist"})
    * @ORM\JoinColumn(name="file_id", referencedColumnName="id")
-   * @ORM\Id
    */
   private $file;
 
   /**
    * @var Collection
    *
-   * @ORM\ManyToMany(targetEntity="Violation", inversedBy="reports")
-   * @ORM\JoinTable(name="report_violation",
-   *   joinColumns={@ORM\JoinColumn(name="review_id", referencedColumnName="review_id"),
-   *     @ORM\JoinColumn(name="file_id", referencedColumnName="file_id")},
-   *   inverseJoinColumns={@ORM\JoinColumn(name="violation_id", referencedColumnName="id")}
-   * )
+   * @ORM\OneToMany(targetEntity="Violation", mappedBy="id", cascade={"persist"})
    */
   private $violations;
 
@@ -48,6 +50,16 @@ class Report
   {
     $this->file = $file;
     $this->violations = new \Doctrine\Common\Collections\ArrayCollection();
+  }
+
+  /**
+   * Get id
+   *
+   * @return integer
+   */
+  public function getId()
+  {
+    return $this->id;
   }
 
   /**
@@ -98,5 +110,20 @@ class Report
   public function getViolations()
   {
     return $this->violations;
+  }
+
+  /**
+   * Returns the contents of the Report
+   *
+   * @return string
+   */
+  public function __toString()
+  {
+    $output = '';
+    $output .= $this->getFile();
+    foreach($this->getViolations() as $violation){
+      $output .= $violation . "\n";
+    }
+    return $output;
   }
 }

@@ -2,6 +2,11 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Parser\Diff;
 
+/**
+ * This object contains all the blocks of code of the parsed Diff.
+ *
+ * @author rprent
+ */
 class DiffCodeBlock
 {
   /**

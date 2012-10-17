@@ -11,6 +11,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route,
 
 use Hostnet\HostnetCodeQualityBundle\Entity\Tool;
 
+/**
+ * The Default Controller
+ *
+ * @author rprent
+ */
 class DefaultController extends Controller
 {
   /**
@@ -54,7 +59,11 @@ class DefaultController extends Controller
   }
 
   /**
+   * Performs the Code Quality Review process.
+   *
    * @Route("/perform-code-quality-review")
+   * @param Request $request
+   * @return \Symfony\Component\HttpFoundation\Response
    */
   public function performCodeQualityReviewAction(Request $request)
   {

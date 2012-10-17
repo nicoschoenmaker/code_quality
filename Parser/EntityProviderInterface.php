@@ -2,9 +2,15 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Parser;
 
-use Hostnet\HostnetCodeQualityBundle\Entity\Rule,
-    Hostnet\HostnetCodeQualityBundle\Entity\CodeLanguage;
+use Hostnet\HostnetCodeQualityBundle\Entity\CodeLanguage;
 
+/**
+ * The Entity Provider Interface is implemented
+ * by the Entity Factory so that it can be
+ * injected without having the dependency.
+ *
+ * @author rprent
+ */
 interface EntityProviderInterface
 {
   /**
@@ -16,19 +22,6 @@ interface EntityProviderInterface
    * @return File
    */
   public function retrieveFile(CodeLanguage $code_language, $name);
-
-  /**
-   * Retrieves the Violation object from the DB
-   * based on the name.
-   * If it can't find the violation it will create it.
-   *
-   * @param Rule $rule
-   * @param string $message
-   * @param integer $begin_line
-   * @param integer $end_line
-   * @return Violation
-   */
-  public function retrieveViolation(Rule $rule, $message, $begin_line, $end_line);
 
   /**
    * Checks if the code language already exists and gets it,

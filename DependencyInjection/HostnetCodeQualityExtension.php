@@ -15,8 +15,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder,
 class HostnetCodeQualityExtension extends Extension
 {
   /**
-   * {@inheritDoc}
-  */
+   * @see \Symfony\Component\DependencyInjection\Extension\ExtensionInterface::load()
+   */
   public function load(array $configs, ContainerBuilder $container)
   {
     $configuration = new Configuration();

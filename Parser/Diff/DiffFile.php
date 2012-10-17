@@ -6,6 +6,11 @@ use Symfony\Component\Process\Process;
 
 use Hostnet\HostnetCodeQualityBundle\Entity\Tool;
 
+/**
+ * This object contains all the parsed Diff data.
+ *
+ * @author rprent
+ */
 class DiffFile
 {
   CONST TEMP_DIFF_FILE_PREFIX = 'cq';

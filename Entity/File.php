@@ -39,7 +39,7 @@ class File
   /**
    * @var Collection
    *
-   * @ORM\OneToMany(targetEntity="Report", mappedBy="id")
+   * @ORM\OneToMany(targetEntity="Report", mappedBy="id", cascade={"persist"})
    */
   private $reports;
 
@@ -112,5 +112,15 @@ class File
   public function setCodeLanguage(CodeLanguage $code_language)
   {
     $this->code_language = $code_language;
+  }
+
+  /**
+   * Returns the contents of the File
+   *
+   * @return string
+   */
+  public function __toString()
+  {
+    return $this->getName() . '.' . $this->getCodeLanguage()->getName() . "\n";
   }
 }

@@ -11,6 +11,13 @@ use Hostnet\HostnetCodeQualityBundle\Entity\Review,
     Hostnet\HostnetCodeQualityBundle\Parser\CommandLineUtility,
     Hostnet\HostnetCodeQualityBundle\Parser\ParserFactory;
 
+/**
+ * The Review Processor processes the whole review.
+ * Most of the important component calls like calling parsers
+ * is done in this class.
+ *
+ * @author rprent
+ */
 class ReviewProcessor
 {
   /**
@@ -69,6 +76,9 @@ class ReviewProcessor
 
     // Send each diff file to their specific tool based on the extension
     $review = new Review();
+    // Tell the Entity Factory whether we want to register the Review or not
+    $this->ef->setRegister($register);
+    $this->ef->persistAndFlush($review);
     foreach($diff_files as $diff_file) {
       foreach($tools as $tool) {
         if($tool->supports($diff_file->getExtension())) {
@@ -83,10 +93,6 @@ class ReviewProcessor
             '?id2=' .
             $code_file->getSourceRevision()
           );*/
-          // If the file_get_contents fails it returns false on failure which is why we throw an exception
-          if(!$original_file) {
-            throw new IOException("The file at '". $this->raw_file_url_mask . "' could not be found.");
-          }
 
           // Let the file be processed by the given tool
           $diff_file->processFile(
@@ -106,16 +112,12 @@ class ReviewProcessor
           $report = $tool_output_parser->parseToolOutput($diff_file);
 
           // Add the Report object to the Review
+          $report->setReview($review);
           $review->getReports()->add($report);
-
-          // Save the reviews if they should be registered
-          if($register) {
-            $this->em->persist($report);
-            $this->em->flush();
-          }
         }
       }
     }
+    $this->ef->persistAndFlush($review);
 
     return $review;
   }

@@ -59,10 +59,13 @@ class ProcessDiffCommand extends ContainerAwareCommand
       $register = true;
     }
 
+    $this->container = $this->getApplication()->getKernel()->getContainer();
     // Process the review by calling the ReviewProcessor through the container
     $review = $this->container->get('review_processor')->processReview(
       $diff,
       $register
     );
+
+    echo $review;
   }
 }

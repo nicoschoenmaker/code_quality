@@ -22,7 +22,7 @@ class CommandLineUtility
 
   public function __construct($temp_cq_dir_name)
   {
-    $this->temp_code_quality_dir_path = realpath(sys_get_temp_dir() . '/' . $temp_cq_dir_name);
+    $this->temp_code_quality_dir_path = realpath($temp_cq_dir_name);
     if(!is_writable($this->temp_code_quality_dir_path)) {
       throw new IOException("The Code Quality Temp directory at '" . $this->temp_code_quality_dir_path
         . "' is not writable.");

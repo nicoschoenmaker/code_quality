@@ -77,9 +77,7 @@ class Review
    */
   public function __toString(){
     $output = "\n";
-    foreach($this->getReports() as $report){
-      $output .= $report;
-    }
+    $output .= implode("\n", $this->getReports()->toArray());
     return $output;
   }
 }

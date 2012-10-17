@@ -29,7 +29,7 @@ class Configuration implements ConfigurationInterface
           ->isRequired()
             ->end()
         ->scalarNode('temp_cq_dir_name')
-          ->defaultValue('codequality')
+          ->defaultValue(sys_get_temp_dir() . '/codequality')
             ->end()
       ->end();
 

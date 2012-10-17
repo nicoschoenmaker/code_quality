@@ -121,9 +121,8 @@ class Report
   {
     $output = '';
     $output .= $this->getFile();
-    foreach($this->getViolations() as $violation){
-      $output .= $violation . "\n";
-    }
+    $output .= implode("\n", $this->getViolations()->toArray());
+
     return $output;
   }
 }

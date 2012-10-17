@@ -2,8 +2,6 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-
 use Symfony\Component\Console\Command\Command,
     Symfony\Component\Console\Input\InputArgument,
     Symfony\Component\Console\Input\InputInterface,
@@ -19,7 +17,7 @@ use Doctrine\Common\Collection;
  *
  * @author rprent
  */
-class ProcessDiffCommand extends ContainerAwareCommand
+class ProcessDiffCommand extends Command
 {
   /**
    * Configures the command settings
@@ -66,6 +64,6 @@ class ProcessDiffCommand extends ContainerAwareCommand
       $register
     );
 
-    echo $review;
+    $output->write($review->__toString());
   }
 }

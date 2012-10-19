@@ -119,8 +119,7 @@ class Report
    */
   public function __toString()
   {
-    $output = '';
-    $output .= $this->getFile();
+    $output = $this->getFile();
     $output .= implode("\n", $this->getViolations()->toArray());
 
     return $output;

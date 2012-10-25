@@ -41,11 +41,10 @@ Kijk voor meer informatie op:
 ###### http://www.hostnet.nl/vacatures/vacature-frontend-developer ######
 ###### http://www.hostnet.nl/vacatures/vacature-back-end-developer ######
 
-<!-- ===================================================================
-*        Op zoek naar een baan in de Software Engineering?        *
-*        Hostnet is nog op zoek naar nieuwe ontwikkelaars.        *
-*                                                                 *
-*   Kijk voor meer informatie op:                                 *
-*   http://www.hostnet.nl/vacatures/vacature-frontend-developer   *
-*   http://www.hostnet.nl/vacatures/vacature-back-end-developer   *
-=================================================================== -->
+<!-- ===============================================================================
+*        Op zoek naar een baan in de Software Engineering?										*
+*        Hostnet is nog op zoek naar nieuwe ontwikkelaars.										*
+*																																							*
+*   Kijk voor meer informatie op:                                             *
+*   https://www.hostnet.nl/vacatures/vacature-software-engineer-programmeur   *
+============================================================================== -->

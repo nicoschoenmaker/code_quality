@@ -6,7 +6,7 @@ services:
 
   review_processor:
     class: Hostnet\HostnetCodeQualityBundle\Lib\ReviewProcessor
-    arguments: [@doctrine.orm.entity_manager, @entity_factory, @command_line_utility, @parser_factory, %hostnet_code_quality.raw_file_url_mask%]
+    arguments: [@doctrine.orm.entity_manager, @entity_factory, @original_file_retrieval_factory, @command_line_utility, @parser_factory]
 
 ##############################
 # The Entity Factory service #
@@ -16,6 +16,20 @@ services:
     class: Hostnet\HostnetCodeQualityBundle\Lib\EntityFactory
     arguments: [@doctrine.orm.entity_manager]
 
+########################################
+# The Original File Retrieval services #
+########################################
+
+  original_file_retrieval_factory:
+    class: Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalFactory
+    arguments: [%hostnet_code_quality.original_file_retrieval_method%]
+    calls:
+      - [ addOriginalFileRetrieverInstance, [@original_file_retriever.retrieve_by_cgit] ]
+
+  original_file_retriever.retrieve_by_cgit:
+    class: Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\RetrieveByCGIT
+    arguments: [%hostnet_code_quality.raw_file_url_mask_1%, %hostnet_code_quality.raw_file_url_mask_2%]
+
 ####################################
 # The Command Line Utility service #
 ####################################
@@ -23,7 +37,6 @@ services:
   command_line_utility:
     class: Hostnet\HostnetCodeQualityBundle\Parser\CommandLineUtility
     arguments: [%hostnet_code_quality.temp_cq_dir_name%]
-
 
 #######################
 # The Parser services #
@@ -51,3 +64,10 @@ services:
   tool_output_parser.xml.jslint_xml_parser:
     class: Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\XML\JSLintXMLParser
     arguments: [@entity_factory]
+
+#####################
+# Feedback Handlers #
+#####################
+
+  review_board_feedback_handler:
+    class: Hostnet\HostnetCodeQualityBundle\Lib\ReviewBoardFeedbackHandler

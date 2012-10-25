@@ -121,6 +121,11 @@ class File
    */
   public function __toString()
   {
-    return $this->getName() . '.' . $this->getCodeLanguage()->getName() . "\n";
+    $full_file_name = $this->getName() . '.' . $this->getCodeLanguage()->getName();
+    $output = str_repeat('*', strlen($full_file_name) + 4) . "\n";
+    $output .=  '* ' . $full_file_name . " *\n";
+    $output .= str_repeat('*', strlen($full_file_name) + 4) . "\n";
+
+    return $output;
   }
 }

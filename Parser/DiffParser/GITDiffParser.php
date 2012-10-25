@@ -7,6 +7,8 @@ use Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile,
     Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\AbstractDiffParser,
     Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\DiffParserInterface;
 
+use InvalidArgumentException;
+
 class GITDiffParser extends AbstractDiffParser implements DiffParserInterface
 {
   CONST T_DOUBLE_DOT = '..';
@@ -39,7 +41,9 @@ class GITDiffParser extends AbstractDiffParser implements DiffParserInterface
       $diff_code_block_strings = preg_split(self::FILE_RANGE_PATTERN, $file_string);
       $header_string = $diff_code_block_strings[0];
       // Parse the header data
-      $diff_file = $this->parseDiffHead($header_string);
+      $diff_file = new DiffFile();
+      $diff_file->setDiffFile($file_string);
+      $this->parseDiffHead($diff_file, $header_string);
 
       // Parse diff code blocks into DiffCodeBlock objects
       $diff_code_blocks = array();
@@ -54,6 +58,7 @@ class GITDiffParser extends AbstractDiffParser implements DiffParserInterface
       $diff_file->setDiffCodeBlocks($diff_code_blocks);
       $diff_files[] = $diff_file;
     }
+    $this->checkIfDiffParsedCleanly($diff_files);
 
     return $diff_files;
   }
@@ -61,28 +66,27 @@ class GITDiffParser extends AbstractDiffParser implements DiffParserInterface
   /**
    * Parse the diff header data
    *
+   * @param DiffFile $diff_file
    * @param String $header_string
-   * @return DiffFile
    * @see \Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\DiffParserInterface::parseDiffHead()
    */
-  public function parseDiffHead($header_string)
+  public function parseDiffHead(DiffFile $diff_file, $header_string)
   {
-    $diff_file = new DiffFile();
-    // Fill the DiffFile with the header data
     // Fill the DiffFile source property
-    $source_start_pos = strpos($header_string, self::SOURCE_START);
+    $source_start_pos = strpos(
+      $header_string,
+      self::T_FORWARD_SLASH,
+      strpos($header_string, self::SOURCE_START)
+    );
     $diff_file->setSource(
       substr(
         $header_string,
-        $source_start_pos + strlen(self::SOURCE_START)
-          + self::UNNECESSARY_LOCATION_PART_LENGTH,
+        $source_start_pos,
         strpos(
           $header_string,
           PHP_EOL,
           $source_start_pos
-        ) - self::T_SPACE_LENGTH
-          - ($source_start_pos+strlen($source_start_pos)
-          + self::UNNECESSARY_LOCATION_PART_LENGTH)
+        ) - $source_start_pos
       )
     );
     // Fill the DiffFile index property
@@ -138,8 +142,6 @@ class GITDiffParser extends AbstractDiffParser implements DiffParserInterface
           + strlen(self::T_DOT)
       )
     );
-
-    return $diff_file;
   }
 
   /**
@@ -173,9 +175,9 @@ class GITDiffParser extends AbstractDiffParser implements DiffParserInterface
       substr(
         $begin_and_end_line,
         strpos($begin_and_end_line, self::T_MINUS) + strlen(self::T_MINUS),
-        strpos($begin_and_end_line, self::T_PLUS)
-        - (strlen(self::T_PLUS)+self::T_SPACE_LENGTH)
-        - strpos($begin_and_end_line, self::T_MINUS)
+         strpos($begin_and_end_line, ',')
+          - strpos($begin_and_end_line, self::T_MINUS)
+          - strlen(self::T_MINUS)
       )
     );
     $diff_code_block->setEndLine(
@@ -194,7 +196,7 @@ class GITDiffParser extends AbstractDiffParser implements DiffParserInterface
         $body_string,
         strpos(
           $body_string,
-          self::FILE_RANGE_BRACKETS
+          PHP_EOL
         ) + self::T_SPACE_LENGTH
       )
     );

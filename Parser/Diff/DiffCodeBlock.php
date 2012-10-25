@@ -10,6 +10,15 @@ namespace Hostnet\HostnetCodeQualityBundle\Parser\Diff;
 class DiffCodeBlock
 {
   /**
+   * An array of the properties that are required
+   * to be extracted in the diff parsing process.
+   *
+   * @var array
+   */
+  private $required_diff_parsing_properties =
+    array('begin_line', 'end_line', 'code');
+
+  /**
    * @var integer $begin_line
    */
   private $begin_line;
@@ -83,5 +92,17 @@ class DiffCodeBlock
   public function getCode()
   {
     return $this->code;
+  }
+
+  public function returnEmptyDiffParsingProperties()
+  {
+    $empty_diff_parsing_properties = array();
+    foreach($this->required_diff_parsing_properties as $property) {
+      if($this->$property == '') {
+        $empty_diff_parsing_properties[$property] = $property;
+      }
+    }
+
+    return $empty_diff_parsing_properties;
   }
 }

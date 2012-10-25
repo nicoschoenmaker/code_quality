@@ -8,7 +8,6 @@ use Symfony\Component\Filesystem\Exception\IOException;
 
 use Hostnet\HostnetCodeQualityBundle\Entity\Review,
     Hostnet\HostnetCodeQualityBundle\Lib\EntityFactory,
-    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalFactory,
     Hostnet\HostnetCodeQualityBundle\Parser\CommandLineUtility,
     Hostnet\HostnetCodeQualityBundle\Parser\ParserFactory;
 
@@ -28,11 +27,6 @@ class ReviewProcessor
   private $em;
 
   /**
-   * @var OriginalFileRetrievalFactory
-   */
-  private $ofrf;
-
-  /**
    * @var CommandLineUtility
    */
   private $clu;
@@ -47,14 +41,22 @@ class ReviewProcessor
    */
   private $ef;
 
+  /**
+   * The raw file url mask setting configured which
+   * is used to retrieve the original file
+   *
+   * @var string
+   */
+  private $raw_file_url_mask;
+
   public function __construct(EntityManager $em, EntityFactory $ef,
-    OriginalFileRetrievalFactory $ofrf, CommandLineUtility $clu, ParserFactory $pf)
+    CommandLineUtility $clu, ParserFactory $pf, $raw_file_url_mask)
   {
     $this->em = $em;
     $this->ef = $ef;
-    $this->ofrf = $ofrf;
     $this->clu = $clu;
     $this->pf = $pf;
+    $this->raw_file_url_mask = $raw_file_url_mask;
   }
 
   /**
@@ -65,7 +67,7 @@ class ReviewProcessor
    * @throws IOException
    * @return \Hostnet\HostnetCodeQualityBundle\Entity\Review
    */
-  public function processReview($diff, $register, $repository)
+  public function processReview($diff, $register)
   {
     $tools = $this->ef->retrieveTools();
     // Parse the diff into DiffFile objects
@@ -77,32 +79,27 @@ class ReviewProcessor
     // Tell the Entity Factory whether we want to register the Review or not
     $this->ef->setRegister($register);
     $this->ef->persistAndFlush($review);
-    // Gets the correct original file retriever based on the config setting
-    $original_file_retriever = $this->ofrf->getOriginalFileRetrieverInstance();
     foreach($diff_files as $diff_file) {
       foreach($tools as $tool) {
         if($tool->supports($diff_file->getExtension())) {
-
-          // Check if the diff file is new. If it's not new we retrieve the original file
-          // and merge it. If it's new we don't have to retrieve the original
-          // as there is none, so we just insert the whole diff code
-          if($diff_file->hasParent()) {
-            // Retrieves the original file based on the configured retrieval method
-            $diff_file->setOriginalFile(
-              $original_file_retriever->retrieveOriginalFile($diff_file, $repository)
-            );
-            // Merge the diff with the original in order to be able
-            // to scan all the changes made in the actual code
-            $diff_file->mergeDiffWithOriginal(
-              $this->clu->getTempCodeQualityDirPath(),
-              $this->pf->getSCM()
-            );
-          } else {
-            $diff_file->createTempDiffFile($this->clu->getTempCodeQualityDirPath());
-          }
+          // cgit implementation:
+          // Retrieve the original code file based on the repository raw file url mask
+          // and the original file name + parent revision number
+          // TODO Make more original file extraction implementations possible
+          $original_file = file_get_contents($this->raw_file_url_mask);
+          /*$original_file = file_get_contents(
+            $this->raw_file_url_mask .
+            $code_file->getSource() .
+            '?id2=' .
+            $code_file->getSourceRevision()
+          );*/
 
           // Let the file be processed by the given tool
-          $diff_file->processFile($tool);
+          $diff_file->processFile(
+            $tool,
+            $original_file,
+            $this->clu->getTempCodeQualityDirPath()
+          );
 
           // Request the Tool Output Parser from the Factory
           $additional_tool_properties = array('format' => $tool->getFormat());
@@ -117,14 +114,6 @@ class ReviewProcessor
           // Add the Report object to the Review
           $report->setReview($review);
           $review->getReports()->add($report);
-        } else {
-          // If the tool doesn't support the extension we report it to the user.
-          echo
-            "\nThe file " . $diff_file->getName() . '.' . $diff_file->getExtension()
-            . ' has the ' . $diff_file->getExtension()
-            . ' extension, which is not supported by ' . $tool->getName() . ".\nIf "
-            . $tool->getName() . ' should support the ' . $diff_file->getExtension()
-            . ' extension you should contact your administrator to enable it.';
         }
       }
     }

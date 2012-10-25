@@ -37,7 +37,9 @@ class SVNDiffParser extends AbstractDiffParser implements DiffParserInterface
       $diff_diff_code_block_strings = preg_split(self::FILE_RANGE_PATTERN, $file_string);
       $header_string = $diff_diff_code_block_strings[0];
       // Parse the header data
-      $diff_file = $this->parseDiffHead($header_string);
+      $diff_file = new DiffFile();
+      $diff_file->setDiffFile($file_string);
+      $this->parseDiffHead($diff_file, $header_string);
 
       // Parse diff code blocks into DiffCodeBlock objects
       $diff_diff_code_blocks = array();
@@ -51,6 +53,7 @@ class SVNDiffParser extends AbstractDiffParser implements DiffParserInterface
       $diff_file->setDiffCodeBlocks($diff_diff_code_blocks);
       $diff_files[] = $diff_file;
     }
+    $this->checkIfDiffParsedCleanly($diff_files);
 
     return $diff_files;
   }
@@ -58,13 +61,12 @@ class SVNDiffParser extends AbstractDiffParser implements DiffParserInterface
   /**
    * Parse the diff header data
    *
+   * @param DiffFile $diff_file
    * @param String $header_string
-   * @return DiffFile
    * @see \Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\DiffParserInterface::parseDiffHead()
    */
-  public function parseDiffHead($header_string)
+  public function parseDiffHead(DiffFile $diff_file, $header_string)
   {
-    $diff_file = new DiffFile();
     // Explode each header into lines so we can easily gather the header data,
     // it removes the "Index: " pattern
     $lines = explode(PHP_EOL, $header_string);
@@ -111,8 +113,6 @@ class SVNDiffParser extends AbstractDiffParser implements DiffParserInterface
       $lines[3],
       strlen(self::DESTINATION_START)
     );
-
-    return $diff_file;
   }
 
   /**

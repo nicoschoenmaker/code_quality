@@ -28,6 +28,7 @@ class MockEntityFactory extends EntityFactory implements EntityProviderInterface
     );
     $PHPMD->getArguments()->add(new Argument('codesize,unusedcode,naming'));
     $PHPMD->getSupportedLanguages()->add(new CodeLanguage('php'));
+    $PHPMD->setWhitelistedExitCodes('0, 2');
 
     return array($PHPMD);
   }

@@ -2,7 +2,8 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile;
+use Hostnet\HostnetCodeQualityBundle\Parser\ParserInterface,
+    Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile;
 
 /**
  * A tool output parser interface which
@@ -10,7 +11,7 @@ use Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile;
  *
  * @author rprent
  */
-interface ToolOutputParserInterface
+interface ToolOutputParserInterface extends ParserInterface
 {
   /**
    * Parse the output of a static code quality tool and

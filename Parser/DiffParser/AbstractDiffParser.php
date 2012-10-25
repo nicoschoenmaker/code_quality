@@ -4,6 +4,8 @@ namespace Hostnet\HostnetCodeQualityBundle\Parser\DiffParser;
 
 use Hostnet\HostnetCodeQualityBundle\Parser\AbstractParser;
 
+use InvalidArgumentException;
+
 abstract class AbstractDiffParser extends AbstractParser
 {
   CONST T_SPACE_LENGTH = 1;
@@ -27,5 +29,38 @@ abstract class AbstractDiffParser extends AbstractParser
   public function supports($scm)
   {
     return (strcasecmp($this->resource, $scm) == 0) ? true : false;
+  }
+
+  /**
+   * Check if the whole diff parsed cleanly
+   *
+   * @param array $diff_files
+   * @throws InvalidArgumentException
+   */
+  protected function checkIfDiffParsedCleanly($diff_files)
+  {
+    $diff_parsed_uncleanly = false;
+    $parsing_exception = "The following diff components didn't get parsed correctly:\n\n";
+
+    foreach($diff_files as $diff_file) {
+      $empty_diff_parsing_properties = $diff_file->returnEmptyDiffParsingProperties();
+      // If a property didn't get parsed correctly we start the exception throwing process
+      if(count($empty_diff_parsing_properties) > 0) {
+        $diff_parsed_uncleanly = true;
+        $last_empty_diff_parsing_property = array_pop($empty_diff_parsing_properties);
+        $empty_diff_parsing_properties = implode(', ', $empty_diff_parsing_properties);
+        // Add all the failed parsing components of the diff file
+        $and = (count($empty_diff_parsing_properties) > 1) ? ' and ' : ', ';
+        $parsing_exception .=
+        "\t" . $diff_file->getName() . ":\n"
+          . "\t\t" . '"' . $empty_diff_parsing_properties . $and
+            . $last_empty_diff_parsing_property . '"' . "\n";
+        ;
+      }
+    }
+
+    if($diff_parsed_uncleanly) {
+      throw new InvalidArgumentException($parsing_exception);
+    }
   }
 }

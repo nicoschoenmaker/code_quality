@@ -2,7 +2,7 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Parser;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\AbstractParser;
+use Hostnet\HostnetCodeQualityBundle\Parser\ParserInterface;
 
 /**
  * The Parser Factory holds and creates parsers.
@@ -28,14 +28,20 @@ class ParserFactory
 
   public function __construct($scm)
   {
-    $this->scm = $scm;
+    $this->scm = strtolower($scm);
   }
+
+  public function getSCM()
+  {
+    return $this->scm;
+  }
+
   /**
    * Adds a parser to the collection of parsers
    *
    * @param AbstractParser $parser_instance
    */
-  public function addParserInstance(AbstractParser $parser_instance)
+  public function addParserInstance(ParserInterface $parser_instance)
   {
     $this->parsers[] = $parser_instance;
   }

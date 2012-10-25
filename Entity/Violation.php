@@ -166,7 +166,11 @@ class Violation
   public function __toString()
   {
     $output = $this->rule;
-    $output .= 'From lines ' . $this->begin_line . ' to ' . $this->end_line . "\n";
+    if($this->begin_line == $this->end_line) {
+      $output .= 'At line ' . $this->begin_line . "\n";
+    } else {
+      $output .= 'From lines ' . $this->begin_line . ' to ' . $this->end_line . "\n";
+    }
     $output .= $this->message . "\n";
 
     return $output;

@@ -61,6 +61,7 @@ class PMDXMLParser extends AbstractToolOutputParser implements ToolOutputParserI
     if(!$xml->loadXML($diff_file->getDiffOutput())) {
       throw new XmlErrorException('Error while parsing XML, invalid XML supplied');
     }
+
     // Extract all the violation nodes out of the tool output
     $output_violations = $xml->getElementsByTagName(self::VIOLATION_TAG_NAME);
     foreach($output_violations as $output_violation) {

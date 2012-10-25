@@ -120,7 +120,31 @@ class Report
   public function __toString()
   {
     $output = $this->getFile();
-    $output .= implode("\n", $this->getViolations()->toArray());
+    if(count($this->getViolations()) == 0) {
+      $output .= "No violations for this file! Keep up the good work and make the donkey proud!\n";
+      $output .= '                         /\          /\   ' . "\n" .
+                 '                         ( \\        // ) ' . "\n" .
+                 '                          \ \\      // /  ' . "\n" .
+                 '                           \_\\||||//_/   ' . "\n" .
+                 '                            \/ _  _ \     ' . "\n" .
+                 '                           \/|(O)(O)|     ' . "\n" .
+                 '                          \/ |      |     ' . "\n" .
+                 '      ___________________\/  \      /     ' . "\n" .
+                 '     //                //     |____|      ' . "\n" .
+                 '    //                ||     /      \     ' . "\n" .
+                 '   //|                \|     \ 0  0 /     ' . "\n" .
+                 '  // \       )         V    / \____/      ' . "\n" .
+                 ' //   \     /        (     /              ' . "\n" .
+                 '""     \   /_________|  |_/               ' . "\n" .
+                 '       /  /\   /     |  ||                ' . "\n" .
+                 '      /  / /  /      \  ||                ' . "\n" .
+                 '      | |  | |        | ||                ' . "\n" .
+                 '      | |  | |        | ||                ' . "\n" .
+                 '      |_|  |_|        |_||                ' . "\n" .
+                 '       \_\  \_\        \_\\               ' . "\n";
+    } else {
+      $output .= implode("\n", $this->getViolations()->toArray());
+    }
 
     return $output;
   }

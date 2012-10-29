@@ -244,7 +244,7 @@ class Tool
    */
   public function getWhitelistedExitCodes()
   {
-    return explode(', ', $this->whitelisted_exit_codes);
+    return array_map('trim', explode(',', $this->whitelisted_exit_codes));
   }
 
   /**

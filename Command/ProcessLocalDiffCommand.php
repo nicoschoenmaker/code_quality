@@ -2,19 +2,17 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Command;
 
-use Symfony\Component\Console\Command\Command,
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand,
+    Symfony\Component\Console\Command\Command,
     Symfony\Component\Console\Input\InputArgument,
     Symfony\Component\Console\Input\InputInterface,
     Symfony\Component\Console\Input\InputOption,
-    Symfony\Component\Console\Output\OutputInterface,
-    Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-
-use Doctrine\Common\Collection;
+    Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Processes the local supplied diff by calling the cq:processDiff:localDiff command on the CLI.
- * Input:   php app/console cq:processDiff:localDiff path_to_diff [--register|-r]
- * Example: php app/console cq:processDiff:localDiff path/to/diff     -r true
+ * Input:   php app/console cq:processDiff:localDiff path_to_diff  repository
+ * Example: php app/console cq:processDiff:localDiff path/to/diff code_quality
  *
  * @author rprent
  */
@@ -31,8 +29,10 @@ class ProcessLocalDiffCommand extends ContainerAwareCommand
       ->setName('cq:processDiff:localDiff')
       ->setDescription('Scans the diff on the quality of the code and returns feedback.')
       ->setDefinition(array(
-        new InputArgument('path_to_diff', InputArgument::REQUIRED, 'Path to the diff / patch file.'),
-        new InputOption('register', 'r', InputOption::VALUE_REQUIRED, 'Register the diff.', false)
+        new InputArgument('path_to_diff', InputArgument::REQUIRED,
+          'Path to the diff / patch file.'),
+        new InputArgument('repository', InputArgument::REQUIRED,
+          'The repository that the review request is made for.')
       ))
     ;
   }
@@ -47,17 +47,14 @@ class ProcessLocalDiffCommand extends ContainerAwareCommand
     // User CLI Input
     // Path to diff arg & retrieve the diff
     $path_to_diff = $input->getArgument('path_to_diff');
-    $diff = file_get_contents('/' . $path_to_diff);
-    // If the optional register arg is set put it on true, otherwise default to false
-    $register = $input->getOption('register');
-    if(isset($register) && $register !== false) {
-      $register = true;
-    }
+    $repository = $input->getArgument('repository');
+    $diff = file_get_contents($path_to_diff);
 
     // Process the review by calling the ReviewProcessor through the container
     $review = $this->getContainer()->get('review_processor')->processReview(
       $diff,
-      $register
+      true,
+      $repository
     );
 
     $output->write($review->__toString());

@@ -28,9 +28,9 @@ class ReviewProcessor
   private $em;
 
   /**
-   * @var OriginalFileRetrievalFactory
+   * @var OriginalFileRetrieverInterface
    */
-  private $ofrf;
+  private $original_file_retriever;
 
   /**
    * @var CommandLineUtility
@@ -52,7 +52,8 @@ class ReviewProcessor
   {
     $this->em = $em;
     $this->ef = $ef;
-    $this->ofrf = $ofrf;
+    // Gets the correct original file retriever based on the config setting
+    $this->original_file_retriever = $ofrf->getOriginalFileRetrieverInstance();
     $this->clu = $clu;
     $this->pf = $pf;
   }
@@ -62,8 +63,9 @@ class ReviewProcessor
    *
    * @param string $diff
    * @param boolean $register
+   * @param string $repository
    * @throws IOException
-   * @return \Hostnet\HostnetCodeQualityBundle\Entity\Review
+   * @return Review
    */
   public function processReview($diff, $register, $repository)
   {
@@ -77,19 +79,17 @@ class ReviewProcessor
     // Tell the Entity Factory whether we want to register the Review or not
     $this->ef->setRegister($register);
     $this->ef->persistAndFlush($review);
-    // Gets the correct original file retriever based on the config setting
-    $original_file_retriever = $this->ofrf->getOriginalFileRetrieverInstance();
     foreach($diff_files as $diff_file) {
       foreach($tools as $tool) {
         if($tool->supports($diff_file->getExtension())) {
 
-          // Check if the diff file is new. If it's not new we retrieve the original file
+          // Check if the diff file is new. If it exists we retrieve the original file
           // and merge it. If it's new we don't have to retrieve the original
           // as there is none, so we just insert the whole diff code
           if($diff_file->hasParent()) {
             // Retrieves the original file based on the configured retrieval method
             $diff_file->setOriginalFile(
-              $original_file_retriever->retrieveOriginalFile($diff_file, $repository)
+              $this->original_file_retriever->retrieveOriginalFile($diff_file, $repository)
             );
             // Merge the diff with the original in order to be able
             // to scan all the changes made in the actual code

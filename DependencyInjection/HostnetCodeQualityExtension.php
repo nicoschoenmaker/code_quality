@@ -25,11 +25,12 @@ class HostnetCodeQualityExtension extends Extension
     $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
     $loader->load('services.yml');
 
+    $container->setParameter('hostnet_code_quality.temp_cq_dir_name', $config['temp_cq_dir_name']);
     $container->setParameter('hostnet_code_quality.scm', $config['scm']);
     $container->setParameter('hostnet_code_quality.original_file_retrieval_method', $config['original_file_retrieval_method']);
-    $container->setParameter('hostnet_code_quality.domain', $config['domain']);
     $container->setParameter('hostnet_code_quality.raw_file_url_mask_1', $config['raw_file_url_mask_1']);
     $container->setParameter('hostnet_code_quality.raw_file_url_mask_2', $config['raw_file_url_mask_2']);
-    $container->setParameter('hostnet_code_quality.temp_cq_dir_name', $config['temp_cq_dir_name']);
+    $container->setParameter('hostnet_code_quality.domain', $config['domain']);
+    $container->setParameter('hostnet_code_quality.review_board_login', $config['review_board_login']);
   }
 }

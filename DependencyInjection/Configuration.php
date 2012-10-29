@@ -22,21 +22,24 @@ class Configuration implements ConfigurationInterface
 
     $rootNode
       ->children()
+        ->scalarNode('temp_cq_dir_name')
+          ->defaultValue(sys_get_temp_dir() . 'codequality')
+            ->end()
         ->scalarNode('scm')
           ->isRequired()
             ->end()
         ->scalarNode('original_file_retrieval_method')
           ->isRequired()
             ->end()
-        ->scalarNode('domain')
-          ->end()
         ->scalarNode('raw_file_url_mask_1')
           ->end()
         ->scalarNode('raw_file_url_mask_2')
           ->end()
-        ->scalarNode('temp_cq_dir_name')
-          ->defaultValue(sys_get_temp_dir() . 'codequality')
-            ->end()
+        ->scalarNode('domain')
+          ->end()
+        ->scalarNode('review_board_login')
+          ->end()
+
       ->end();
 
     return $treeBuilder;

@@ -121,27 +121,8 @@ class Report
   {
     $output = $this->getFile();
     if(count($this->getViolations()) == 0) {
-      $output .= "No violations for this file! Keep up the good work and make the donkey proud!\n";
-      $output .= '                         /\          /\   ' . "\n" .
-                 '                         ( \\        // ) ' . "\n" .
-                 '                          \ \\      // /  ' . "\n" .
-                 '                           \_\\||||//_/   ' . "\n" .
-                 '                            \/ _  _ \     ' . "\n" .
-                 '                           \/|(O)(O)|     ' . "\n" .
-                 '                          \/ |      |     ' . "\n" .
-                 '      ___________________\/  \      /     ' . "\n" .
-                 '     //                //     |____|      ' . "\n" .
-                 '    //                ||     /      \     ' . "\n" .
-                 '   //|                \|     \ 0  0 /     ' . "\n" .
-                 '  // \       )         V    / \____/      ' . "\n" .
-                 ' //   \     /        (     /              ' . "\n" .
-                 '""     \   /_________|  |_/               ' . "\n" .
-                 '       /  /\   /     |  ||                ' . "\n" .
-                 '      /  / /  /      \  ||                ' . "\n" .
-                 '      | |  | |        | ||                ' . "\n" .
-                 '      | |  | |        | ||                ' . "\n" .
-                 '      |_|  |_|        |_||                ' . "\n" .
-                 '       \_\  \_\        \_\\               ' . "\n";
+      $output .= "No violations for this file! \nKeep up the good work and make the dancing monkey proud!\n";
+      $output .= file_get_contents(__DIR__ . '/../Resources/public/images/ascii/dancing_monkey.txt');
     } else {
       $output .= implode("\n", $this->getViolations()->toArray());
     }

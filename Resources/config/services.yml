@@ -65,6 +65,14 @@ services:
     class: Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\XML\JSLintXMLParser
     arguments: [@entity_factory]
 
+##########################
+# Review Board API Calls #
+##########################
+
+  review_board_api_calls:
+    class: Hostnet\HostnetCodeQualityBundle\Command\ReviewBoardAPICalls
+    arguments: [%hostnet_code_quality.domain%, %hostnet_code_quality.review_board_login%]
+
 #####################
 # Feedback Handlers #
 #####################

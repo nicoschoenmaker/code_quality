@@ -25,11 +25,8 @@ class ToolTest extends \PHPUnit_Framework_TestCase
   public function testGetWhitelistedExitCode()
   {
     $whitelisted_exit_codes = $this->tool->getWhitelistedExitCodes();
-    $this->assertEquals('0', $whitelisted_exit_codes[0]);
-    $this->assertEquals('2', $whitelisted_exit_codes[1]);
-    $this->assertEquals('4', $whitelisted_exit_codes[2]);
-    $this->assertEquals('5', $whitelisted_exit_codes[3]);
-    $this->assertEquals('6', $whitelisted_exit_codes[4]);
+    $expected_whitelisted_exit_codes = array(0, 2, 4, 5, 6);
+    $this->assertEquals($expected_whitelisted_exit_codes, $whitelisted_exit_codes);
   }
 }
 

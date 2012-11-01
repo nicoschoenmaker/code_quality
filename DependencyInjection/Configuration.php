@@ -37,7 +37,9 @@ class Configuration implements ConfigurationInterface
           ->end()
         ->scalarNode('domain')
           ->end()
-        ->scalarNode('review_board_login')
+        ->scalarNode('review_board_username')
+          ->end()
+        ->scalarNode('review_board_password')
           ->end()
 
       ->end();

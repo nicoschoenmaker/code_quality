@@ -71,7 +71,7 @@ services:
 
   review_board_api_calls:
     class: Hostnet\HostnetCodeQualityBundle\Command\ReviewBoardAPICalls
-    arguments: [%hostnet_code_quality.domain%, %hostnet_code_quality.review_board_login%]
+    arguments: [%hostnet_code_quality.domain%, %hostnet_code_quality.review_board_username%, %hostnet_code_quality.review_board_password%]
 
 #####################
 # Feedback Handlers #

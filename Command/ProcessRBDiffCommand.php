@@ -36,7 +36,7 @@ class ProcessRBDiffCommand extends ContainerAwareCommand
             'The id of the review request to give feedback on.'),
         new InputArgument('repository', InputArgument::REQUIRED,
           'The repository that the review request is made for.'),
-        new InputOption('diff_revision', 'r', InputOption::VALUE_REQUIRED,
+        new InputOption('diff_revision', 'd', InputOption::VALUE_REQUIRED,
           'The version of the diff. If no value is supplied the last one will be picked.')
       ))
     ;

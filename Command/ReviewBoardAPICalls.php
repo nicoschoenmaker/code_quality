@@ -32,6 +32,8 @@ class ReviewBoardAPICalls
   const ITEM_TAG_NAME = 'item';
   const ID_TAG_NAME = 'id';
   const DEST_FILE_TAG_NAME = 'dest_file';
+  // Exit codes
+  const EXIT_CODE_200 = 200;
 
   /**
    * @var string
@@ -43,10 +45,10 @@ class ReviewBoardAPICalls
    */
   private $login;
 
-  public function __construct($domain, $login)
+  public function __construct($domain, $username, $password)
   {
     $this->domain = $domain;
-    $this->login = base64_encode($login);
+    $this->login = base64_encode($username . ':' . $password);
   }
 
   /**
@@ -73,14 +75,14 @@ class ReviewBoardAPICalls
    * @param integer $diff_revision
    * @return mixed
    */
-  public function retrieveDiffByRevision($review_request_id, $diff_revision)
+  private function retrieveDiffByRevision($review_request_id, $diff_revision)
   {
     $this->validateDiffRevision($review_request_id, $diff_revision);
 
     $url = $this->domain . self::API_RR . $review_request_id . self::DIFFS . $diff_revision . '/';
-    $header = array(self::RESULT_TYPE_TEXT);
+    $headers = array(self::RESULT_TYPE_TEXT);
 
-    return $this->executeCURLRequest($url, $header);
+    return $this->executeCURLRequest($url, $headers);
   }
 
   /**
@@ -89,12 +91,12 @@ class ReviewBoardAPICalls
    * @param integer $review_request_id
    * @return mixed
    */
-  public function retrieveLastDiff($review_request_id)
+  private function retrieveLastDiff($review_request_id)
   {
     $diff_url = $this->domain . self::R . $review_request_id . self::RAW_DIFF;
-    $header = array(self::RESULT_TYPE_TEXT);
+    $headers = array(self::RESULT_TYPE_TEXT);
 
-    return $this->executeCURLRequest($diff_url, $header, false);
+    return $this->executeCURLRequest($diff_url, $headers, false);
   }
 
   /**
@@ -104,12 +106,12 @@ class ReviewBoardAPICalls
    * @throws XmlErrorException
    * @throws InvalidArgumentException
    */
-  public function retrieveDiffList($review_request_id)
+  private function retrieveDiffList($review_request_id)
   {
     // Retrieve the list of diffs of the review request
     $diff_list_url = $this->domain . self::API_RR . $review_request_id . self::DIFFS;
-    $header = array(self::RESULT_TYPE_XML);
-    $diff_list_in_xml = $this->executeCURLRequest($diff_list_url, $header);
+    $headers = array(self::RESULT_TYPE_XML);
+    $diff_list_in_xml = $this->executeCURLRequest($diff_list_url, $headers);
 
     $xml = new DomDocument();
     // Try to load the xml data, if it fails we throw an exception
@@ -135,7 +137,7 @@ class ReviewBoardAPICalls
    * @param integer $diff_revision
    * @throws InvalidArgumentException
    */
-  public function validateDiffRevision($review_request_id, $diff_revision)
+  private function validateDiffRevision($review_request_id, $diff_revision)
   {
     // If the supplied diff revision is not numeric we throw an exception
     if(!is_numeric($diff_revision)) {
@@ -158,17 +160,17 @@ class ReviewBoardAPICalls
    * Executes a curl request and returns the output
    *
    * @param string $url
-   * @param string $header
+   * @param string $headers
    * @param string $method
    * @param array $fields
    * @return mixed
    */
-  private function executeCURLRequest($url, $header = array(), $decode_json = true, $method = self::GET, $fields = array())
+  private function executeCURLRequest($url, $headers = array(), $decode_json = true, $method = self::GET, $fields = array())
   {
     // Initialize the curl handler
     $ch = curl_init($url);
     // Set the curl options
-    $full_http_header = array_merge(array(self::BASIC_AUTH . $this->login), $header);
+    $full_http_header = array_merge(array(self::BASIC_AUTH . $this->login), $headers);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $full_http_header);
     if($method == self::POST) {
       curl_setopt($ch, CURLOPT_POST, true);
@@ -180,7 +182,7 @@ class ReviewBoardAPICalls
     $output = curl_exec($ch);
     // Check if the curl request returned a valid code
     $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    if($code != 200) {
+    if($code != self::EXIT_CODE_200) {
       throw new Exception('Wrong status code (' . $code . ') for ' . $url);
     }
     // Close the curl connection

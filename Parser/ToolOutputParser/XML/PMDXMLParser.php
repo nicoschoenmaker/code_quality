@@ -11,6 +11,8 @@ use Hostnet\HostnetCodeQualityBundle\Entity\Report,
     Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\AbstractToolOutputParser,
     Hostnet\HostnetCodeQualityBundle\Parser\EntityProviderInterface;
 
+use DomDocument;
+
 /**
  * The PMD XML Parser parses PMD xml format output.
  *
@@ -49,16 +51,48 @@ class PMDXMLParser extends AbstractToolOutputParser implements ToolOutputParserI
   {
     // Fill the report with the File and CodeLanguage
     $code_language = $this->efi->getCodeLanguage($diff_file->getExtension());
-    $file = $this->efi->retrieveFile($code_language, $diff_file->getName());
+    $file = $this->efi->retrieveFile(
+      $code_language,
+      $diff_file->getName(),
+      $diff_file->getSource()
+    );
     $report = new Report($file);
 
     // Retrieve the violations array in advance as
     // it's only required to add all the violations
     $violations_array = $report->getViolations();
+    // Parse the diff file violations
+    $this->parseViolations(
+      $diff_file->getDiffOutput(),
+      $violations_array,
+      true
+    );
+    // Parse the original file violations
+    // if the original file exists
+    if($diff_file->hasParent()) {
+      $this->parseViolations(
+        $diff_file->getOriginalOutput(),
+        $violations_array,
+        false
+      );
+    }
 
-    $xml = new \DomDocument();
+    return $report;
+  }
+
+  /**
+   * Parse all the tool output violations
+   *
+   * @param string $output
+   * @param array $violations_array
+   * @param boolean $originated_from_diff
+   * @throws XmlErrorException
+   */
+  private function parseViolations($output, $violations_array, $originated_from_diff)
+  {
+    $xml = new DomDocument();
     // Load the tool output string in the xml format as xml
-    if(!$xml->loadXML($diff_file->getDiffOutput())) {
+    if(!$xml->loadXML($output)) {
       throw new XmlErrorException('Error while parsing XML, invalid XML supplied');
     }
 
@@ -78,12 +112,11 @@ class PMDXMLParser extends AbstractToolOutputParser implements ToolOutputParserI
         $rule,
         $message,
         $output_violation->getAttribute(self::BEGINLINE),
-        $output_violation->getAttribute(self::ENDLINE)
+        $output_violation->getAttribute(self::ENDLINE),
+        $originated_from_diff
       );
 
       $violations_array->add($violation);
     }
-
-    return $report;
   }
 }

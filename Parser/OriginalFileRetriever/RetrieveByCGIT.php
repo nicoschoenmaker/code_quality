@@ -56,6 +56,7 @@ class RetrieveByCGIT extends AbstractOriginalFileRetriever implements OriginalFi
     $original_file_url = $this->raw_file_url_mask_1
       . $repository
       . $this->raw_file_url_mask_2
+      . '/'
       . $diff_file->getSource()
       . '?id2='
       . $diff_file->getSourceRevision()

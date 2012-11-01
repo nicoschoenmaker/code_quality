@@ -51,20 +51,29 @@ class Violation
    */
   private $rule;
 
+  /**
+   * Is the violation from the diff file,
+   * if not we assume it is from the original file
+   *
+   * @var boolean
+   */
+  private $originated_from_diff;
+
 
   /**
    * @param Rule $rule
    * @param string $message
    * @param string $begin_line
    * @param string $end_line
-   * @param string $status
+   * @param string $originated_from_diff
    */
-  public function __construct(Rule $rule, $message, $begin_line, $end_line)
+  public function __construct(Rule $rule, $message, $begin_line, $end_line, $originated_from_diff)
   {
     $this->rule = $rule;
     $this->message = $message;
     $this->begin_line = $begin_line;
     $this->end_line = $end_line;
+    $this->originated_from_diff = $originated_from_diff;
     $this->reports = new \Doctrine\Common\Collections\ArrayCollection();
   }
 
@@ -156,6 +165,11 @@ class Violation
   public function getRule()
   {
     return $this->rule;
+  }
+
+  public function isOriginatedFromDiff()
+  {
+    return $this->originated_from_diff;
   }
 
   /**

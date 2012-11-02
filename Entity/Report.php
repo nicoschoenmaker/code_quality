@@ -115,46 +115,31 @@ class Report
   /**
    * Get the diff file violations
    *
-   * @return array
+   * @return Collection
    */
   public function getDiffViolations()
   {
-    $diff_violations = array();
-    foreach($this->violations as $violation) {
-      if($violation->isOriginatedFromDiff()) {
-        $diff_violations[] = $violation;
+    return $this->violations->filter(
+      function($violation) {
+        return $violation->isOriginatedFromDiff();
       }
-    }
-
-    return $diff_violations;
+    );
   }
 
   /**
    * Get the original file violations
    *
-   * @return array
+   * @return Collection
    */
   public function getOriginalViolations()
   {
-    $original_violations = array();
-    foreach($this->violations as $violation) {
-      if(!$violation->isOriginatedFromDiff()) {
-        $original_violations[] = $violation;
+    return $this->violations->filter(
+      function($violation) {
+        return !$violation->isOriginatedFromDiff();
       }
-    }
-
-    return $original_violations;
+    );
   }
 
-  /**
-   * Checks if the report contains violations
-   *
-   * @return boolean
-   */
-  public function hasViolations()
-  {
-    return (count($this->violations) > 0) ? true : false;
-  }
   /**
    * Returns the contents of the Report
    *

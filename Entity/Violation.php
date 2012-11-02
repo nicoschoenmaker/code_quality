@@ -56,6 +56,8 @@ class Violation
    * if not we assume it is from the original file
    *
    * @var boolean
+   *
+   * @ORM\Column(name="originated_from_diff", type="boolean")
    */
   private $originated_from_diff;
 

@@ -57,11 +57,11 @@ class PMDXMLParser extends AbstractToolOutputParser implements ToolOutputParserI
 
     // Retrieve the violations array in advance as
     // it's only required to add all the violations
-    $violations_array = $report->getViolations();
+    $violations = $report->getViolations();
     // Parse the diff file violations
     $this->parseViolations(
       $diff_file->getDiffOutput(),
-      $violations_array,
+      $violations,
       true
     );
     // Parse the original file violations
@@ -69,7 +69,7 @@ class PMDXMLParser extends AbstractToolOutputParser implements ToolOutputParserI
     if($diff_file->hasParent()) {
       $this->parseViolations(
         $diff_file->getOriginalOutput(),
-        $violations_array,
+        $violations,
         false
       );
     }
@@ -81,11 +81,11 @@ class PMDXMLParser extends AbstractToolOutputParser implements ToolOutputParserI
    * Parse all the tool output violations
    *
    * @param string $output
-   * @param array $violations_array
+   * @param array $violations
    * @param boolean $originated_from_diff
    * @throws XmlErrorException
    */
-  private function parseViolations($output, Collection $violations_array, $originated_from_diff)
+  private function parseViolations($output, Collection $violations, $originated_from_diff)
   {
     $xml = new DomDocument();
     // Load the tool output string in the xml format as xml
@@ -113,7 +113,7 @@ class PMDXMLParser extends AbstractToolOutputParser implements ToolOutputParserI
         $originated_from_diff
       );
 
-      $violations_array->add($violation);
+      $violations->add($violation);
     }
   }
 }

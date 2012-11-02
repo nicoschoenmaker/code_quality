@@ -112,16 +112,7 @@ class ReviewProcessor
           );
 
           // Parse the Tool output into Report objects
-          $report = $tool_output_parser->parseToolOutput(
-            $diff_file,
-            $diff_file->getDiffOutput()
-          );
-          // TODO Add the difference in violation amounts combined with the priorities to the feedback
-          // Temporarily echoing it here
-          $original_report = $tool_output_parser->parseToolOutput($diff_file, $diff_file->getOriginalOutput());
-          echo $diff_file->getSource() . "\n";
-          echo 'Amount of diff violations:' . count($report->getDiffViolations()) . "\n";
-          echo 'Amount of original violations:' . count($original_report->getOriginalViolations()) . "\n\n";
+          $report = $tool_output_parser->parseToolOutput($diff_file);
 
           // Add the Report object to the Review
           $report->setReview($review);

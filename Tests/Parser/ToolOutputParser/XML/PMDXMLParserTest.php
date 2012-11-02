@@ -53,7 +53,7 @@ class PMDXMLParserTest extends \PHPUnit_Framework_TestCase
 
     // Initialize the pmd xml parser and parse the test tool output
     $pmd_xml_parser = new PMDXMLParser($this->ef);
-    $report = $pmd_xml_parser->parseToolOutput($diff_file, $diff_file->getDiffOutput());
+    $report = $pmd_xml_parser->parseToolOutput($diff_file);
 
     $this->assertEquals($test_file_name, $report->getFile()->getName());
 

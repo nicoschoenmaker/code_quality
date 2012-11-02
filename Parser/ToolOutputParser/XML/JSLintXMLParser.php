@@ -13,6 +13,8 @@ use Hostnet\HostnetCodeQualityBundle\Entity\Report,
     Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\ToolOutputParserInterface,
     Hostnet\HostnetCodeQualityBundle\Parser\EntityProviderInterface;
 
+use DomDocument;
+
 /**
  * The JSLint XML Parser parses JSLint xml format output.
  *
@@ -58,11 +60,11 @@ class JSLintXMLParser extends AbstractToolOutputParser implements ToolOutputPars
 
     // Retrieve the violations array in advance as
     // it's only required to add all the violations
-    $violations_array = $report->getViolations();
+    $violations = $report->getViolations();
     // Parse the diff file violations
     $this->parseViolations(
       $diff_file->getDiffOutput(),
-      $violations_array,
+      $violations,
       true
     );
     // Parse the original file violations
@@ -70,7 +72,7 @@ class JSLintXMLParser extends AbstractToolOutputParser implements ToolOutputPars
     if($diff_file->hasParent()) {
       $this->parseViolations(
         $diff_file->getOriginalOutput(),
-        $violations_array,
+        $violations,
         false
       );
     }
@@ -82,13 +84,13 @@ class JSLintXMLParser extends AbstractToolOutputParser implements ToolOutputPars
    * Parse all the tool output violations
    *
    * @param string $output
-   * @param array $violations_array
+   * @param array $violations
    * @param boolean $originated_from_diff
    * @throws XmlErrorException
    */
-  private function parseViolations($output, Collection $violations_array, $originated_from_diff)
+  private function parseViolations($output, Collection $violations, $originated_from_diff)
   {
-    $xml = new \DomDocument();
+    $xml = new DomDocument();
     // Load the tool output string in the xml format as xml
     if(!$xml->loadXML($output)) {
       throw new XmlErrorException('Error while parsing XML, invalid XML supplied');
@@ -108,10 +110,11 @@ class JSLintXMLParser extends AbstractToolOutputParser implements ToolOutputPars
         $rule,
         $output_violation->getAttribute(self::EVIDENCE),
         $output_violation->getAttribute(self::BEGINLINE),
-        $output_violation->getAttribute(self::ENDLINE)
+        $output_violation->getAttribute(self::ENDLINE),
+        $originated_from_diff
       );
 
-      $violations_array->add($violation);
+      $violations->add($violation);
     }
   }
 }

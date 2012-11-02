@@ -2,7 +2,8 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Parser;
 
-use Hostnet\HostnetCodeQualityBundle\Entity\CodeLanguage;
+use Hostnet\HostnetCodeQualityBundle\Entity\CodeLanguage,
+    Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile;
 
 /**
  * The Entity Provider Interface is implemented
@@ -18,10 +19,11 @@ interface EntityProviderInterface
    * based on the name.
    * If it can't find the file it will create it.
    *
-   * @param string $name
+   * @param CodeLanguage $code_language
+   * @param DiffFile $diff_file
    * @return File
    */
-  public function retrieveFile(CodeLanguage $code_language, $name);
+  public function retrieveFile(CodeLanguage $code_language, DiffFile $diff_file);
 
   /**
    * Checks if the code language already exists and gets it,

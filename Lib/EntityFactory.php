@@ -5,6 +5,7 @@ namespace Hostnet\HostnetCodeQualityBundle\Lib;
 use Hostnet\HostnetCodeQualityBundle\Entity\File,
     Hostnet\HostnetCodeQualityBundle\Entity\Rule,
     Hostnet\HostnetCodeQualityBundle\Entity\CodeLanguage,
+    Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile,
     Hostnet\HostnetCodeQualityBundle\Parser\EntityProviderInterface;
 
 use Doctrine\ORM\EntityManager,
@@ -134,19 +135,20 @@ class EntityFactory implements EntityProviderInterface
    * based on the name.
    * If it can't find the file it will create it.
    *
-   * @param string $name
+   * @param CodeLanguage $code_language
+   * @param DiffFile $diff_file
    * @return File
    */
-  public function retrieveFile(CodeLanguage $code_language, $name)
+  public function retrieveFile(CodeLanguage $code_language, DiffFile $diff_file)
   {
     $file = $this->em
       ->getRepository('HostnetCodeQualityBundle:File')
-      ->findOneByName($name)
+      ->findOneByName($diff_file->getName())
     ;
 
     // If file is null we create it
     if(!$file) {
-      $file = new File($code_language, $name);
+      $file = new File($code_language, $diff_file->getName(), $diff_file->getSource());
       $this->persistAndFlush($file);
     }
 

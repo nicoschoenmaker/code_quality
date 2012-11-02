@@ -2,6 +2,8 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\XML;
 
+use Doctrine\Common\Collections\Collection;
+
 use JMS\SerializerBundle\Exception\XmlErrorException;
 
 use Hostnet\HostnetCodeQualityBundle\Entity\Report,
@@ -30,13 +32,13 @@ class PMDXMLParser extends AbstractToolOutputParser implements ToolOutputParserI
   /**
    * @var EntityProviderInterface
    */
-  protected $efi;
+  protected $epi;
 
-  public function __construct(EntityProviderInterface $efi)
+  public function __construct(EntityProviderInterface $epi)
   {
     $this->resource = 'pmd';
     $this->format = 'xml';
-    $this->efi = $efi;
+    $this->epi = $epi;
   }
 
   /**
@@ -50,11 +52,10 @@ class PMDXMLParser extends AbstractToolOutputParser implements ToolOutputParserI
   public function parseToolOutput(DiffFile $diff_file)
   {
     // Fill the report with the File and CodeLanguage
-    $code_language = $this->efi->getCodeLanguage($diff_file->getExtension());
-    $file = $this->efi->retrieveFile(
+    $code_language = $this->epi->getCodeLanguage($diff_file->getExtension());
+    $file = $this->epi->retrieveFile(
       $code_language,
-      $diff_file->getName(),
-      $diff_file->getSource()
+      $diff_file
     );
     $report = new Report($file);
 
@@ -88,7 +89,7 @@ class PMDXMLParser extends AbstractToolOutputParser implements ToolOutputParserI
    * @param boolean $originated_from_diff
    * @throws XmlErrorException
    */
-  private function parseViolations($output, $violations_array, $originated_from_diff)
+  private function parseViolations($output, Collection $violations_array, $originated_from_diff)
   {
     $xml = new DomDocument();
     // Load the tool output string in the xml format as xml
@@ -101,7 +102,7 @@ class PMDXMLParser extends AbstractToolOutputParser implements ToolOutputParserI
     foreach($output_violations as $output_violation) {
 
       // Fill the Rule
-      $rule = $this->efi->getRule(
+      $rule = $this->epi->getRule(
         $output_violation->getAttribute(self::RULE),
         $output_violation->getAttribute(self::PRIORITY)
       );

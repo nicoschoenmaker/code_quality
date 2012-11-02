@@ -9,6 +9,7 @@ use Hostnet\HostnetCodeQualityBundle\Entity\CodeLanguage,
     Hostnet\HostnetCodeQualityBundle\Entity\Tool,
     Hostnet\HostnetCodeQualityBundle\Entity\Violation,
     Hostnet\HostnetCodeQualityBundle\Lib\EntityFactory,
+    Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile,
     Hostnet\HostnetCodeQualityBundle\Parser\EntityProviderInterface;
 
 
@@ -43,9 +44,9 @@ class MockEntityFactory extends EntityFactory implements EntityProviderInterface
     return null;
   }
 
-  public function retrieveFile(CodeLanguage $code_language, $name)
+  public function retrieveFile(CodeLanguage $code_language, DiffFile $diff_file)
   {
-    return new File($code_language, $name);
+    return new File($code_language, $diff_file->getName(), $diff_file->getSource());
   }
 
   public function retrieveViolation(Rule $rule, $message, $begin_line, $end_line)

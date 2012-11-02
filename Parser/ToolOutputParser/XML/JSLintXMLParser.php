@@ -50,10 +50,8 @@ class JSLintXMLParser extends AbstractToolOutputParser implements ToolOutputPars
    */
   public function parseToolOutput(DiffFile $diff_file)
   {
-    // Fill the report with the File and CodeLanguage
-    $code_language = $this->epi->getCodeLanguage($diff_file->getExtension());
+    // Fill the report with the File
     $file = $this->epi->retrieveFile(
-      $code_language,
       $diff_file
     );
     $report = new Report($file);

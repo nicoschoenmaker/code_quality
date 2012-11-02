@@ -19,20 +19,10 @@ interface EntityProviderInterface
    * based on the name.
    * If it can't find the file it will create it.
    *
-   * @param CodeLanguage $code_language
    * @param DiffFile $diff_file
    * @return File
    */
-  public function retrieveFile(CodeLanguage $code_language, DiffFile $diff_file);
-
-  /**
-   * Checks if the code language already exists and gets it,
-   * otherwise it creates a new CodeLanguage.
-   *
-   * @param string $code_language_name
-   * @return CodeLanguage
-   */
-  public function getCodeLanguage($name);
+  public function retrieveFile(DiffFile $diff_file);
 
   /**
    * Checks if the rule already exists and gets it,

@@ -51,12 +51,8 @@ class PMDXMLParser extends AbstractToolOutputParser implements ToolOutputParserI
    */
   public function parseToolOutput(DiffFile $diff_file)
   {
-    // Fill the report with the File and CodeLanguage
-    $code_language = $this->epi->getCodeLanguage($diff_file->getExtension());
-    $file = $this->epi->retrieveFile(
-      $code_language,
-      $diff_file
-    );
+    // Fill the report with the File
+    $file = $this->epi->retrieveFile($diff_file);
     $report = new Report($file);
 
     // Retrieve the violations array in advance as

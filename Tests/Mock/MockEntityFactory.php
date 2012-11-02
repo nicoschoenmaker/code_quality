@@ -44,8 +44,9 @@ class MockEntityFactory extends EntityFactory implements EntityProviderInterface
     return null;
   }
 
-  public function retrieveFile(CodeLanguage $code_language, DiffFile $diff_file)
+  public function retrieveFile(DiffFile $diff_file)
   {
+    $code_language = new CodeLanguage('PHP');
     return new File($code_language, $diff_file->getName(), $diff_file->getSource());
   }
 

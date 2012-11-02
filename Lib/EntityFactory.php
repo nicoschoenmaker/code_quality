@@ -135,11 +135,10 @@ class EntityFactory implements EntityProviderInterface
    * based on the name.
    * If it can't find the file it will create it.
    *
-   * @param CodeLanguage $code_language
    * @param DiffFile $diff_file
    * @return File
    */
-  public function retrieveFile(CodeLanguage $code_language, DiffFile $diff_file)
+  public function retrieveFile(DiffFile $diff_file)
   {
     $file = $this->em
       ->getRepository('HostnetCodeQualityBundle:File')
@@ -148,6 +147,7 @@ class EntityFactory implements EntityProviderInterface
 
     // If file is null we create it
     if(!$file) {
+      $code_language = $this->getCodeLanguage($diff_file->getExtension());
       $file = new File($code_language, $diff_file->getName(), $diff_file->getSource());
       $this->persistAndFlush($file);
     }
@@ -159,10 +159,10 @@ class EntityFactory implements EntityProviderInterface
    * Checks if the code language already exists and gets it,
    * otherwise it creates a new CodeLanguage.
    *
-   * @param string $code_language_name
+   * @param string $name
    * @return CodeLanguage
    */
-  public function getCodeLanguage($name)
+  private function getCodeLanguage($name)
   {
     if(!isset($this->code_languages[$name])) {
       $this->code_languages[$name] = new CodeLanguage($name);

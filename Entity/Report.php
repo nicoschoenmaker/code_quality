@@ -120,7 +120,7 @@ class Report
   public function getDiffViolations()
   {
     return $this->violations->filter(
-      function($violation) {
+      function(Violation $violation) {
         return $violation->isOriginatedFromDiff();
       }
     );
@@ -134,7 +134,7 @@ class Report
   public function getOriginalViolations()
   {
     return $this->violations->filter(
-      function($violation) {
+      function(Violation $violation) {
         return !$violation->isOriginatedFromDiff();
       }
     );

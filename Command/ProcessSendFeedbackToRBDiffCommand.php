@@ -2,24 +2,28 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand,
-    Symfony\Component\Console\Command\Command,
+use Symfony\Component\Console\Command\Command,
     Symfony\Component\Console\Input\InputArgument,
     Symfony\Component\Console\Input\InputInterface,
     Symfony\Component\Console\Input\InputOption,
-    Symfony\Component\Console\Output\OutputInterface;
+    Symfony\Component\Console\Output\OutputInterface,
+    Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+
+use Hostnet\HostnetCodeQualityBundle\Command\ReviewBoardAPICalls;
+
+use Doctrine\Common\Collection;
 
 use InvalidArgumentException;
 
 /**
  * Processes the Review Board diff based on the given review_request_id
  * by calling the cq:processDiff:RBDiff command on the CLI.
- * Input:   php app/console cq:processDiff:RBDiff review_request_id repository [--diff_revision|-r]
- * Example: php app/console cq:processDiff:RBDiff       12345      code_quality        -r 2
+ * Input:   php app/console cq:processDiff:RBDiff review_request_id repository [--line_cap|-c]
+ * Example: php app/console cq:processDiff:RBDiff       12345      code_quality     -c 25
  *
  * @author rprent
  */
-class ProcessRBDiffCommand extends ContainerAwareCommand
+class ProcessSendFeedbackToRBDiffCommand extends ContainerAwareCommand
 {
   /**
    * Configures the command settings
@@ -29,15 +33,16 @@ class ProcessRBDiffCommand extends ContainerAwareCommand
   protected function configure()
   {
     $this
-      ->setName('cq:processDiff:RBDiff')
+      ->setName('cq:processDiff:sendToRBDiff')
       ->setDescription('Scans the diff on the quality of the code and returns feedback.')
       ->setDefinition(array(
         new InputArgument('review_request_id', InputArgument::REQUIRED,
-            'The id of the review request to give feedback on.'),
+          'The id of the review request to give feedback on.'),
         new InputArgument('repository', InputArgument::REQUIRED,
           'The repository that the review request is made for.'),
-        new InputOption('diff_revision', 'd', InputOption::VALUE_REQUIRED,
-          'The version of the diff. If no value is supplied the last one will be picked.')
+        new InputOption('line_cap', 'c', InputOption::VALUE_REQUIRED,
+          'The maximum number of lines per violation to be shown. Imagine a class with 2000 lines '
+          . 'taking way too much space, therefore the default is at 50 lines.', 50)
       ))
     ;
   }
@@ -54,16 +59,16 @@ class ProcessRBDiffCommand extends ContainerAwareCommand
     // User CLI Input
     $review_request_id = $input->getArgument('review_request_id');
     $repository = $input->getArgument('repository');
-    $diff_revision = $input->getOption('diff_revision');
+    $line_cap = $input->getOption('line_cap');
 
-    $diff = $rb_api_calls->retrieveDiff($review_request_id, $diff_revision, $rb_api_calls::RESULT_TYPE_TEXT);
     // Process the review by calling the ReviewProcessor through the container
+    $diff = $rb_api_calls->retrieveDiff($review_request_id, null, $rb_api_calls::RESULT_TYPE_TEXT);
     $review = $this->getContainer()->get('review_processor')->processReview(
       $diff,
       true,
       $repository
     );
 
-    $output->write($review->__toString());
+    $rb_api_calls->sendFeedbackToRB($review_request_id, $review, $line_cap);
   }
 }

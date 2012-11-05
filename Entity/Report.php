@@ -151,6 +151,7 @@ class Report
     if(count($this->getViolations()) == 0) {
       $output .= "No violations for this file! \nKeep up the good work and make the dancing monkey proud!\n";
       $output .= file_get_contents(__DIR__ . '/../Resources/public/images/ascii/dancing_monkey.txt');
+      $output .= "\n";
     } else {
       $output .= implode("\n", $this->getViolations()->toArray());
     }

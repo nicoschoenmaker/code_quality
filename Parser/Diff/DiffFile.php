@@ -15,7 +15,7 @@ use RuntimeException;
  */
 class DiffFile
 {
-  CONST DEV_NULL = '/dev/null';
+  CONST DEV_NULL = 'dev/null';
   CONST ORIGINAL_EXTENSION = '.orig';
   CONST TEMP_DIFF_FILE_PREFIX = 'cq';
 

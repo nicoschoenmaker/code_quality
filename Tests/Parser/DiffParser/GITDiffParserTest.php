@@ -21,7 +21,7 @@ class GITDiffParserTest extends \PHPUnit_Framework_TestCase
     $diff_file = $diff_files[0];
     $this->assertEquals('http-fetch', $diff_file->getName());
     $this->assertEquals('php', $diff_file->getExtension());
-    $this->assertEquals('/test1/test2/builtin-http-fetch.php', $diff_file->getSource());
+    $this->assertEquals('test1/test2/builtin-http-fetch.php', $diff_file->getSource());
     $this->assertEquals('f3e63d7', $diff_file->getSourceRevision());
     $diff_code_blocks = $diff_file->getDiffCodeBlocks();
     //first code block of first code file
@@ -37,7 +37,7 @@ class GITDiffParserTest extends \PHPUnit_Framework_TestCase
     $diff_file = $diff_files[1];
     $this->assertEquals('een_test_bestand', $diff_file->getName());
     $this->assertEquals('php', $diff_file->getExtension());
-    $this->assertEquals('/test1/test2/een_test_bestand.php', $diff_file->getSource());
+    $this->assertEquals('test1/test2/een_test_bestand.php', $diff_file->getSource());
     $this->assertEquals('a3e63d9', $diff_file->getSourceRevision());
     $diff_code_blocks = $diff_file->getDiffCodeBlocks();
     //first code block of first code file

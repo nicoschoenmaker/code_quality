@@ -29,6 +29,13 @@ class File
   private $name;
 
   /**
+   * @var string $source
+   *
+   * @ORM\Column(name="source", type="string", length=255)
+   */
+  private $source;
+
+  /**
    * @var CodeLanguage
    *
    * @ORM\ManyToOne(targetEntity="CodeLanguage", inversedBy="code_language")
@@ -44,10 +51,11 @@ class File
   private $reports;
 
 
-  public function __construct($code_language, $name)
+  public function __construct($code_language, $name, $source)
   {
     $this->code_language = $code_language;
     $this->name = $name;
+    $this->source = $source;
     $this->reports = new \Doctrine\Common\Collections\ArrayCollection();
   }
 
@@ -81,6 +89,26 @@ class File
   public function setName($name)
   {
     $this->name = $name;
+  }
+
+  /**
+   * Get the source
+   *
+   * @return string
+   */
+  public function getSource()
+  {
+    return $this->source;
+  }
+
+  /**
+   * Set the source
+   *
+   * @param string $source
+   */
+  public function setSource($source)
+  {
+    $this->source = $source;
   }
 
   /**

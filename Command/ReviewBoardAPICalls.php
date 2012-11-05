@@ -2,6 +2,8 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Command;
 
+use Hostnet\HostnetCodeQualityBundle\Entity\Review;
+
 use JMS\SerializerBundle\Exception\XmlErrorException;
 
 use DomDocument,
@@ -18,15 +20,20 @@ class ReviewBoardAPICalls
 {
   // Review Board url path parts
   const API_RR = '/api/review-requests/';
+  const API_R = '/api/repositories/';
   const R = '/r/';
   const DIFFS = '/diffs/';
+  const FILES = '/files/';
   const RAW_DIFF = '/diff/raw/';
+  const REVIEWS = '/reviews/';
+  const DIFF_COMMENTS = '/diff-comments/';
   // CURL request methods
   const GET = 'get';
   const POST = 'post';
   // CURL headers
   const RESULT_TYPE_TEXT = 'Accept: text/plain';
   const RESULT_TYPE_XML = 'Accept: application/xml';
+  const RESULT_TYPE_JSON = 'Accept: application/json';
   const BASIC_AUTH = 'Authorization: Basic ';
   // XML tag names
   const ITEM_TAG_NAME = 'item';
@@ -34,6 +41,7 @@ class ReviewBoardAPICalls
   const DEST_FILE_TAG_NAME = 'dest_file';
   // Exit codes
   const EXIT_CODE_200 = 200;
+  const EXIT_CODE_201 = 201;
 
   /**
    * @var string
@@ -52,82 +60,82 @@ class ReviewBoardAPICalls
   }
 
   /**
+   * Retrieves all the pending review requests
+   *
+   * @return mixed
+   */
+  public function retrievePendingReviewRequests()
+  {
+    $review_requests_url = $this->domain . self::API_RR . '?status=pending&max-results=999999';
+    $headers = array(self::RESULT_TYPE_TEXT);
+
+    return $this->executeCURLRequest($review_requests_url, $headers);
+  }
+
+  /**
    * Retrieve the diff
    *
    * @param integer $review_request_id
    * @param integer $diff_revision
+   * @param string $result_type
    * @return string
    */
-  public function retrieveDiff($review_request_id, $diff_revision = null)
+  public function retrieveDiff($review_request_id, $diff_revision = null, $result_type = self::RESULT_TYPE_JSON)
   {
     // If the diff revision is supplied we use it, otherwise default to the last diff
+    // Also check if we want the raw/text version or in json/other
     if(!empty($diff_revision)) {
-      return $this->retrieveDiffByRevision($review_request_id, $diff_revision);
+      $this->validateDiffRevision($review_request_id, $diff_revision);
+      $diff_url = $this->domain . self::API_RR . $review_request_id . self::DIFFS . $diff_revision . '/';
     } else {
-      return $this->retrieveLastDiff($review_request_id);
+      if($result_type == self::RESULT_TYPE_TEXT) {
+        $diff_url = $this->domain . self::R . $review_request_id . self::RAW_DIFF;
+      } else {
+        $last_diff_revision = $this->retrieveAmountOfDiffs($review_request_id);
+        $diff_url = $this->domain . self::API_RR . $review_request_id . self::DIFFS . $last_diff_revision . '/';
+      }
     }
-  }
-
-  /**
-   * Retrieve the review request diff by the given diff revision
-   *
-   * @param integer $review_request_id
-   * @param integer $diff_revision
-   * @return mixed
-   */
-  private function retrieveDiffByRevision($review_request_id, $diff_revision)
-  {
-    $this->validateDiffRevision($review_request_id, $diff_revision);
-
-    $url = $this->domain . self::API_RR . $review_request_id . self::DIFFS . $diff_revision . '/';
-    $headers = array(self::RESULT_TYPE_TEXT);
-
-    return $this->executeCURLRequest($url, $headers);
-  }
-
-  /**
-   * Retrieves the last diff of the given review request
-   *
-   * @param integer $review_request_id
-   * @return mixed
-   */
-  private function retrieveLastDiff($review_request_id)
-  {
-    $diff_url = $this->domain . self::R . $review_request_id . self::RAW_DIFF;
-    $headers = array(self::RESULT_TYPE_TEXT);
+    $headers = array($result_type);
 
     return $this->executeCURLRequest($diff_url, $headers, false);
   }
 
   /**
-   * Retrieve the diff list and return it
+   * Retrieve the diff files from the last diff of a review request
    *
    * @param integer $review_request_id
-   * @throws XmlErrorException
-   * @throws InvalidArgumentException
+   * @return mixed
    */
-  private function retrieveDiffList($review_request_id)
+  public function retrieveDiffFiles($review_request_id)
+  {
+    $last_diff_revision = $this->retrieveAmountOfDiffs($review_request_id);
+    $diff_files_url = $this->domain . self::API_RR . $review_request_id
+      . self::DIFFS . $last_diff_revision . self::FILES;
+
+    return $this->executeCURLRequest($diff_files_url);
+  }
+
+  /**
+   * Retrieve the amount of diffs that a review request contains
+   *
+   * @param integer $review_request_id
+   * @throws InvalidArgumentException
+   * @return integer
+   */
+  private function retrieveAmountOfDiffs($review_request_id)
   {
     // Retrieve the list of diffs of the review request
     $diff_list_url = $this->domain . self::API_RR . $review_request_id . self::DIFFS;
-    $headers = array(self::RESULT_TYPE_XML);
-    $diff_list_in_xml = $this->executeCURLRequest($diff_list_url, $headers);
-
-    $xml = new DomDocument();
-    // Try to load the xml data, if it fails we throw an exception
-    if(!$xml->loadXML($diff_list_in_xml)) {
-      throw new XmlErrorException('Error while parsing XML, invalid XML supplied');
-    }
-    $diff_list = $xml->getElementsByTagName(self::ITEM_TAG_NAME);
+    $amount_of_diffs = count($this->executeCURLRequest($diff_list_url));
 
     // If the length of the diff list is 0 it means that
     // the review request has no diffs so we throw an exception
-    if(!$diff_list->length) {
-      throw new InvalidArgumentException('No diffs found for the selected review request id, '
-        . 'are you sure that you selected the right review request?');
+    if(!$amount_of_diffs) {
+      throw new InvalidArgumentException('No diffs found for the selected review request id ('
+        . $review_request_id . '), are you sure that you selected the right review request?');
     }
 
-    return $diff_list;
+    return $amount_of_diffs;
   }
 
   /**
@@ -144,28 +152,134 @@ class ReviewBoardAPICalls
       throw new InvalidArgumentException('The diff revision option value has to contain a number!');
     }
 
-    $diff_list = $this->retrieveDiffList($review_request_id);
+    $amount_of_diffs = $this->retrieveAmountOfDiffs($review_request_id);
     // If the supplied diff revision is bigger than the number of diffs we throw an exception
-    $to_be_text = $diff_list->length == 1 ? 'is ' : 'are ';
-    $revision_text = $diff_list->length == 1 ? 'revision' : 'revisions';
-    if($diff_revision > $diff_list->length || $diff_revision == 0) {
+    $to_be_text = $amount_of_diffs == 1 ? 'is ' : 'are ';
+    $revision_text = $amount_of_diffs == 1 ? 'revision' : 'revisions';
+    if($diff_revision > $amount_of_diffs || $diff_revision == 0) {
       throw new InvalidArgumentException('The given diff revision does not exist, '
-        . 'there ' . $to_be_text . $diff_list->length . ' diff ' . $revision_text
-        .' so use a value from 1 to '. $diff_list->length
+        . 'there ' . $to_be_text . $amount_of_diffs . ' diff ' . $revision_text
+        .' so use a value from 1 to '. $amount_of_diffs
       );
     }
+  }
+
+  /**
+   * Create a new review for the specified review request
+   * and return the new review id
+   *
+   * @param integer $review_request_id
+   * @param array $fields
+   */
+  private function createReview($review_request_id, $fields = array())
+  {
+    $reviews_url = $this->domain . self::API_RR . $review_request_id . self::REVIEWS;
+    $new_review = $this->executeCURLRequest($reviews_url, array(), true, self::POST, $fields);
+
+    return $new_review->review->id;
+  }
+
+  /**
+   * Create a comment for a draft review
+   *
+   * @param integer $review_request_id
+   * @param integer $review_id
+   * @param array $fields
+   */
+  private function createComment($review_request_id, $review_id, $fields = array())
+  {
+    $diff_comments_url = $this->domain . self::API_RR . $review_request_id
+      . self::REVIEWS . $review_id . self::DIFF_COMMENTS;
+
+    $this->executeCURLRequest($diff_comments_url, array(), false, self::POST, $fields);
+  }
+
+  /**
+   * Send the feedback to Review Board
+   *
+   * @param integer $review_request_id
+   * @param Review $review
+   * @param integer $line_cap
+   */
+  public function sendFeedbackToRB($review_request_id, $review, $line_cap)
+  {
+    // Create a draft review
+    $new_review_id = $this->createReview($review_request_id);
+    $diff_files = $this->retrieveDiffFiles($review_request_id);
+
+    $reports = $review->getReports();
+    $violation_detected = false;
+    $total_original_violations_amount = 0;
+    $total_diff_violations_amount = 0;
+    foreach($reports as $report) {
+      $file = $report->getFile();
+      $diff_violations = $report->getDiffViolations();
+      $amount_of_diff_violations = count($report->getDiffViolations());
+      // Count the total of original and diff violations to see if the diff had positive changes
+      $total_original_violations_amount += count($report->getOriginalViolations());
+      $total_diff_violations_amount += $amount_of_diff_violations;
+      // Check if there are any violations
+      if($amount_of_diff_violations > 0) {
+        $violation_detected = true;
+      }
+      // Go through all the diff files retrieved from RB
+      foreach($diff_files->files as $diff_file) {
+        // If the reviewed file is the same as the RB diff file
+        // we push all the violations for that file to RB
+        if($file->getSource() == $diff_file->source_file) {
+          foreach($diff_violations as $violation) {
+            // Set the number of lines to post the comment on,
+            // if it exceeds the cap we just take the cap
+            $number_of_lines = $violation->getEndLine() + 1 - $violation->getBeginLine();
+            $number_of_lines = ($number_of_lines > $line_cap) ? $line_cap : $number_of_lines;
+            $fields = array(
+                'filediff_id'      => $diff_file->id,
+                'first_line'       => $violation->getBeginLine(),
+                'issue_opened'     => false,
+                'num_lines'        => $number_of_lines,
+                'text'             => $violation->getMessage()
+            );
+            // Post the comment onto the draft review
+            $this->createComment($review_request_id, $new_review_id, $fields);
+          }
+        }
+      }
+    }
+
+    // Make the review public and add the appropriate progression message
+    $progression = $total_original_violations_amount - $total_diff_violations_amount;
+    if($progression > 0) {
+      $progression_text = 'better by removing ' . abs($progression) . ' old violations!';
+    } else if($progression == 0) {
+      $progression_text = 'stay the same!';
+    } else {
+      $progression_text = 'worse by adding ' . abs($progression) . ' new violations!';
+    }
+    $fields = array(
+      'body_top' => "Static Code Quality feedback:\n\nYour diff made the code quality "
+        . $progression_text . "\nThe next messages are all the violations detected in "
+        . 'all the files you modified with this diff.',
+      'public' => 1
+    );
+    if(!$violation_detected) {
+      $fields['body_bottom'] = 'No code quality violations found, good job!';
+    }
+    // Publish the review
+    $this->createReview($review_request_id, $fields);
   }
 
   /**
    * Executes a curl request and returns the output
    *
    * @param string $url
-   * @param string $headers
+   * @param array $headers
+   * @param boolean $decode_json
    * @param string $method
    * @param array $fields
    * @return mixed
    */
-  private function executeCURLRequest($url, $headers = array(), $decode_json = true, $method = self::GET, $fields = array())
+  private function executeCURLRequest($url, $headers = array(),
+    $decode_json = true, $method = self::GET, $fields = array())
   {
     // Initialize the curl handler
     $ch = curl_init($url);
@@ -182,7 +296,7 @@ class ReviewBoardAPICalls
     $output = curl_exec($ch);
     // Check if the curl request returned a valid code
     $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    if($code != self::EXIT_CODE_200) {
+    if($code != self::EXIT_CODE_200 && $code != self::EXIT_CODE_201) {
       throw new Exception('Wrong status code (' . $code . ') for ' . $url);
     }
     // Close the curl connection

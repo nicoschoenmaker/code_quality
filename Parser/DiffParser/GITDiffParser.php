@@ -81,13 +81,12 @@ class GITDiffParser extends AbstractDiffParser implements DiffParserInterface
     $diff_file->setSource(
       substr(
         $header_string,
-        $source_start_pos + strlen(self::T_FORWARD_SLASH),
+        $source_start_pos,
         strpos(
           $header_string,
           PHP_EOL,
           $source_start_pos
         ) - $source_start_pos
-          - strlen(self::T_FORWARD_SLASH)
       )
     );
     // Fill the DiffFile index property

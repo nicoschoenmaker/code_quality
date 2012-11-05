@@ -57,6 +57,6 @@ class ProcessLocalDiffCommand extends ContainerAwareCommand
       $repository
     );
 
-    $output->write($review->__toString());
+    $output->write((string) $review);
   }
 }

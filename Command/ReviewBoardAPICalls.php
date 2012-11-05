@@ -2,7 +2,8 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Command;
 
-use Hostnet\HostnetCodeQualityBundle\Entity\Review;
+use Hostnet\HostnetCodeQualityBundle\Command\FeedbackReceiverInterface,
+    Hostnet\HostnetCodeQualityBundle\Entity\Review;
 
 use JMS\SerializerBundle\Exception\XmlErrorException;
 
@@ -12,36 +13,22 @@ use DomDocument,
 
 /**
  * The Review Board API calls that are
- * used to retrieve data from Review Board
+ * used to retrieve data from and push data
+ * to Review Board
  *
  * @author rprent
  */
-class ReviewBoardAPICalls
+class ReviewBoardAPICalls implements FeedbackReceiverInterface
 {
   // Review Board url path parts
-  const API_RR = '/api/review-requests/';
-  const API_R = '/api/repositories/';
+  const API_REVIEW_REQUEST = '/api/review-requests/';
+  const API_REPOSITORIES = '/api/repositories/';
   const R = '/r/';
   const DIFFS = '/diffs/';
   const FILES = '/files/';
   const RAW_DIFF = '/diff/raw/';
   const REVIEWS = '/reviews/';
   const DIFF_COMMENTS = '/diff-comments/';
-  // CURL request methods
-  const GET = 'get';
-  const POST = 'post';
-  // CURL headers
-  const RESULT_TYPE_TEXT = 'Accept: text/plain';
-  const RESULT_TYPE_XML = 'Accept: application/xml';
-  const RESULT_TYPE_JSON = 'Accept: application/json';
-  const BASIC_AUTH = 'Authorization: Basic ';
-  // XML tag names
-  const ITEM_TAG_NAME = 'item';
-  const ID_TAG_NAME = 'id';
-  const DEST_FILE_TAG_NAME = 'dest_file';
-  // Exit codes
-  const EXIT_CODE_200 = 200;
-  const EXIT_CODE_201 = 201;
 
   /**
    * @var string
@@ -66,10 +53,10 @@ class ReviewBoardAPICalls
    */
   public function retrievePendingReviewRequests()
   {
-    $review_requests_url = $this->domain . self::API_RR . '?status=pending&max-results=999999';
+    $review_requests_url = self::API_REVIEW_REQUEST . '?status=pending&max-results=999999';
     $headers = array(self::RESULT_TYPE_TEXT);
 
-    return $this->executeCURLRequest($review_requests_url, $headers);
+    return json_decode($this->executeCURLRequest($review_requests_url, $headers));
   }
 
   /**
@@ -86,18 +73,18 @@ class ReviewBoardAPICalls
     // Also check if we want the raw/text version or in json/other
     if(!empty($diff_revision)) {
       $this->validateDiffRevision($review_request_id, $diff_revision);
-      $diff_url = $this->domain . self::API_RR . $review_request_id . self::DIFFS . $diff_revision . '/';
+      $diff_url = self::API_REVIEW_REQUEST . $review_request_id . self::DIFFS . $diff_revision . '/';
     } else {
       if($result_type == self::RESULT_TYPE_TEXT) {
-        $diff_url = $this->domain . self::R . $review_request_id . self::RAW_DIFF;
+        $diff_url = self::R . $review_request_id . self::RAW_DIFF;
       } else {
         $last_diff_revision = $this->retrieveAmountOfDiffs($review_request_id);
-        $diff_url = $this->domain . self::API_RR . $review_request_id . self::DIFFS . $last_diff_revision . '/';
+        $diff_url = self::API_REVIEW_REQUEST . $review_request_id . self::DIFFS . $last_diff_revision . '/';
       }
     }
     $headers = array($result_type);
 
-    return $this->executeCURLRequest($diff_url, $headers, false);
+    return $this->executeCURLRequest($diff_url, $headers);
   }
 
   /**
@@ -106,13 +93,13 @@ class ReviewBoardAPICalls
    * @param integer $review_request_id
    * @return mixed
    */
-  public function retrieveDiffFiles($review_request_id)
+  private function retrieveReviewRequestDiffFiles($review_request_id)
   {
     $last_diff_revision = $this->retrieveAmountOfDiffs($review_request_id);
-    $diff_files_url = $this->domain . self::API_RR . $review_request_id
+    $diff_files_url = self::API_REVIEW_REQUEST . $review_request_id
       . self::DIFFS . $last_diff_revision . self::FILES;
 
-    return $this->executeCURLRequest($diff_files_url);
+    return json_decode($this->executeCURLRequest($diff_files_url));
   }
 
   /**
@@ -125,8 +112,8 @@ class ReviewBoardAPICalls
   private function retrieveAmountOfDiffs($review_request_id)
   {
     // Retrieve the list of diffs of the review request
-    $diff_list_url = $this->domain . self::API_RR . $review_request_id . self::DIFFS;
-    $amount_of_diffs = count($this->executeCURLRequest($diff_list_url));
+    $diff_list_url = self::API_REVIEW_REQUEST . $review_request_id . self::DIFFS;
+    $amount_of_diffs = count(json_decode($this->executeCURLRequest($diff_list_url)));
 
     // If the length of the diff list is 0 it means that
     // the review request has no diffs so we throw an exception
@@ -154,9 +141,9 @@ class ReviewBoardAPICalls
 
     $amount_of_diffs = $this->retrieveAmountOfDiffs($review_request_id);
     // If the supplied diff revision is bigger than the number of diffs we throw an exception
-    $to_be_text = $amount_of_diffs == 1 ? 'is ' : 'are ';
-    $revision_text = $amount_of_diffs == 1 ? 'revision' : 'revisions';
     if($diff_revision > $amount_of_diffs || $diff_revision == 0) {
+      $to_be_text = $amount_of_diffs == 1 ? 'is ' : 'are ';
+      $revision_text = $amount_of_diffs == 1 ? 'revision' : 'revisions';
       throw new InvalidArgumentException('The given diff revision does not exist, '
         . 'there ' . $to_be_text . $amount_of_diffs . ' diff ' . $revision_text
         .' so use a value from 1 to '. $amount_of_diffs
@@ -173,8 +160,8 @@ class ReviewBoardAPICalls
    */
   private function createReview($review_request_id, $fields = array())
   {
-    $reviews_url = $this->domain . self::API_RR . $review_request_id . self::REVIEWS;
-    $new_review = $this->executeCURLRequest($reviews_url, array(), true, self::POST, $fields);
+    $reviews_url = self::API_REVIEW_REQUEST . $review_request_id . self::REVIEWS;
+    $new_review = json_decode($this->executeCURLRequest($reviews_url, array(), self::POST, $fields));
 
     return $new_review->review->id;
   }
@@ -188,10 +175,10 @@ class ReviewBoardAPICalls
    */
   private function createComment($review_request_id, $review_id, $fields = array())
   {
-    $diff_comments_url = $this->domain . self::API_RR . $review_request_id
+    $diff_comments_url = self::API_REVIEW_REQUEST . $review_request_id
       . self::REVIEWS . $review_id . self::DIFF_COMMENTS;
 
-    $this->executeCURLRequest($diff_comments_url, array(), false, self::POST, $fields);
+    $this->executeCURLRequest($diff_comments_url, array(), self::POST, $fields);
   }
 
   /**
@@ -205,12 +192,13 @@ class ReviewBoardAPICalls
   {
     // Create a draft review
     $new_review_id = $this->createReview($review_request_id);
-    $diff_files = $this->retrieveDiffFiles($review_request_id);
+    $diff_files = $this->retrieveReviewRequestDiffFiles($review_request_id);
 
     $reports = $review->getReports();
     $violation_detected = false;
     $total_original_violations_amount = 0;
     $total_diff_violations_amount = 0;
+    $after_first_backslash_pos = 1;
     foreach($reports as $report) {
       $file = $report->getFile();
       $diff_violations = $report->getDiffViolations();
@@ -226,7 +214,7 @@ class ReviewBoardAPICalls
       foreach($diff_files->files as $diff_file) {
         // If the reviewed file is the same as the RB diff file
         // we push all the violations for that file to RB
-        if($file->getSource() == $diff_file->source_file) {
+        if(substr($file->getSource(), $after_first_backslash_pos) == $diff_file->source_file) {
           foreach($diff_violations as $violation) {
             // Set the number of lines to post the comment on,
             // if it exceeds the cap we just take the cap
@@ -256,7 +244,7 @@ class ReviewBoardAPICalls
       $progression_text = 'worse by adding ' . abs($progression) . ' new violations!';
     }
     $fields = array(
-      'body_top' => "Static Code Quality feedback:\n\nYour diff made the code quality "
+      'body_top' => "Static Code Quality feedback:\n\nYour latest diff made the code quality "
         . $progression_text . "\nThe next messages are all the violations detected in "
         . 'all the files you modified with this diff.',
       'public' => 1
@@ -279,8 +267,10 @@ class ReviewBoardAPICalls
    * @return mixed
    */
   private function executeCURLRequest($url, $headers = array(),
-    $decode_json = true, $method = self::GET, $fields = array())
+    $method = self::GET, $fields = array())
   {
+    // Prefix the domain
+    $url = $this->domain . $url;
     // Initialize the curl handler
     $ch = curl_init($url);
     // Set the curl options
@@ -296,12 +286,12 @@ class ReviewBoardAPICalls
     $output = curl_exec($ch);
     // Check if the curl request returned a valid code
     $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    if($code != self::EXIT_CODE_200 && $code != self::EXIT_CODE_201) {
+    if($code != self::HTTP_STATUS_CODE_OK && $code != self::HTTP_STATUS_CODE_CREATED) {
       throw new Exception('Wrong status code (' . $code . ') for ' . $url);
     }
     // Close the curl connection
     curl_close($ch);
 
-    return $decode_json ? json_decode($output) : $output;
+    return $output;
   }
 }

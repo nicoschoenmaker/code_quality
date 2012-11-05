@@ -9,7 +9,7 @@ use Symfony\Component\Console\Command\Command,
     Symfony\Component\Console\Output\OutputInterface,
     Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
-use Hostnet\HostnetCodeQualityBundle\Command\ReviewBoardAPICalls;
+use Hostnet\HostnetCodeQualityBundle\Command\FeedbackReceiverInterface;
 
 use Doctrine\Common\Collection;
 
@@ -62,7 +62,7 @@ class ProcessSendFeedbackToRBDiffCommand extends ContainerAwareCommand
     $line_cap = $input->getOption('line_cap');
 
     // Process the review by calling the ReviewProcessor through the container
-    $diff = $rb_api_calls->retrieveDiff($review_request_id, null, $rb_api_calls::RESULT_TYPE_TEXT);
+    $diff = $rb_api_calls->retrieveDiff($review_request_id, null, FeedbackReceiverInterface::RESULT_TYPE_TEXT);
     $review = $this->getContainer()->get('review_processor')->processReview(
       $diff,
       true,

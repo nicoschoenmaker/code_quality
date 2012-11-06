@@ -41,7 +41,9 @@ class Configuration implements ConfigurationInterface
           ->end()
         ->scalarNode('review_board_password')
           ->end()
-
+        ->scalarNode('review_board_auto_shipit')
+          ->defaultValue(false)
+            ->end()
       ->end();
 
     return $treeBuilder;

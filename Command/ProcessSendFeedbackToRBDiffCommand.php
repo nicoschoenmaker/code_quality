@@ -9,7 +9,7 @@ use Symfony\Component\Console\Command\Command,
     Symfony\Component\Console\Output\OutputInterface,
     Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
-use Hostnet\HostnetCodeQualityBundle\Command\FeedbackReceiverInterface;
+use Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\FeedbackReceiverInterface;
 
 use Doctrine\Common\Collection;
 

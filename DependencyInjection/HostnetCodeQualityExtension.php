@@ -33,5 +33,6 @@ class HostnetCodeQualityExtension extends Extension
     $container->setParameter('hostnet_code_quality.domain', $config['domain']);
     $container->setParameter('hostnet_code_quality.review_board_username', $config['review_board_username']);
     $container->setParameter('hostnet_code_quality.review_board_password', $config['review_board_password']);
+    $container->setParameter('hostnet_code_quality.review_board_auto_shipit', $config['review_board_auto_shipit']);
   }
 }

@@ -1,9 +1,11 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Command;
+namespace Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\ReviewBoard;
 
-use Hostnet\HostnetCodeQualityBundle\Command\FeedbackReceiverInterface,
-    Hostnet\HostnetCodeQualityBundle\Entity\Review;
+use Hostnet\HostnetCodeQualityBundle\Entity\Review,
+Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\AbstractFeedbackReceiver,
+    Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\FeedbackReceiverInterface,
+    Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\ReviewBoard\ReviewBoardReview;
 
 use JMS\SerializerBundle\Exception\XmlErrorException;
 
@@ -18,7 +20,7 @@ use DomDocument,
  *
  * @author rprent
  */
-class ReviewBoardAPICalls implements FeedbackReceiverInterface
+class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackReceiverInterface
 {
   // Review Board url path parts
   const API_REVIEW_REQUEST = '/api/review-requests/';
@@ -40,10 +42,19 @@ class ReviewBoardAPICalls implements FeedbackReceiverInterface
    */
   private $login;
 
-  public function __construct($domain, $username, $password)
+  /**
+   * If the review should contain an auto ship it
+   * when there are no violations to be found
+   *
+   * @var boolean
+   */
+  private $auto_ship_it;
+
+  public function __construct($domain, $username, $password, $auto_ship_it)
   {
     $this->domain = $domain;
     $this->login = base64_encode($username . ':' . $password);
+    $this->auto_ship_it = $auto_ship_it;
   }
 
   /**
@@ -243,17 +254,18 @@ class ReviewBoardAPICalls implements FeedbackReceiverInterface
     } else {
       $progression_text = 'worse by adding ' . abs($progression) . ' new violations!';
     }
-    $fields = array(
-      'body_top' => "Static Code Quality feedback:\n\nYour latest diff made the code quality "
+    $body_top =
+      "Static Code Quality feedback:\n\nYour latest diff made the code quality "
         . $progression_text . "\nThe next messages are all the violations detected in "
-        . 'all the files you modified with this diff.',
-      'public' => 1
-    );
+        . 'all the files you modified with this diff.';
+    $public = 1;
+    $rb_review = new ReviewBoardReview('', $body_top, $public);
     if(!$violation_detected) {
-      $fields['body_bottom'] = 'No code quality violations found, good job!';
+      $rb_review->setBodyBottom('No code quality violations found, good job!');
+      $rb_review->setShipIt($this->ship_it);
     }
     // Publish the review
-    $this->createReview($review_request_id, $fields);
+    $this->createReview($review_request_id, $rb_review->toArray());
   }
 
   /**
@@ -286,7 +298,7 @@ class ReviewBoardAPICalls implements FeedbackReceiverInterface
     $output = curl_exec($ch);
     // Check if the curl request returned a valid code
     $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    if($code != self::HTTP_STATUS_CODE_OK && $code != self::HTTP_STATUS_CODE_CREATED) {
+    if(!in_array($code, self::$VALID_HTTP_STATUS_CODES)) {
       throw new Exception('Wrong status code (' . $code . ') for ' . $url);
     }
     // Close the curl connection

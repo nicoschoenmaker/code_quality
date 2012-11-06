@@ -61,8 +61,9 @@ class ProcessSendFeedbackToRBDiffCommand extends ContainerAwareCommand
     $repository = $input->getArgument('repository');
     $line_cap = $input->getOption('line_cap');
 
+    $diff = $rb_api_calls->retrieveDiff($review_request_id, null,
+      FeedbackReceiverInterface::RESULT_TYPE_TEXT);
     // Process the review by calling the ReviewProcessor through the container
-    $diff = $rb_api_calls->retrieveDiff($review_request_id, null, FeedbackReceiverInterface::RESULT_TYPE_TEXT);
     $review = $this->getContainer()->get('review_processor')->processReview(
       $diff,
       true,

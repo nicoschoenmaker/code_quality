@@ -9,6 +9,8 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand,
     Symfony\Component\Console\Input\InputOption,
     Symfony\Component\Console\Output\OutputInterface;
 
+use Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\FeedbackReceiverInterface;
+
 use InvalidArgumentException;
 
 /**
@@ -56,7 +58,8 @@ class ProcessRBDiffCommand extends ContainerAwareCommand
     $repository = $input->getArgument('repository');
     $diff_revision = $input->getOption('diff_revision');
 
-    $diff = $rb_api_calls->retrieveDiff($review_request_id, $diff_revision, $rb_api_calls::RESULT_TYPE_TEXT);
+    $diff = $rb_api_calls->retrieveDiff($review_request_id, $diff_revision,
+      FeedbackReceiverInterface::RESULT_TYPE_TEXT);
     // Process the review by calling the ReviewProcessor through the container
     $review = $this->getContainer()->get('review_processor')->processReview(
       $diff,

@@ -3,14 +3,12 @@
 namespace Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\ReviewBoard;
 
 use Hostnet\HostnetCodeQualityBundle\Entity\Review,
-Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\AbstractFeedbackReceiver,
+    Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\AbstractFeedbackReceiver,
     Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\FeedbackReceiverInterface,
     Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\ReviewBoard\ReviewBoardReview;
 
-use JMS\SerializerBundle\Exception\XmlErrorException;
-
 use DomDocument,
-    Exception,
+    RuntimeException,
     InvalidArgumentException;
 
 /**
@@ -298,11 +296,12 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
     $output = curl_exec($ch);
     // Check if the curl request returned a valid code
     $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    if(!in_array($code, self::$VALID_HTTP_STATUS_CODES)) {
-      throw new Exception('Wrong status code (' . $code . ') for ' . $url);
-    }
     // Close the curl connection
     curl_close($ch);
+
+    if(!in_array($code, self::$supported_http_status_codes)) {
+      throw new RuntimeException('Wrong status code (' . $code . ') for ' . $url);
+    }
 
     return $output;
   }

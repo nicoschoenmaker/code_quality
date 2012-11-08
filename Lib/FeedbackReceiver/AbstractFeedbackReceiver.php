@@ -83,7 +83,8 @@ abstract class AbstractFeedbackReceiver
   {
     $result = json_decode($string);
     if(json_last_error() != JSON_ERROR_NONE) {
-      throw new InvalidArgumentException(json_last_error());
+      throw new InvalidArgumentException("Decoding the string '" . $string
+        . "'with JSON failed and returned error code '" . json_last_error() . "'");
     }
 
     return $result;

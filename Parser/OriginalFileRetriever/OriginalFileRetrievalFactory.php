@@ -2,9 +2,7 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\CGIT\CGITOriginalFileRetrieverParams,
-    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\ReviewBoard\ReviewBoardOriginalFileRetrieverParams,
-    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalParams,
+use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalParams,
     Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrieverInterface;
 
 use InvalidArgumentException;
@@ -50,12 +48,7 @@ class OriginalFileRetrievalFactory
   {
     // Switch cases unfortunately aren't possible with instanceof
     foreach($this->original_file_retrievers as $original_file_retriever) {
-      if($original_file_retrieval_params instanceof ReviewBoardOriginalFileRetrieverParams
-        && $original_file_retriever instanceof RetrieveByReviewBoard) {
-        return $original_file_retriever;
-      }
-      else if($original_file_retrieval_params instanceof CGITOriginalFileRetrieverParams
-        && $original_file_retriever instanceof RetrieveByCGIT) {
+      if($original_file_retriever->supports($original_file_retrieval_params)) {
         return $original_file_retriever;
       }
     }

@@ -4,7 +4,8 @@ namespace Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever;
 
 use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalParams,
     Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\FeedbackReceiverInterface,
-    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrieverInterface;
+    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrieverInterface,
+    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\ReviewBoard\ReviewBoardOriginalFileRetrieverParams;
 
 /**
  * The Review Board implementation of retrieving the original file
@@ -37,5 +38,17 @@ class RetrieveByReviewBoard implements OriginalFileRetrieverInterface
 
     return $this->feedback_receiver->
       retrieveOriginalFile($review_request_id, $source_file);
+  }
+
+  /**
+   * Checks if the original file retriever supports the original
+   * file retrieval params
+   *
+   * @param OriginalFileRetrievalParams $original_file_retrieval_params
+   * @return boolean
+   */
+  public function supports(OriginalFileRetrievalParams $original_file_retrieval_params)
+  {
+    return $original_file_retrieval_params instanceof ReviewBoardOriginalFileRetrieverParams;
   }
 }

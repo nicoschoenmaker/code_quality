@@ -3,7 +3,8 @@
 namespace Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever;
 
 use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrieverInterface,
-    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalParams;
+    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalParams,
+    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\CGIT\CGITOriginalFileRetrieverParams;
 
 /**
  * The CGIT implementation of retrieving the original file
@@ -56,5 +57,17 @@ class RetrieveByCGIT implements OriginalFileRetrieverInterface
     ;
 
     return file_get_contents($original_file_url);
+  }
+
+  /**
+   * Checks if the original file retriever supports the original
+   * file retrieval params
+   *
+   * @param OriginalFileRetrievalParams $original_file_retrieval_params
+   * @return boolean
+   */
+  public function supports(OriginalFileRetrievalParams $original_file_retrieval_params)
+  {
+    return $original_file_retrieval_params instanceof CGITOriginalFileRetrieverParams;
   }
 }

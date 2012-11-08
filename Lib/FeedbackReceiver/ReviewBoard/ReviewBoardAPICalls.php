@@ -286,8 +286,7 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
       $progression_text = 'worse by adding ' . abs($progression) . ' new violations!';
     }
     $body_top = "Static Code Quality feedback:\n\n";
-    $public = true;
-    $rb_review = new ReviewBoardReview('', '', $public);
+    $rb_review = new ReviewBoardReview('', '', true);
     if($violation_detected) {
       $rb_review->setBodyTop($body_top . "\tYour latest diff made the code quality "
         . $progression_text . "\n\tThe next messages are all the violations detected in "

@@ -25,7 +25,7 @@ services:
     calls:
       - [ addOriginalFileRetrieverInstance, [@original_file_retriever.retrieve_by_cgit] ]
       - [ addOriginalFileRetrieverInstance, [@original_file_retriever.retrieve_by_review_board] ]
-  
+
   original_file_retriever.retrieve_by_cgit:
     class: Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\RetrieveByCGIT
     arguments: [%hostnet_code_quality.raw_file_url_mask_1%, %hostnet_code_quality.raw_file_url_mask_2%]

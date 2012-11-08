@@ -40,7 +40,7 @@ class ReviewBoardReview
    */
   private $ship_it;
 
-  public function __construct($body_bottom = '', $body_top = '', $public = '', $ship_it = '')
+  public function __construct($body_bottom = '', $body_top = '', $public = false, $ship_it = false)
   {
     $this->body_bottom = '';
     $this->body_top = $body_top;

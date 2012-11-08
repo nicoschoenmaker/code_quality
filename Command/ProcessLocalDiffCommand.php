@@ -2,6 +2,8 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Command;
 
+use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\CGIT\CGITOriginalFileRetrieverParams;
+
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand,
     Symfony\Component\Console\Command\Command,
     Symfony\Component\Console\Input\InputArgument,
@@ -50,11 +52,12 @@ class ProcessLocalDiffCommand extends ContainerAwareCommand
     $repository = $input->getArgument('repository');
     $diff = file_get_contents($path_to_diff);
 
+    $original_file_retrieval_params = new CGITOriginalFileRetrieverParams($repository);
     // Process the review by calling the ReviewProcessor through the container
     $review = $this->getContainer()->get('review_processor')->processReview(
       $diff,
       true,
-      $repository
+      $original_file_retrieval_params
     );
 
     $output->write((string) $review);

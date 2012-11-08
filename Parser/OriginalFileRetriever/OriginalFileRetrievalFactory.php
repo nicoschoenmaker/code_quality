@@ -2,7 +2,10 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrieverInterface;
+use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\CGIT\CGITOriginalFileRetrieverParams,
+    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\ReviewBoard\ReviewBoardOriginalFileRetrieverParams,
+    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\AbstractOriginalFileRetrievalParams,
+    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrieverInterface;
 
 use InvalidArgumentException;
 
@@ -24,24 +27,13 @@ class OriginalFileRetrievalFactory
   private $original_file_retrievers = array();
 
   /**
-   * Specifies how the original file should be retrieved
-   *
-   * @var string
-   */
-  private $original_file_retrieval_method = '';
-
-  public function __construct($original_file_retrieval_method)
-  {
-    $this->original_file_retrieval_method = $original_file_retrieval_method;
-  }
-
-  /**
    * Adds an OriginalFileRetriever instance to the
    * original file retrievers array
    *
    * @param OriginalFileRetrieverInterface $original_file_retriever
    */
-  public function addOriginalFileRetrieverInstance(OriginalFileRetrieverInterface $original_file_retriever)
+  public function addOriginalFileRetrieverInstance(
+    OriginalFileRetrieverInterface $original_file_retriever)
   {
     $this->original_file_retrievers[] = $original_file_retriever;
   }
@@ -50,22 +42,26 @@ class OriginalFileRetrievalFactory
    * Gets an OriginalFileRetriever instance from the
    * original file retrievers array
    *
+   * @param OriginalFileRetrievalParams $original_file_retrieval_params
    * @return OriginalFileRetrieverInterface
    */
-  public function getOriginalFileRetrieverInstance()
+  public function getOriginalFileRetrieverInstance(
+    AbstractOriginalFileRetrievalParams $original_file_retrieval_params)
   {
-    $retriever = null;
+    // Switch cases unfortunately aren't possible with instanceof
     foreach($this->original_file_retrievers as $original_file_retriever) {
-      if($original_file_retriever->supports($this->original_file_retrieval_method)) {
-        $retriever = $original_file_retriever;
+      if($original_file_retrieval_params instanceof ReviewBoardOriginalFileRetrieverParams
+        && $original_file_retriever instanceof RetrieveByReviewBoard) {
+        return $original_file_retriever;
+      }
+      else if($original_file_retrieval_params instanceof CGITOriginalFileRetrieverParams
+        && $original_file_retriever instanceof RetrieveByCGIT) {
+        return $original_file_retriever;
       }
     }
 
-    if(!$retriever) {
-      throw new InvalidArgumentException("No original file retriever found for: '" .
-        $this->original_file_retrieval_method . "'. Please configure the 'original_file_retrieval_method'" .
-        ' setting correctly.');
-    }
-    return $retriever;
+    throw new InvalidArgumentException("No original file retriever found for: '" .
+      $this->original_file_retrieval_method . "'. Please configure the 'original_file_retrieval_method'" .
+      ' setting correctly.');
   }
 }

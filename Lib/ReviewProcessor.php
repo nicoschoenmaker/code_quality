@@ -9,6 +9,7 @@ use Symfony\Component\Filesystem\Exception\IOException;
 use Hostnet\HostnetCodeQualityBundle\Entity\Review,
     Hostnet\HostnetCodeQualityBundle\Lib\EntityFactory,
     Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalFactory,
+    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\AbstractOriginalFileRetrievalParams,
     Hostnet\HostnetCodeQualityBundle\Parser\CommandLineUtility,
     Hostnet\HostnetCodeQualityBundle\Parser\ParserFactory;
 
@@ -28,9 +29,9 @@ class ReviewProcessor
   private $em;
 
   /**
-   * @var OriginalFileRetrieverInterface
+   * @var OriginalFileRetrievalFactory
    */
-  private $original_file_retriever;
+  private $original_file_retrieval_factory;
 
   /**
    * @var CommandLineUtility
@@ -48,12 +49,12 @@ class ReviewProcessor
   private $ef;
 
   public function __construct(EntityManager $em, EntityFactory $ef,
-    OriginalFileRetrievalFactory $ofrf, CommandLineUtility $clu, ParserFactory $pf)
+    OriginalFileRetrievalFactory $original_file_retrieval_factory,
+    CommandLineUtility $clu, ParserFactory $pf)
   {
     $this->em = $em;
     $this->ef = $ef;
-    // Gets the correct original file retriever based on the config setting
-    $this->original_file_retriever = $ofrf->getOriginalFileRetrieverInstance();
+    $this->original_file_retrieval_factory = $original_file_retrieval_factory;
     $this->clu = $clu;
     $this->pf = $pf;
   }
@@ -63,16 +64,21 @@ class ReviewProcessor
    *
    * @param string $diff
    * @param boolean $register
-   * @param string $repository
+   * @param AbstractOriginalFileRetrievalParams $original_file_retrieval_params
    * @throws IOException
    * @return Review
    */
-  public function processReview($diff, $register, $repository)
+  public function processReview($diff, $register,
+    AbstractOriginalFileRetrievalParams $original_file_retrieval_params)
   {
     $tools = $this->ef->retrieveTools();
     // Parse the diff into DiffFile objects
     $diff_parser = $this->pf->getDiffParserInstance();
     $diff_files = $diff_parser->parseDiff($diff);
+
+    // Gets the correct original file retriever based on the given param class
+    $original_file_retriever =
+      $this->original_file_retrieval_factory->getOriginalFileRetrieverInstance($original_file_retrieval_params);
 
     // Send each diff file to their specific tool based on the extension
     $review = new Review();
@@ -82,14 +88,14 @@ class ReviewProcessor
     foreach($diff_files as $diff_file) {
       foreach($tools as $tool) {
         if($tool->supports($diff_file->getExtension())) {
-
           // Check if the diff file is new. If it exists we retrieve the original file
           // and merge it. If it's new we don't have to retrieve the original
           // as there is none, so we just insert the whole diff code
           if($diff_file->hasParent()) {
+            $original_file_retrieval_params->setDiffFile($diff_file);
             // Retrieves the original file based on the configured retrieval method
             $diff_file->setOriginalFile(
-              $this->original_file_retriever->retrieveOriginalFile($diff_file, $repository)
+              $original_file_retriever->retrieveOriginalFile($original_file_retrieval_params)
             );
             // Merge the diff with the original in order to be able
             // to scan all the changes made in the actual code

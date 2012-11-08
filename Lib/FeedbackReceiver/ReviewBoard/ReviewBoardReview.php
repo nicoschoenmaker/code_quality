@@ -2,6 +2,13 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\ReviewBoard;
 
+/**
+ * The Review Board Review object.
+ * The properties are used to post a review
+ * on Review Board.
+ *
+ * @author rprent
+ */
 class ReviewBoardReview
 {
   /**

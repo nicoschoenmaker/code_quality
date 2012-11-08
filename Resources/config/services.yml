@@ -22,13 +22,17 @@ services:
 
   original_file_retrieval_factory:
     class: Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalFactory
-    arguments: [%hostnet_code_quality.original_file_retrieval_method%]
     calls:
       - [ addOriginalFileRetrieverInstance, [@original_file_retriever.retrieve_by_cgit] ]
+      - [ addOriginalFileRetrieverInstance, [@original_file_retriever.retrieve_by_review_board] ]
 
   original_file_retriever.retrieve_by_cgit:
     class: Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\RetrieveByCGIT
     arguments: [%hostnet_code_quality.raw_file_url_mask_1%, %hostnet_code_quality.raw_file_url_mask_2%]
+    
+  original_file_retriever.retrieve_by_review_board:
+    class: Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\RetrieveByReviewBoard
+    arguments: [@review_board_api_calls]
 
 ####################################
 # The Command Line Utility service #
@@ -39,7 +43,7 @@ services:
     arguments: [%hostnet_code_quality.temp_cq_dir_name%]
 
 #######################
-# The Parser services #
+# The parser services #
 #######################
 
   parser_factory:
@@ -65,10 +69,10 @@ services:
     class: Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\XML\JSLintXMLParser
     arguments: [@entity_factory]
 
-##########################
-# Review Board API Calls #
-##########################
-
+##############################
+# Feedback receiving service #
+##############################
+  
   review_board_api_calls:
     class: Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\ReviewBoard\ReviewBoardAPICalls
     arguments: [%hostnet_code_quality.domain%, %hostnet_code_quality.review_board_username%, %hostnet_code_quality.review_board_password%, %hostnet_code_quality.review_board_auto_shipit%]

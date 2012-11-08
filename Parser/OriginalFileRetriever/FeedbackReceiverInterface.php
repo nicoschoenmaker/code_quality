@@ -1,17 +1,19 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver;
+namespace Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever;
 
+/**
+ * The Feedback Receiver Interface
+ * All the Feedback Receivers should implement this
+ *
+ * @author rprent
+ */
 interface FeedbackReceiverInterface
 {
-  // CURL request methods
-  const GET = 'get';
-  const POST = 'post';
-  // CURL headers
+  // CURL result type headers
   const RESULT_TYPE_TEXT = 'Accept: text/plain';
   const RESULT_TYPE_XML = 'Accept: application/xml';
   const RESULT_TYPE_JSON = 'Accept: application/json';
-  const BASIC_AUTH = 'Authorization: Basic ';
 
   /**
    * Retrieve the diff

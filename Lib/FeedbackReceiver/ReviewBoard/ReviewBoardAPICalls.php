@@ -4,12 +4,10 @@ namespace Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\ReviewBoard;
 
 use Hostnet\HostnetCodeQualityBundle\Entity\Review,
     Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\AbstractFeedbackReceiver,
-    Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\FeedbackReceiverInterface,
-    Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\ReviewBoard\ReviewBoardReview;
+    Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\ReviewBoard\ReviewBoardReview,
+    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\FeedbackReceiverInterface;
 
-use DomDocument,
-    RuntimeException,
-    InvalidArgumentException;
+use InvalidArgumentException;
 
 /**
  * The Review Board API calls that are
@@ -29,16 +27,8 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
   const RAW_DIFF = '/diff/raw/';
   const REVIEWS = '/reviews/';
   const DIFF_COMMENTS = '/diff-comments/';
-
-  /**
-   * @var string
-   */
-  private $domain;
-
-  /**
-   * @var string
-   */
-  private $login;
+  const ORIGINAL_FILE = '/original-file/';
+  const AFTER_FIRST_BACKSLASH_POS = 1;
 
   /**
    * If the review should contain an auto ship it
@@ -50,9 +40,31 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
 
   public function __construct($domain, $username, $password, $auto_ship_it)
   {
-    $this->domain = $domain;
-    $this->login = base64_encode($username . ':' . $password);
     $this->auto_ship_it = $auto_ship_it;
+
+    parent::__construct($domain, $username, $password);
+  }
+
+  /**
+   * Retrieves the original file from Review Board
+   * Note: Functionality added in the Review Board v1.7+ API!
+   *
+   * @param integer $review_request_id
+   * @param string $source_file
+   * @return mixed
+   */
+  public function retrieveOriginalFile($review_request_id, $source_file)
+  {
+    $files = $this->
+      retrieveReviewRequestLastDiffFiles($review_request_id);
+    foreach($files->files as $file) {
+      if(substr($source_file, self::AFTER_FIRST_BACKSLASH_POS) == $file->source_file) {
+        $original_file_url = $file->links->original_file->href;
+      }
+    }
+    $headers = array(self::RESULT_TYPE_TEXT);
+
+    return $this->executeCURLRequest($original_file_url, $headers);
   }
 
   /**
@@ -62,7 +74,8 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
    */
   public function retrievePendingReviewRequests()
   {
-    $review_requests_url = self::API_REVIEW_REQUEST . '?status=pending&max-results=999999';
+    $review_requests_url = $this->domain . self::API_REVIEW_REQUEST
+      . '?status=pending&max-results=999999';
     $headers = array(self::RESULT_TYPE_TEXT);
 
     return json_decode($this->executeCURLRequest($review_requests_url, $headers));
@@ -82,13 +95,15 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
     // Also check if we want the raw/text version or in json/other
     if(!empty($diff_revision)) {
       $this->validateDiffRevision($review_request_id, $diff_revision);
-      $diff_url = self::API_REVIEW_REQUEST . $review_request_id . self::DIFFS . $diff_revision . '/';
+      $diff_url = $this->domain . self::API_REVIEW_REQUEST
+        . $review_request_id . self::DIFFS . $diff_revision . '/';
     } else {
       if($result_type == self::RESULT_TYPE_TEXT) {
-        $diff_url = self::R . $review_request_id . self::RAW_DIFF;
+        $diff_url = $this->domain . self::R . $review_request_id . self::RAW_DIFF;
       } else {
         $last_diff_revision = $this->retrieveAmountOfDiffs($review_request_id);
-        $diff_url = self::API_REVIEW_REQUEST . $review_request_id . self::DIFFS . $last_diff_revision . '/';
+        $diff_url = $this->domain . self::API_REVIEW_REQUEST . $review_request_id
+          . self::DIFFS . $last_diff_revision . '/';
       }
     }
     $headers = array($result_type);
@@ -102,10 +117,10 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
    * @param integer $review_request_id
    * @return mixed
    */
-  private function retrieveReviewRequestDiffFiles($review_request_id)
+  private function retrieveReviewRequestLastDiffFiles($review_request_id)
   {
     $last_diff_revision = $this->retrieveAmountOfDiffs($review_request_id);
-    $diff_files_url = self::API_REVIEW_REQUEST . $review_request_id
+    $diff_files_url = $this->domain . self::API_REVIEW_REQUEST . $review_request_id
       . self::DIFFS . $last_diff_revision . self::FILES;
 
     return json_decode($this->executeCURLRequest($diff_files_url));
@@ -121,7 +136,8 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
   private function retrieveAmountOfDiffs($review_request_id)
   {
     // Retrieve the list of diffs of the review request
-    $diff_list_url = self::API_REVIEW_REQUEST . $review_request_id . self::DIFFS;
+    $diff_list_url = $this->domain . self::API_REVIEW_REQUEST
+      . $review_request_id . self::DIFFS;
     $amount_of_diffs = count(json_decode($this->executeCURLRequest($diff_list_url)));
 
     // If the length of the diff list is 0 it means that
@@ -169,8 +185,11 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
    */
   private function createReview($review_request_id, $fields = array())
   {
-    $reviews_url = self::API_REVIEW_REQUEST . $review_request_id . self::REVIEWS;
-    $new_review = json_decode($this->executeCURLRequest($reviews_url, array(), self::POST, $fields));
+    $reviews_url = $this->domain . self::API_REVIEW_REQUEST
+      . $review_request_id . self::REVIEWS;
+    $new_review = json_decode($this->executeCURLRequest(
+      $reviews_url, array(), self::POST, $fields
+    ));
 
     return $new_review->review->id;
   }
@@ -184,8 +203,8 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
    */
   private function createComment($review_request_id, $review_id, $fields = array())
   {
-    $diff_comments_url = self::API_REVIEW_REQUEST . $review_request_id
-      . self::REVIEWS . $review_id . self::DIFF_COMMENTS;
+    $diff_comments_url = $this->domain . self::API_REVIEW_REQUEST
+      . $review_request_id . self::REVIEWS . $review_id . self::DIFF_COMMENTS;
 
     $this->executeCURLRequest($diff_comments_url, array(), self::POST, $fields);
   }
@@ -201,13 +220,12 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
   {
     // Create a draft review
     $new_review_id = $this->createReview($review_request_id);
-    $diff_files = $this->retrieveReviewRequestDiffFiles($review_request_id);
+    $diff_files = $this->retrieveReviewRequestLastDiffFiles($review_request_id);
 
     $reports = $review->getReports();
     $violation_detected = false;
     $total_original_violations_amount = 0;
     $total_diff_violations_amount = 0;
-    $after_first_backslash_pos = 1;
     foreach($reports as $report) {
       $file = $report->getFile();
       $diff_violations = $report->getDiffViolations();
@@ -223,7 +241,7 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
       foreach($diff_files->files as $diff_file) {
         // If the reviewed file is the same as the RB diff file
         // we push all the violations for that file to RB
-        if(substr($file->getSource(), $after_first_backslash_pos) == $diff_file->source_file) {
+        if(substr($file->getSource(), self::AFTER_FIRST_BACKSLASH_POS) == $diff_file->source_file) {
           foreach($diff_violations as $violation) {
             // Set the number of lines to post the comment on,
             // if it exceeds the cap we just take the cap
@@ -256,53 +274,13 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
       "Static Code Quality feedback:\n\nYour latest diff made the code quality "
         . $progression_text . "\nThe next messages are all the violations detected in "
         . 'all the files you modified with this diff.';
-    $public = 1;
+    $public = true;
     $rb_review = new ReviewBoardReview('', $body_top, $public);
     if(!$violation_detected) {
       $rb_review->setBodyBottom('No code quality violations found, good job!');
-      $rb_review->setShipIt($this->ship_it);
+      $rb_review->setShipIt($this->auto_ship_it);
     }
     // Publish the review
     $this->createReview($review_request_id, $rb_review->toArray());
-  }
-
-  /**
-   * Executes a curl request and returns the output
-   *
-   * @param string $url
-   * @param array $headers
-   * @param boolean $decode_json
-   * @param string $method
-   * @param array $fields
-   * @return mixed
-   */
-  private function executeCURLRequest($url, $headers = array(),
-    $method = self::GET, $fields = array())
-  {
-    // Prefix the domain
-    $url = $this->domain . $url;
-    // Initialize the curl handler
-    $ch = curl_init($url);
-    // Set the curl options
-    $full_http_header = array_merge(array(self::BASIC_AUTH . $this->login), $headers);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $full_http_header);
-    if($method == self::POST) {
-      curl_setopt($ch, CURLOPT_POST, true);
-      curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($fields));
-    }
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    // Execute the curl session
-    $output = curl_exec($ch);
-    // Check if the curl request returned a valid code
-    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    // Close the curl connection
-    curl_close($ch);
-
-    if(!in_array($code, self::$supported_http_status_codes)) {
-      throw new RuntimeException('Wrong status code (' . $code . ') for ' . $url);
-    }
-
-    return $output;
   }
 }

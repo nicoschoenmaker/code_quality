@@ -2,8 +2,74 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver;
 
-class AbstractFeedbackReceiver
+use RuntimeException;
+
+/**
+ * An Abstract class for all the Feedback Receivers
+ *
+ * @author rprent
+ */
+abstract class AbstractFeedbackReceiver
 {
+  // CURL authorization header
+  const BASIC_AUTH = 'Authorization: Basic ';
+  // CURL request methods
+  const GET = 'get';
+  const POST = 'post';
+
   // HTTP status codes
   protected static $supported_http_status_codes = array(200, 201);
+
+  /**
+   * @var string
+   */
+  protected $domain;
+
+  /**
+   * @var string
+   */
+  private $login;
+
+  public function __construct($domain, $username, $password)
+  {
+    $this->domain = $domain;
+    $this->login = base64_encode($username . ':' . $password);
+  }
+
+  /**
+   * Executes a curl request and returns the output
+   *
+   * @param string $url
+   * @param array $headers
+   * @param string $method
+   * @param array $fields
+   * @return mixed
+   */
+  protected function executeCURLRequest($url, $headers = array(),
+    $method = self::GET, $fields = array())
+  {
+    // Initialize the curl handler
+    $ch = curl_init($url);
+    // Set the curl options
+    $full_http_header = array_merge(array(self::BASIC_AUTH . $this->login), $headers);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $full_http_header);
+    if($method == self::POST) {
+      curl_setopt($ch, CURLOPT_POST, true);
+      curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($fields));
+    }
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    // Execute the curl session
+    $output = curl_exec($ch);
+    // Check if the curl request returned a valid code
+    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    // Close the curl connection
+    curl_close($ch);
+
+    if(!in_array($code, self::$supported_http_status_codes)) {
+      throw new RuntimeException('Wrong status code (' . $code . ') for ' . $url);
+    }
+
+    return $output;
+  }
 }

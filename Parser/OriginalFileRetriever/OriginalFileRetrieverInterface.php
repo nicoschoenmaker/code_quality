@@ -2,7 +2,7 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile;
+use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\AbstractOriginalFileRetrievalParams;
 
 /**
  * The OriginalFileRetriever interface
@@ -12,10 +12,9 @@ use Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile;
 interface OriginalFileRetrieverInterface
 {
   /**
-   * Retrieves the original file of the given diff
+   * Retrieves the original file of a diff
    *
-   * @param DiffFile $diff_file
-   * @param string $repository
+   * @param OriginalFileRetrievalParams $original_file_retrieval_params
    */
-  public function retrieveOriginalFile(DiffFile $diff_file, $repository);
+  public function retrieveOriginalFile(AbstractOriginalFileRetrievalParams $original_file_retrieval_params);
 }

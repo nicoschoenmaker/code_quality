@@ -3,8 +3,7 @@
 namespace Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever;
 
 use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrieverInterface,
-    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\AbstractOriginalFileRetriever,
-    Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile;
+    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\AbstractOriginalFileRetrievalParams;
 
 /**
  * The CGIT implementation of retrieving the original file
@@ -13,7 +12,7 @@ use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRe
  *
  * @author rprent
  */
-class RetrieveByCGIT extends AbstractOriginalFileRetriever implements OriginalFileRetrieverInterface
+class RetrieveByCGIT implements OriginalFileRetrieverInterface
 {
   /**
    * The raw file url mask setting configured which
@@ -31,13 +30,6 @@ class RetrieveByCGIT extends AbstractOriginalFileRetriever implements OriginalFi
    */
   private $raw_file_url_mask_2;
 
-  /**
-   * The retrieval method that the original file retriever supports
-   *
-   * @var string
-   */
-  protected $original_file_retrieval_method = 'cgit';
-
   public function __construct($raw_file_url_mask_1, $raw_file_url_mask_2)
   {
     $this->raw_file_url_mask_1 = $raw_file_url_mask_1;
@@ -47,14 +39,15 @@ class RetrieveByCGIT extends AbstractOriginalFileRetriever implements OriginalFi
   /**
    * Retrieves the original file of the given diff with CGIT
    *
-   * @param DiffFile $diff_file
-   * @param string $repository
-   * $return string
+   * @param AbstractOriginalFileRetrievalParams $original_file_retrieval_params
+   * @return string
    */
-  public function retrieveOriginalFile(DiffFile $diff_file, $repository)
+  public function retrieveOriginalFile(
+    AbstractOriginalFileRetrievalParams $original_file_retrieval_params)
   {
+    $diff_file = $original_file_retrieval_params->getDiffFile();
     $original_file_url = $this->raw_file_url_mask_1
-      . $repository
+      . $original_file_retrieval_params->getRepository()
       . $this->raw_file_url_mask_2
       . '/'
       . $diff_file->getSource()

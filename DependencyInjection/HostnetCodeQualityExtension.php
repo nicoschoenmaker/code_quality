@@ -29,7 +29,7 @@ class HostnetCodeQualityExtension extends Extension
     $container->setParameter('hostnet_code_quality.scm', $config['scm']);
     $container->setParameter('hostnet_code_quality.raw_file_url_mask_1', $config['raw_file_url_mask_1']);
     $container->setParameter('hostnet_code_quality.raw_file_url_mask_2', $config['raw_file_url_mask_2']);
-    $container->setParameter('hostnet_code_quality.domain', $config['domain']);
+    $container->setParameter('hostnet_code_quality.review_board_base_url', $config['review_board_base_url']);
     $container->setParameter('hostnet_code_quality.review_board_username', $config['review_board_username']);
     $container->setParameter('hostnet_code_quality.review_board_password', $config['review_board_password']);
     $container->setParameter('hostnet_code_quality.review_board_auto_shipit', $config['review_board_auto_shipit']);

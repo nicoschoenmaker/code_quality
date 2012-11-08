@@ -2,7 +2,7 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\AbstractOriginalFileRetrievalParams;
+use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalParams;
 
 /**
  * The OriginalFileRetriever interface
@@ -16,5 +16,5 @@ interface OriginalFileRetrieverInterface
    *
    * @param OriginalFileRetrievalParams $original_file_retrieval_params
    */
-  public function retrieveOriginalFile(AbstractOriginalFileRetrievalParams $original_file_retrieval_params);
+  public function retrieveOriginalFile(OriginalFileRetrievalParams $original_file_retrieval_params);
 }

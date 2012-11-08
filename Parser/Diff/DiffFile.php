@@ -333,6 +333,11 @@ class DiffFile
     return $empty_diff_parsing_properties;
   }
 
+  /**
+   * If the diff file has a parent source
+   *
+   * @return boolean
+   */
   public function hasParent()
   {
     return $this->source != self::DEV_NULL;

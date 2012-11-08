@@ -32,7 +32,7 @@ class Configuration implements ConfigurationInterface
           ->end()
         ->scalarNode('raw_file_url_mask_2')
           ->end()
-        ->scalarNode('domain')
+        ->scalarNode('review_board_base_url')
           ->end()
         ->scalarNode('review_board_username')
           ->end()

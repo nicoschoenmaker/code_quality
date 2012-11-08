@@ -9,7 +9,7 @@ use Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile;
  *
  * @author rprent
  */
-abstract class AbstractOriginalFileRetrievalParams
+class OriginalFileRetrievalParams
 {
   /**
    * @var DiffFile

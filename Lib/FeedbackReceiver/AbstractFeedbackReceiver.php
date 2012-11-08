@@ -2,7 +2,8 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver;
 
-use RuntimeException;
+use RuntimeException,
+    InvalidArgumentException;
 
 /**
  * An Abstract class for all the Feedback Receivers
@@ -23,16 +24,16 @@ abstract class AbstractFeedbackReceiver
   /**
    * @var string
    */
-  protected $domain;
+  protected $base_url;
 
   /**
    * @var string
    */
   private $login;
 
-  public function __construct($domain, $username, $password)
+  public function __construct($base_url, $username, $password)
   {
-    $this->domain = $domain;
+    $this->base_url = $base_url;
     $this->login = base64_encode($username . ':' . $password);
   }
 
@@ -45,7 +46,7 @@ abstract class AbstractFeedbackReceiver
    * @param array $fields
    * @return mixed
    */
-  protected function executeCURLRequest($url, $headers = array(),
+  final protected function executeCURLRequest($url, $headers = array(),
     $method = self::GET, $fields = array())
   {
     // Initialize the curl handler
@@ -71,5 +72,20 @@ abstract class AbstractFeedbackReceiver
     }
 
     return $output;
+  }
+
+  /**
+   * Decodes JSON and checks for errors
+   *
+   * @param string $string
+   */
+  final protected function decodeJSON($string)
+  {
+    $result = json_decode($string);
+    if(json_last_error() != JSON_ERROR_NONE) {
+      throw new InvalidArgumentException(json_last_error());
+    }
+
+    return $result;
   }
 }

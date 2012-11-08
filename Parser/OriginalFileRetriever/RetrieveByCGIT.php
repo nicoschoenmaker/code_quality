@@ -3,7 +3,7 @@
 namespace Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever;
 
 use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrieverInterface,
-    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\AbstractOriginalFileRetrievalParams;
+    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalParams;
 
 /**
  * The CGIT implementation of retrieving the original file
@@ -39,11 +39,11 @@ class RetrieveByCGIT implements OriginalFileRetrieverInterface
   /**
    * Retrieves the original file of the given diff with CGIT
    *
-   * @param AbstractOriginalFileRetrievalParams $original_file_retrieval_params
+   * @param OriginalFileRetrievalParams $original_file_retrieval_params
    * @return string
    */
   public function retrieveOriginalFile(
-    AbstractOriginalFileRetrievalParams $original_file_retrieval_params)
+    OriginalFileRetrievalParams $original_file_retrieval_params)
   {
     $diff_file = $original_file_retrieval_params->getDiffFile();
     $original_file_url = $this->raw_file_url_mask_1

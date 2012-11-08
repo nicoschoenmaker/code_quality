@@ -2,7 +2,7 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\ReviewBoard;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\AbstractOriginalFileRetrievalParams;
+use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalParams;
 
 /**
  * The Review Board original file retrieval parameters
@@ -10,7 +10,7 @@ use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\AbstractOrigin
  *
  * @author rprent
  */
-class ReviewBoardOriginalFileRetrieverParams extends AbstractOriginalFileRetrievalParams
+class ReviewBoardOriginalFileRetrieverParams extends OriginalFileRetrievalParams
 {
   /**
    * @var integer

@@ -53,7 +53,7 @@ class ReviewBoardReview
    *
    * @param string $body_bottom
    */
-  public function setBodyBottom(string $body_bottom)
+  public function setBodyBottom($body_bottom)
   {
     $this->body_bottom = $body_bottom;
   }
@@ -63,7 +63,7 @@ class ReviewBoardReview
    *
    * @param string $body_top
    */
-  public function setBodyTop(string $body_top)
+  public function setBodyTop($body_top)
   {
     $this->body_top = $body_top;
   }

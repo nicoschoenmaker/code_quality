@@ -2,8 +2,7 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\CGIT;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile,
-    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\AbstractOriginalFileRetrievalParams;
+use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalParams;
 
 /**
  * The CGIT original file retrieval parameters
@@ -12,7 +11,7 @@ use Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile,
  *
  * @author rprent
  */
-class CGITOriginalFileRetrieverParams extends AbstractOriginalFileRetrievalParams
+class CGITOriginalFileRetrieverParams extends OriginalFileRetrievalParams
 {
   /**
    * @var string

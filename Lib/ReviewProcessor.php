@@ -9,7 +9,7 @@ use Symfony\Component\Filesystem\Exception\IOException;
 use Hostnet\HostnetCodeQualityBundle\Entity\Review,
     Hostnet\HostnetCodeQualityBundle\Lib\EntityFactory,
     Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalFactory,
-    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\AbstractOriginalFileRetrievalParams,
+    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalParams,
     Hostnet\HostnetCodeQualityBundle\Parser\CommandLineUtility,
     Hostnet\HostnetCodeQualityBundle\Parser\ParserFactory;
 
@@ -64,12 +64,12 @@ class ReviewProcessor
    *
    * @param string $diff
    * @param boolean $register
-   * @param AbstractOriginalFileRetrievalParams $original_file_retrieval_params
+   * @param OriginalFileRetrievalParams $original_file_retrieval_params
    * @throws IOException
    * @return Review
    */
   public function processReview($diff, $register,
-    AbstractOriginalFileRetrievalParams $original_file_retrieval_params)
+    OriginalFileRetrievalParams $original_file_retrieval_params)
   {
     $tools = $this->ef->retrieveTools();
     // Parse the diff into DiffFile objects

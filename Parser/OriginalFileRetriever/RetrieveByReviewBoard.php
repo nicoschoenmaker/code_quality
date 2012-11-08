@@ -2,7 +2,7 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\AbstractOriginalFileRetrievalParams,
+use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalParams,
     Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\FeedbackReceiverInterface,
     Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrieverInterface;
 
@@ -27,10 +27,10 @@ class RetrieveByReviewBoard implements OriginalFileRetrieverInterface
   /**
    * Retrieves the original file of a diff
    *
-   * @param AbstractOriginalFileRetrievalParams $original_file_retrieval_params
+   * @param OriginalFileRetrievalParams $original_file_retrieval_params
    * @see \Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrieverInterface::retrieveOriginalFile()
    */
-  public function retrieveOriginalFile(AbstractOriginalFileRetrievalParams $original_file_retrieval_params)
+  public function retrieveOriginalFile(OriginalFileRetrievalParams $original_file_retrieval_params)
   {
     $review_request_id = $original_file_retrieval_params->getReviewRequestId();
     $source_file = $original_file_retrieval_params->getDiffFile()->getSource();

@@ -12,7 +12,6 @@ interface FeedbackReceiverInterface
 {
   // CURL result type headers
   const RESULT_TYPE_TEXT = 'Accept: text/plain';
-  const RESULT_TYPE_XML = 'Accept: application/xml';
   const RESULT_TYPE_JSON = 'Accept: application/json';
 
   /**

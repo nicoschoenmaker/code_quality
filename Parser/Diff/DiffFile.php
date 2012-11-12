@@ -383,6 +383,16 @@ class DiffFile
   }
 
   /**
+   * Checks if the diff file has been removed
+   *
+   * @return boolean
+   */
+  public function isRemoved()
+  {
+    return $this->destination == self::DEV_NULL;
+  }
+
+  /**
    * Merges the diff changes and the original file and
    * puts the result in the diff file property.
    * It saves the original file and the diff file in

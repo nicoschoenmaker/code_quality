@@ -126,7 +126,7 @@ class GITDiffParser extends AbstractDiffParser implements DiffParserInterface
     $diff_file->setDestination($destination);
 
     // Fill the DiffFile name & extension properties
-    if(!$diff_file->hasParent()) {
+    if(!$diff_file->isRemoved()) {
       $startpos_of_name = strrpos(
        $destination,
         self::T_FORWARD_SLASH

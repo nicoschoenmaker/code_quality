@@ -11,6 +11,7 @@ use Hostnet\HostnetCodeQualityBundle\Entity\Tool,
     Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\GITDiffParser,
     Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\XML\PMDXMLParser,
     Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalFactory,
+    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\CGIT\CGITOriginalFileRetrieverParams,
     Hostnet\HostnetCodeQualityBundle\Tests\Mock\MockEntityFactory;
 
 use Hostnet\HostnetCodeQualityBundle\Parser\EntityProviderInterface;
@@ -100,7 +101,10 @@ class ReviewProcessorTest extends \PHPUnit_Framework_TestCase
     $register = false;
     $repository = 'code_quality';
 
-    $review = $this->processor->processReview($diff, $register, $repository);
+    $original_file_retrieval_params = new CGITOriginalFileRetrieverParams($repository);
+    $review = $this->processor->processReview(
+      $diff, $register, $original_file_retrieval_params
+    );
 
     // Test the 1st review
     $reports = $review->getReports();

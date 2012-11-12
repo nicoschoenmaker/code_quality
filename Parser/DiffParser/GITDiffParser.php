@@ -14,7 +14,6 @@ class GITDiffParser extends AbstractDiffParser implements DiffParserInterface
   CONST T_DOUBLE_DOT = '..';
   CONST START_OF_FILE_PATTERN = 'diff --git ';
   CONST INDEX = 'index ';
-  CONST UNNECESSARY_LOCATION_PART_LENGTH = 2;
 
   public function __construct()
   {
@@ -78,16 +77,17 @@ class GITDiffParser extends AbstractDiffParser implements DiffParserInterface
       self::T_FORWARD_SLASH,
       strpos($header_string, self::SOURCE_START)
     );
-    $diff_file->setSource(
-      substr(
+    $source = substr(
+      $header_string,
+      $source_start_pos,
+      strpos(
         $header_string,
-        $source_start_pos,
-        strpos(
-          $header_string,
-          PHP_EOL,
-          $source_start_pos
-        ) - $source_start_pos
-      )
+        PHP_EOL,
+        $source_start_pos
+      ) - $source_start_pos
+    );
+    $diff_file->setSource(
+      $source
     );
     // Fill the DiffFile index property
     $index_pos = strrpos($header_string, self::INDEX);
@@ -113,35 +113,52 @@ class GITDiffParser extends AbstractDiffParser implements DiffParserInterface
     $destination = substr(
       $header_string,
       $destination_start_pos
-        + strlen(self::DESTINATION_START)
-        + self::UNNECESSARY_LOCATION_PART_LENGTH,
+        + strlen(self::DESTINATION_START),
       strpos(
         $header_string,
         PHP_EOL,
         $destination_start_pos
       ) - self::T_SPACE_LENGTH
         - ($destination_start_pos
-        + strlen($destination_start_pos)
-        + self::UNNECESSARY_LOCATION_PART_LENGTH)
+        + strlen($destination_start_pos))
     );
-    // Fill the DiffFile name property
-    $startpos_of_name = strrpos(
-      $destination,
-      self::T_FORWARD_SLASH
-    ) + strlen(self::T_FORWARD_SLASH);
-    $diff_file->setName(
-      substr($destination, $startpos_of_name,
-      strrpos($destination, self::T_DOT)
-        - $startpos_of_name)
-    );
-    // Fill the DiffFile extension property
-    $diff_file->setExtension(
-      substr(
+    $destination = $this->parseFileTypePart($destination);
+    $diff_file->setDestination($destination);
+
+    // Fill the DiffFile name & extension properties
+    if(!$diff_file->hasParent()) {
+      $startpos_of_name = strrpos(
+       $destination,
+        self::T_FORWARD_SLASH
+      ) + strlen(self::T_FORWARD_SLASH);
+      $name = substr(
+        $destination, $startpos_of_name,
+        strrpos($destination, self::T_DOT)
+          - $startpos_of_name
+      );
+      $extension = substr(
         $destination,
         strrpos($destination, self::T_DOT)
           + strlen(self::T_DOT)
-      )
-    );
+      );
+    } else {
+      $startpos_of_name = strrpos(
+        $source,
+        self::T_FORWARD_SLASH
+      ) + strlen(self::T_FORWARD_SLASH);
+      $name = substr(
+        $source, $startpos_of_name,
+        strrpos($source, self::T_DOT)
+          - $startpos_of_name
+      );
+      $extension = substr(
+        $source,
+        strrpos($source, self::T_DOT)
+          + strlen(self::T_DOT)
+      );
+    }
+    $diff_file->setExtension($extension);
+    $diff_file->setName($name);
   }
 
   /**

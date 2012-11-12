@@ -215,7 +215,7 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
    * @param integer $review_id
    * @param array $fields
    */
-  private function createComment($review_request_id, $review_id, $fields = array())
+  private function createComment($review_request_id, $review_id, array $fields = array())
   {
     $diff_comments_url = $this->base_url . self::API_REVIEW_REQUEST
       . $review_request_id . self::REVIEWS . $review_id . self::DIFF_COMMENTS;
@@ -243,9 +243,9 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
     foreach($reports as $report) {
       $file = $report->getFile();
       $diff_violations = $report->getDiffViolations();
-      $amount_of_diff_violations = count($report->getDiffViolations());
+      $amount_of_diff_violations = $diff_violations->count();
       // Count the total of original and diff violations to see if the diff had positive changes
-      $total_original_violations_amount += count($report->getOriginalViolations());
+      $total_original_violations_amount += $report->getOriginalViolations()->count();
       $total_diff_violations_amount += $amount_of_diff_violations;
       // Check if there are any violations
       if($amount_of_diff_violations > 0) {
@@ -253,10 +253,17 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
       }
       // Go through all the diff files retrieved from RB
       foreach($diff_files->files as $diff_file) {
-        // If the reviewed file is the same as the RB diff file
-        // we push all the violations for that file to RB
-        $same_source = substr($file->getSource(), self::AFTER_FIRST_BACKSLASH_POS) == $diff_file->source_file;
-        if(!$file->hasParent() || $same_source) {
+        $same_source = substr($file->getSource(), self::AFTER_FIRST_BACKSLASH_POS)
+          == $diff_file->source_file;
+        $same_destination = substr($file->getDestination(), self::AFTER_FIRST_BACKSLASH_POS)
+          == $diff_file->dest_file;
+        // If the file is old we match on the source and destination.
+        // If the file is new we only match on the destination.
+        // Currently if the file is removed we do nothing as original_file isn't filled.
+        if(!$file->isNewFile() && $same_source && $same_destination
+          || $file->isNewFile() && $same_destination) {
+          // If the reviewed file is the same as the RB diff file
+          // we push all the violations for that file to RB
           foreach($diff_violations as $violation) {
             // Set the number of lines to post the comment on,
             // if it exceeds the cap we just take the cap

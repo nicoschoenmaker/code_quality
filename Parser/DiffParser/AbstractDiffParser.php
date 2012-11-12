@@ -19,6 +19,10 @@ abstract class AbstractDiffParser extends AbstractParser
   CONST SOURCE_START = '--- ';
   CONST DESTINATION_START = '+++ ';
   CONST FILE_RANGE_BRACKETS = '@@';
+  const FILE_TYPE_PART_REGEX_LENGTH = 2;
+  CONST FILE_TYPE_PART_LENGTH = 1;
+  const SOURCE_FILE_TYPE = 'a/';
+  const DESTINATION_FILE_TYPE = 'b/';
 
   /**
    * Checks if the diff parser supports the configured scm setting
@@ -29,6 +33,37 @@ abstract class AbstractDiffParser extends AbstractParser
   public function supports($scm)
   {
     return (strcasecmp($this->resource, $scm) == 0) ? true : false;
+  }
+
+  /**
+   * Parses the file type part if it exists
+   *
+   * @param string $file_path
+   * @return string
+   */
+  protected function parseFileTypePart($file_path)
+  {
+    if($this->hasFileTypePart($file_path)) {
+      $file_path = substr($file_path, self::FILE_TYPE_PART_LENGTH);
+    }
+
+    return $file_path;
+  }
+
+  /**
+   * Checks if the file type part exists
+   *
+   * @param string $file_path
+   * @return boolean
+   */
+  private function hasFileTypePart($file_path)
+  {
+    $file_type = substr($file_path, 0, self::FILE_TYPE_PART_REGEX_LENGTH);
+    if($file_type == self::SOURCE_FILE_TYPE || $file_type == self::DESTINATION_FILE_TYPE) {
+      return true;
+    }
+
+    return false;
   }
 
   /**

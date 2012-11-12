@@ -87,7 +87,7 @@ class ReviewProcessor
     $this->ef->persistAndFlush($review);
     foreach($diff_files as $diff_file) {
       foreach($tools as $tool) {
-        if($tool->supports($diff_file->getExtension())) {
+        if($tool->supports($diff_file->getExtension()) && !$diff_file->isRemovedFile()) {
           // Check if the diff file is new. If it exists we retrieve the original file
           // and merge it. If it's new we don't have to retrieve the original
           // as there is none, so we just insert the whole diff code
@@ -123,7 +123,7 @@ class ReviewProcessor
           // Add the Report object to the Review
           $report->setReview($review);
           $review->getReports()->add($report);
-        } else {
+        } else if(!$diff_file->isRemovedFile()) {
           // If the tool doesn't support the extension we report it to the user.
           echo
             "The file " . $diff_file->getName() . '.' . $diff_file->getExtension()

@@ -41,7 +41,7 @@ class ProcessSendFeedbackToRBDiffCommand extends ContainerAwareCommand
           'The id of the review request to give feedback on.'),
         new InputOption('line_cap', 'c', InputOption::VALUE_REQUIRED,
           'The maximum number of lines per violation to be shown. Imagine a class with 2000 lines '
-          . 'taking way too much space, therefore the default is at 50 lines.', 50)
+          . 'taking way too much space, therefore the default is at 5 lines.', 5)
       ))
     ;
   }

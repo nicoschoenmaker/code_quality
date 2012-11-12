@@ -12,6 +12,8 @@ use Hostnet\HostnetCodeQualityBundle\Entity\CodeLanguage;
  */
 class File
 {
+  CONST DEV_NULL = '/dev/null';
+
   /**
    * @var integer $id
    *
@@ -36,6 +38,13 @@ class File
   private $source;
 
   /**
+   * @var string $destination
+   *
+   * @ORM\Column(name="destination", type="string", length=255)
+   */
+  private $destination;
+
+  /**
    * @var CodeLanguage
    *
    * @ORM\ManyToOne(targetEntity="CodeLanguage", inversedBy="code_language")
@@ -51,11 +60,12 @@ class File
   private $reports;
 
 
-  public function __construct($code_language, $name, $source)
+  public function __construct($code_language, $name, $source, $destination)
   {
     $this->code_language = $code_language;
     $this->name = $name;
     $this->source = $source;
+    $this->destination = $destination;
     $this->reports = new \Doctrine\Common\Collections\ArrayCollection();
   }
 
@@ -112,6 +122,26 @@ class File
   }
 
   /**
+   * Get the destination
+   *
+   * @return string
+   */
+  public function getDestination()
+  {
+  	return $this->destination;
+  }
+
+  /**
+   * Set the destination
+   *
+   * @param string $destination
+   */
+  public function setDestination($destination)
+  {
+  	$this->destination = $destination;
+  }
+
+  /**
    * Get an array of Report objects
    *
    * @return Collection
@@ -140,6 +170,17 @@ class File
   public function setCodeLanguage(CodeLanguage $code_language)
   {
     $this->code_language = $code_language;
+  }
+
+  /**
+   * Check if the diff file is new
+   * / has a dev null source
+   *
+   * @return boolean
+   */
+  public function isNewFile()
+  {
+    return $this->source == self::DEV_NULL;
   }
 
   /**

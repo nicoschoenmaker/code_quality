@@ -148,7 +148,8 @@ class EntityFactory implements EntityProviderInterface
     // If file is null we create it
     if(!$file) {
       $code_language = $this->getCodeLanguage($diff_file->getExtension());
-      $file = new File($code_language, $diff_file->getName(), $diff_file->getSource());
+      $file = new File($code_language, $diff_file->getName(),
+        $diff_file->getSource(), $diff_file->getDestination());
       $this->persistAndFlush($file);
     }
 

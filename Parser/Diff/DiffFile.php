@@ -51,6 +51,14 @@ class DiffFile
   private $source;
 
   /**
+   * The relative path of the destination
+   * of the file
+   *
+   * @var string
+   */
+  private $destination;
+
+  /**
    * The revision index of the original file
    *
    * @var string $source_revision
@@ -178,6 +186,26 @@ class DiffFile
   }
 
   /**
+   * Set the destination
+   *
+   * @param string $destination
+   */
+  public function setDestination($destination)
+  {
+    $this->destination = $destination;
+  }
+
+  /**
+   * Get the destination
+   *
+   * @return string
+   */
+  public function getDestination()
+  {
+    return $this->destination;
+  }
+
+  /**
    * Set source_revision
    *
    * @param string $source_revision
@@ -240,22 +268,6 @@ class DiffFile
   }
 
   /**
-   * Creates a new diff file, which means it
-   * has no original file. Also removes all the
-   * '+' diff characters
-   */
-  public function createTempDiffFile($temp_code_quality_dir_path)
-  {
-    $lines_of_code = explode(PHP_EOL, $this->diff_file);
-    foreach($lines_of_code as $key => $line_of_code) {
-      $lines_of_code[$key] = substr($line_of_code, 1);
-    }
-    $code = implode("\n", $lines_of_code);
-
-    $this->temp_diff_file_path = $this->createTempFile($temp_code_quality_dir_path, $code);
-  }
-
-  /**
    * Get the original file
    *
    * @return string
@@ -307,6 +319,33 @@ class DiffFile
       $entire_diff .= $diff_code_block->getCode();
     }
     return $entire_diff;
+  }
+
+  /**
+   * Creates a new diff file, which means it
+   * has no original file. Also removes all the
+   * '+' diff characters
+   */
+  public function createTempDiffFile($temp_code_quality_dir_path)
+  {
+    $lines_of_code = explode(PHP_EOL, $this->diff_file);
+    foreach($lines_of_code as $key => $line_of_code) {
+      $lines_of_code[$key] = substr($line_of_code, 1);
+    }
+    $code = implode("\n", $lines_of_code);
+
+    $this->temp_diff_file_path = $this->createTempFile($temp_code_quality_dir_path, $code);
+  }
+
+  /**
+   * Check if the diff file is removed
+   * / has a dev null destination
+   *
+   * @return boolean
+   */
+  public function isRemovedFile()
+  {
+    return $this->destination == self::DEV_NULL;
   }
 
   /**

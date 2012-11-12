@@ -23,8 +23,8 @@ class GITDiffParser extends AbstractDiffParser implements DiffParserInterface
   /**
    * Parse the diff into an array of DiffFile objects
    *
-   * @param String $diff
-   * @return DiffFile array
+   * @param string $diff
+   * @return array
    * @see \Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\DiffParserInterface::parseDiff()
    */
   public function parseDiff($diff)
@@ -66,106 +66,39 @@ class GITDiffParser extends AbstractDiffParser implements DiffParserInterface
    * Parse the diff header data
    *
    * @param DiffFile $diff_file
-   * @param String $header_string
+   * @param string $header_string
    * @see \Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\DiffParserInterface::parseDiffHead()
    */
   public function parseDiffHead(DiffFile $diff_file, $header_string)
   {
-    // Fill the DiffFile source property
     $source_start_pos = strpos(
       $header_string,
       self::T_FORWARD_SLASH,
       strpos($header_string, self::SOURCE_START)
     );
-    $source = substr(
-      $header_string,
-      $source_start_pos,
-      strpos(
-        $header_string,
-        PHP_EOL,
-        $source_start_pos
-      ) - $source_start_pos
-    );
-    $diff_file->setSource(
-      $source
-    );
-    // Fill the DiffFile index property
-    $index_pos = strrpos($header_string, self::INDEX);
-    $index = substr(
-      $header_string,
-      $index_pos + strlen(self::INDEX),
-      strpos(
-        $header_string,
-        self::SOURCE_START
-      ) - ($index_pos + strlen(self::INDEX)
-        + self::T_SPACE_LENGTH)
-    );
-    // Fill the DiffFile source revision property
-    $diff_file->setSourceRevision(
-      substr(
-        $index,
-        0,
-        strpos($index, self::T_DOUBLE_DOT)
-      )
-    );
-    // Fill the DiffFile destination property
-    $destination_start_pos = strpos($header_string, self::DESTINATION_START);
-    $destination = substr(
-      $header_string,
-      $destination_start_pos
-        + strlen(self::DESTINATION_START),
-      strpos(
-        $header_string,
-        PHP_EOL,
-        $destination_start_pos
-      ) - self::T_SPACE_LENGTH
-        - ($destination_start_pos
-        + strlen($destination_start_pos))
-    );
-    $destination = $this->parseFileTypePart($destination);
-    $diff_file->setDestination($destination);
-
-    // Fill the DiffFile name & extension properties
+    $diff_file->setSource($this->parseSource($header_string, $source_start_pos));
+    $diff_file->setSourceRevision($this->parseSourceRevision($header_string));
+    $diff_file->setDestination($this->parseDestination($header_string));
+    // If the diff file is removed we don't
+    // use the destination as it is empty
     if(!$diff_file->isRemoved()) {
-      $startpos_of_name = strrpos(
-       $destination,
-        self::T_FORWARD_SLASH
-      ) + strlen(self::T_FORWARD_SLASH);
-      $name = substr(
-        $destination, $startpos_of_name,
-        strrpos($destination, self::T_DOT)
-          - $startpos_of_name
-      );
-      $extension = substr(
-        $destination,
-        strrpos($destination, self::T_DOT)
-          + strlen(self::T_DOT)
-      );
+      $file_location_type_value = $diff_file->getDestination();
     } else {
-      $startpos_of_name = strrpos(
-        $source,
-        self::T_FORWARD_SLASH
-      ) + strlen(self::T_FORWARD_SLASH);
-      $name = substr(
-        $source, $startpos_of_name,
-        strrpos($source, self::T_DOT)
-          - $startpos_of_name
-      );
-      $extension = substr(
-        $source,
-        strrpos($source, self::T_DOT)
-          + strlen(self::T_DOT)
-      );
+      $file_location_type_value = $diff_file->getSource();
     }
-    $diff_file->setExtension($extension);
-    $diff_file->setName($name);
+    $startpos_of_name = strrpos(
+      $file_location_type_value,
+      self::T_FORWARD_SLASH
+    ) + strlen(self::T_FORWARD_SLASH);
+    $diff_file->setName($this->parseName($startpos_of_name, $file_location_type_value));
+    $diff_file->setExtension($this->parseExtension($startpos_of_name, $file_location_type_value));
   }
 
   /**
    * Parse the diff body data, the actual modified code
    *
-   * @param String $file_string
-   * @param String $body_string
+   * @param string $file_string
+   * @param string $body_string
    * @return DiffCodeBlock
    * @see \Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\DiffParserInterface::parseDiffBody()
    */
@@ -188,36 +121,164 @@ class GITDiffParser extends AbstractDiffParser implements DiffParserInterface
 
     // Extract all the diff code block data and fill the DiffCodeBlock object
     $diff_code_block = new DiffCodeBlock();
-    $diff_code_block->setBeginLine(
-      substr(
-        $begin_and_end_line,
-        strpos($begin_and_end_line, self::T_MINUS) + strlen(self::T_MINUS),
-         strpos($begin_and_end_line, ',')
-          - strpos($begin_and_end_line, self::T_MINUS)
-          - strlen(self::T_MINUS)
-      )
-    );
-    $diff_code_block->setEndLine(
-      substr(
-        $begin_and_end_line,
-        strpos($begin_and_end_line, self::T_PLUS) + strlen(self::T_PLUS),
-        strrpos($begin_and_end_line, self::FILE_RANGE_BRACKETS)
-          - (strlen(self::FILE_RANGE_BRACKETS) + self::T_SPACE_LENGTH)
-          - strpos($begin_and_end_line, self::T_PLUS) + strlen(self::T_PLUS)
-      )
-    );
-    // Extract all the code after the '@@' part,
-    // which is the code that has been modified
-    $diff_code_block->setCode(
-      substr(
-        $body_string,
-        strpos(
-          $body_string,
-          PHP_EOL
-        ) + self::T_SPACE_LENGTH
-      )
-    );
+    $diff_code_block->setBeginLine($this->parseBeginLine($begin_and_end_line));
+    $diff_code_block->setEndLine($this->parseEndLine($begin_and_end_line));
+    $diff_code_block->setCode($this->parseCode($body_string));
 
     return $diff_code_block;
+  }
+
+  /**
+   * Parses the git diff file source
+   *
+   * @param string $header_string
+   * @param integer $source_start_pos
+   * @return string
+   */
+  protected function parseSource($header_string, $source_start_pos)
+  {
+    return substr(
+      $header_string,
+      $source_start_pos,
+      strpos(
+        $header_string,
+        PHP_EOL,
+        $source_start_pos
+      ) - $source_start_pos
+    );
+  }
+
+  /**
+   * Parses the git diff file source revision
+   *
+   * @param string $header_string
+   * @return string
+   */
+  protected function parseSourceRevision($header_string)
+  {
+    $index_pos = strrpos($header_string, self::INDEX);
+    $index = substr(
+      $header_string,
+      $index_pos + strlen(self::INDEX),
+      strpos(
+        $header_string,
+        self::SOURCE_START
+      ) - ($index_pos + strlen(self::INDEX)
+        + self::T_SPACE_LENGTH)
+    );
+
+    return substr(
+      $index,
+      0,
+      strpos($index, self::T_DOUBLE_DOT)
+    );
+  }
+
+  /**
+   * Parses the git diff file destination
+   *
+   * @param string $header_string
+   * @return string
+   */
+  protected function parseDestination($header_string)
+  {
+    $destination_start_pos = strpos($header_string, self::DESTINATION_START);
+    $destination = substr(
+      $header_string,
+      $destination_start_pos
+        + strlen(self::DESTINATION_START),
+      strpos(
+        $header_string,
+        PHP_EOL,
+        $destination_start_pos
+      ) - self::T_SPACE_LENGTH
+        - ($destination_start_pos
+          + strlen($destination_start_pos))
+    );
+
+    return $this->parseFileTypePart($destination);
+  }
+
+  /**
+   * Parses the git diff file name
+   *
+   * @param integer $startpos_of_name
+   * @param string $file_location_type_value
+   * @return string
+   */
+  protected function parseName($startpos_of_name, $file_location_type_value)
+  {
+    return substr(
+      $file_location_type_value, $startpos_of_name,
+      strrpos($file_location_type_value, self::T_DOT)
+        - $startpos_of_name
+    );
+  }
+
+  /**
+   * Parses the git diff file extension
+   *
+   * @param integer $startpos_of_name
+   * @param string $file_location_type_value
+   * @return string
+   */
+  protected function parseExtension($startpos_of_name, $file_location_type_value)
+  {
+    return substr(
+      $file_location_type_value,
+      strrpos($file_location_type_value, self::T_DOT)
+        + strlen(self::T_DOT)
+    );
+  }
+
+  /**
+   * Parses the git diff file code block begin line
+   *
+   * @param string $begin_and_end_line
+   * @return string
+   */
+  protected function parseBeginLine($begin_and_end_line)
+  {
+    return substr(
+      $begin_and_end_line,
+      strpos($begin_and_end_line, self::T_MINUS) + strlen(self::T_MINUS),
+      strpos($begin_and_end_line, ',')
+        - strpos($begin_and_end_line, self::T_MINUS)
+        - strlen(self::T_MINUS)
+    );
+  }
+
+  /**
+   * Parses the git diff file code block end line
+   *
+   * @param string $begin_and_end_line
+   * @return string
+   */
+  protected function parseEndLine($begin_and_end_line)
+  {
+    return substr(
+      $begin_and_end_line,
+      strpos($begin_and_end_line, self::T_PLUS) + strlen(self::T_PLUS),
+      strrpos($begin_and_end_line, self::FILE_RANGE_BRACKETS)
+        - (strlen(self::FILE_RANGE_BRACKETS) + self::T_SPACE_LENGTH)
+        - strpos($begin_and_end_line, self::T_PLUS) + strlen(self::T_PLUS)
+    );
+  }
+
+  /**
+   * Parses the git diff file code block code
+   *
+   * @param string $body_string
+   * @return string
+   */
+  protected function parseCode($body_string)
+  {
+    return substr(
+      $body_string,
+      strpos(
+        $body_string,
+        PHP_EOL
+      ) + self::T_SPACE_LENGTH
+    );
   }
 }

@@ -4,7 +4,9 @@ namespace Hostnet\HostnetCodeQualityBundle\Parser\Diff;
 
 use Symfony\Component\Process\Process;
 
-use Hostnet\HostnetCodeQualityBundle\Entity\Tool;
+use Hostnet\HostnetCodeQualityBundle\Entity\CodeLanguage,
+    Hostnet\HostnetCodeQualityBundle\Entity\File,
+    Hostnet\HostnetCodeQualityBundle\Entity\Tool;
 
 use RuntimeException;
 
@@ -338,17 +340,6 @@ class DiffFile
   }
 
   /**
-   * Check if the diff file is removed
-   * / has a dev null destination
-   *
-   * @return boolean
-   */
-  public function isRemovedFile()
-  {
-    return $this->destination == self::DEV_NULL;
-  }
-
-  /**
    * Returns an array with all the diff properties that haven't been parsed properly
    *
    * @return array
@@ -390,6 +381,18 @@ class DiffFile
   public function isRemoved()
   {
     return $this->destination == self::DEV_NULL;
+  }
+
+  /**
+   * Creates a new File object
+   *
+   * @param CodeLanguage $code_language
+   * @return File
+   */
+  public function createFile($code_language)
+  {
+    return new File($code_language, $this->name,
+      $this->source, $this->destination);
   }
 
   /**

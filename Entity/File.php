@@ -128,7 +128,7 @@ class File
    */
   public function getDestination()
   {
-  	return $this->destination;
+    return $this->destination;
   }
 
   /**
@@ -138,7 +138,7 @@ class File
    */
   public function setDestination($destination)
   {
-  	$this->destination = $destination;
+    $this->destination = $destination;
   }
 
   /**

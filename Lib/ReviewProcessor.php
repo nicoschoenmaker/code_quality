@@ -86,51 +86,53 @@ class ReviewProcessor
     $this->ef->setRegister($register);
     $this->ef->persistAndFlush($review);
     foreach($diff_files as $diff_file) {
-      foreach($tools as $tool) {
-        if($tool->supports($diff_file->getExtension()) && !$diff_file->isRemovedFile()) {
-          // Check if the diff file is new. If it exists we retrieve the original file
-          // and merge it. If it's new we don't have to retrieve the original
-          // as there is none, so we just insert the whole diff code
-          if($diff_file->hasParent()) {
-            $original_file_retrieval_params->setDiffFile($diff_file);
-            // Retrieves the original file based on the configured retrieval method
-            $diff_file->setOriginalFile(
-              $original_file_retriever->retrieveOriginalFile($original_file_retrieval_params)
+      if(!$diff_file->isRemoved()) {
+        foreach($tools as $tool) {
+          if($tool->supports($diff_file->getExtension())) {
+            // Check if the diff file is new. If it exists we retrieve the original file
+            // and merge it. If it's new we don't have to retrieve the original
+            // as there is none, so we just insert the whole diff code
+            if($diff_file->hasParent()) {
+              $original_file_retrieval_params->setDiffFile($diff_file);
+              // Retrieves the original file based on the configured retrieval method
+              $diff_file->setOriginalFile(
+                $original_file_retriever->retrieveOriginalFile($original_file_retrieval_params)
+              );
+              // Merge the diff with the original in order to be able
+              // to scan all the changes made in the actual code
+              $diff_file->mergeDiffWithOriginal(
+                $this->clu->getTempCodeQualityDirPath(),
+                $this->pf->getSCM()
+              );
+            } else {
+              $diff_file->createTempDiffFile($this->clu->getTempCodeQualityDirPath());
+            }
+
+            // Let the file be processed by the given tool
+            $diff_file->processFile($tool);
+
+            // Request the Tool Output Parser from the Factory
+            $additional_tool_properties = array('format' => $tool->getFormat());
+            $tool_output_parser = $this->pf->getToolOutputParserInstance(
+              $tool->getName(),
+              $additional_tool_properties
             );
-            // Merge the diff with the original in order to be able
-            // to scan all the changes made in the actual code
-            $diff_file->mergeDiffWithOriginal(
-              $this->clu->getTempCodeQualityDirPath(),
-              $this->pf->getSCM()
-            );
+
+            // Parse the Tool output into Report objects
+            $report = $tool_output_parser->parseToolOutput($diff_file);
+
+            // Add the Report object to the Review
+            $report->setReview($review);
+            $review->getReports()->add($report);
           } else {
-            $diff_file->createTempDiffFile($this->clu->getTempCodeQualityDirPath());
+            // If the tool doesn't support the extension we report it to the user.
+            echo
+              "The file " . $diff_file->getName() . '.' . $diff_file->getExtension()
+              . ' has the ' . $diff_file->getExtension()
+              . ' extension, which is not supported by ' . $tool->getName() . ".\nIf "
+              . $tool->getName() . ' should support the ' . $diff_file->getExtension()
+              . ' extension you should contact your administrator to enable it.' . "\n\n";
           }
-
-          // Let the file be processed by the given tool
-          $diff_file->processFile($tool);
-
-          // Request the Tool Output Parser from the Factory
-          $additional_tool_properties = array('format' => $tool->getFormat());
-          $tool_output_parser = $this->pf->getToolOutputParserInstance(
-            $tool->getName(),
-            $additional_tool_properties
-          );
-
-          // Parse the Tool output into Report objects
-          $report = $tool_output_parser->parseToolOutput($diff_file);
-
-          // Add the Report object to the Review
-          $report->setReview($review);
-          $review->getReports()->add($report);
-        } else if(!$diff_file->isRemovedFile()) {
-          // If the tool doesn't support the extension we report it to the user.
-          echo
-            "The file " . $diff_file->getName() . '.' . $diff_file->getExtension()
-            . ' has the ' . $diff_file->getExtension()
-            . ' extension, which is not supported by ' . $tool->getName() . ".\nIf "
-            . $tool->getName() . ' should support the ' . $diff_file->getExtension()
-            . ' extension you should contact your administrator to enable it.' . "\n\n";
         }
       }
     }

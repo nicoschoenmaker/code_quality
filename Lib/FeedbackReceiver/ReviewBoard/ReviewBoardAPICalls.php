@@ -260,8 +260,8 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
         // If the file is old we match on the source and destination.
         // If the file is new we only match on the destination.
         // Currently if the file is removed we do nothing as original_file isn't filled.
-        if(!$file->isNewFile() && $same_source && $same_destination
-          || $file->isNewFile() && $same_destination) {
+        if((!$file->isNewFile() && $same_source && $same_destination)
+          || ($file->isNewFile() && $same_destination)) {
           // If the reviewed file is the same as the RB diff file
           // we push all the violations for that file to RB
           foreach($diff_violations as $violation) {

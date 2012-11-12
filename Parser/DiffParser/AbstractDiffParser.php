@@ -8,19 +8,19 @@ use InvalidArgumentException;
 
 abstract class AbstractDiffParser extends AbstractParser
 {
-  CONST T_SPACE_LENGTH = 1;
-  CONST T_DOT = '.';
-  CONST T_FORWARD_SLASH = '/';
-  CONST T_OPEN_PARENTHESIS = '(';
-  CONST T_CLOSE_PARENTHESIS = ')';
-  CONST T_PLUS = '+';
-  CONST T_MINUS = '-';
-  CONST FILE_RANGE_PATTERN = '/@@ -[0-9]*,[0-9]* \+[0-9]*,[0-9]* @@/';
-  CONST SOURCE_START = '--- ';
-  CONST DESTINATION_START = '+++ ';
-  CONST FILE_RANGE_BRACKETS = '@@';
+  const T_SPACE_LENGTH = 1;
+  const T_DOT = '.';
+  const T_FORWARD_SLASH = '/';
+  const T_OPEN_PARENTHESIS = '(';
+  const T_CLOSE_PARENTHESIS = ')';
+  const T_PLUS = '+';
+  const T_MINUS = '-';
+  const FILE_RANGE_PATTERN = '/@@ -[0-9]*,[0-9]* \+[0-9]*,[0-9]* @@/';
+  const SOURCE_START = '--- ';
+  const DESTINATION_START = '+++ ';
+  const FILE_RANGE_BRACKETS = '@@';
   const FILE_TYPE_PART_REGEX_LENGTH = 2;
-  CONST FILE_TYPE_PART_LENGTH = 1;
+  const FILE_TYPE_PART_LENGTH = 1;
   const SOURCE_FILE_TYPE = 'a/';
   const DESTINATION_FILE_TYPE = 'b/';
 

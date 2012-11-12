@@ -2,7 +2,8 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Tests\Parser\ToolOutputParser;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\ParserFactory,
+use Hostnet\HostnetCodeQualityBundle\Entity\File,
+    Hostnet\HostnetCodeQualityBundle\Parser\ParserFactory,
     Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\XML\PMDXMLParser,
     Hostnet\HostnetCodeQualityBundle\Tests\Mock\MockEntityFactory;
 
@@ -49,6 +50,12 @@ class PMDXMLParserTest extends \PHPUnit_Framework_TestCase
       ->expects($this->any())
       ->method('getDiffOutput')
       ->will($this->returnValue($tool_output))
+    ;
+    $file = new File('php', 'test_pmd_xml_output.txt', 'test_source', 'test_destination');
+    $diff_file
+      ->expects($this->any())
+      ->method('createFile')
+      ->will($this->returnValue($file))
     ;
 
     // Initialize the pmd xml parser and parse the test tool output

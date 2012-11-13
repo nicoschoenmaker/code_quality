@@ -76,8 +76,8 @@ class Review
    * @return string
    */
   public function __toString(){
-    $output = "\n";
-    $output .= implode("\n", $this->getReports()->toArray());
+    $output = PHP_EOL;
+    $output .= implode(PHP_EOL, $this->getReports()->toArray());
     return $output;
   }
 }

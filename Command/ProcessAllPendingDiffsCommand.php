@@ -55,21 +55,56 @@ class ProcessAllPendingDiffsCommand extends ContainerAwareCommand
     $line_cap = $input->getOption('line_cap');
 
     // Retrieve all the pending review requests
+    // that haven't been processed yet
+    $current_timestamp = strtotime(date('Y-m-d H:i:s'));
+    // Retrieve the value of the temp
+    // previously processed date file
+    $previous_process_date_file =
+      $this->getContainer()->getParameter('hostnet_code_quality.temp_cq_dir_name') . '/'
+        . $this->getContainer()->getParameter('hostnet_code_quality.review_board_previous_process_date_file');
+    $previous_process_timestamp = file_get_contents($previous_process_date_file);
     $review_requests = $rb_api_calls->retrievePendingReviewRequests();
     foreach($review_requests->review_requests as $review_request) {
-      $review_request_id = $review_request->id;
-      // Retrieve the latest diff based on the review request id
-      $diff = $rb_api_calls->retrieveDiff($review_request_id, null, $rb_api_calls::RESULT_TYPE_TEXT);
-      // Pass the review request id wrapped in a OriginalFileRetrieverParams
-      // in order to retrieve the original file
-      $original_file_retrieval_params = new ReviewBoardOriginalFileRetrieverParams($review_request_id);
-      $review = $this->getContainer()->get('review_processor')->processReview(
-        $diff,
-        true,
-        $original_file_retrieval_params
-      );
-      // Send all the feedback to Review Board
-      $rb_api_calls->sendFeedbackToRB($review_request_id, $review, $line_cap);
+      // get the last updated value from each review request
+      // (includes diffs and comments)
+      $last_updated = $this->parseRBDateToTimestamp($review_request->last_updated);
+      if($last_updated > $previous_process_timestamp) {
+        $review_request_id = $review_request->id;
+        // Check if the latest diff is already processed
+        $diff_object = json_decode($rb_api_calls->retrieveDiff($review_request_id, null, $rb_api_calls::RESULT_TYPE_JSON));
+        $diff_timestamp = $this->parseRBDateToTimestamp($diff_object->diff->timestamp);
+        if($diff_timestamp > $previous_process_timestamp) {
+          // Retrieve the latest diff based on the review request id
+          $diff = $rb_api_calls->retrieveDiff($review_request_id, null, $rb_api_calls::RESULT_TYPE_TEXT);
+          // Pass the review request id wrapped in a OriginalFileRetrieverParams
+          // in order to retrieve the original file
+          $original_file_retrieval_params = new ReviewBoardOriginalFileRetrieverParams($review_request_id);
+          $review = $this->getContainer()->get('review_processor')->processReview(
+            $diff,
+            true,
+            $original_file_retrieval_params
+          );
+          // Send all the feedback to Review Board
+          $rb_api_calls->sendFeedbackToRB($review_request_id, $review, $line_cap);
+        }
+      }
     }
+    // Sets the new previously processed date to the current date
+    file_put_contents($previous_process_date_file, $current_timestamp);
+  }
+
+  /**
+   * Parses the Review Board date to a timestamp
+   *
+   * @param string $date
+   * @return integer
+   */
+  private function parseRBDateToTimestamp($date)
+  {
+    return strtotime(substr(
+      $date,
+      0,
+      strrpos($date, '.')
+    )) + date('Z');
   }
 }

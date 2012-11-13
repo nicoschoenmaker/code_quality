@@ -18,7 +18,11 @@ abstract class AbstractFeedbackReceiver
   const GET = 'get';
   const POST = 'post';
 
-  // HTTP status codes
+  /**
+   * HTTP status codes
+   *
+   * @var array
+   */
   protected static $supported_http_status_codes = array(200, 201);
 
   /**

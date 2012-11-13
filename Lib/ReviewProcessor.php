@@ -137,9 +137,9 @@ class ReviewProcessor
             $file_not_supported_info =
               "The file " . $diff_file->getName() . '.' . $diff_file->getExtension()
               . ' has the ' . $diff_file->getExtension()
-              . ' extension, which is not supported by ' . $tool->getName() . ".\nIf "
-              . $tool->getName() . ' should support the ' . $diff_file->getExtension()
-              . ' extension you should contact your administrator to enable it.' . "\n\n";
+              . ' extension, which is not supported by ' . $tool->getName() . '.' . PHP_EOL
+              . 'If ' . $tool->getName() . ' should support the ' . $diff_file->getExtension()
+              . ' extension you should contact your administrator to enable it.' . PHP_EOL . PHP_EOL;
             $this->logger->info($file_not_supported_info);
           }
         }

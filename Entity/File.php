@@ -191,9 +191,9 @@ class File
   public function __toString()
   {
     $full_file_name = $this->getName() . '.' . $this->getCodeLanguage()->getName();
-    $output = str_repeat('*', strlen($full_file_name) + 4) . "\n";
-    $output .=  '* ' . $full_file_name . " *\n";
-    $output .= str_repeat('*', strlen($full_file_name) + 4) . "\n";
+    $output = str_repeat('*', strlen($full_file_name) + 4) . PHP_EOL;
+    $output .=  '* ' . $full_file_name . ' *' . PHP_EOL;
+    $output .= str_repeat('*', strlen($full_file_name) + 4) . PHP_EOL;
 
     return $output;
   }

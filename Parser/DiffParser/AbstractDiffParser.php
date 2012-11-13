@@ -68,7 +68,8 @@ abstract class AbstractDiffParser extends AbstractParser
   protected function checkIfDiffParsedCleanly($diff_files)
   {
     $diff_parsed_uncleanly = false;
-    $parsing_exception = "The following diff components didn't get parsed correctly:\n\n";
+    $parsing_exception = "The following diff components didn't get parsed correctly:"
+      . PHP_EOL . PHP_EOL;
 
     foreach($diff_files as $diff_file) {
       $empty_diff_parsing_properties = $diff_file->returnEmptyDiffParsingProperties();
@@ -80,9 +81,9 @@ abstract class AbstractDiffParser extends AbstractParser
         // Add all the failed parsing components of the diff file
         $and = (count($empty_diff_parsing_properties) > 1) ? ' and ' : ', ';
         $parsing_exception .=
-        "\t" . $diff_file->getName() . ":\n"
+        "\t" . $diff_file->getName() . ':' . PHP_EOL
           . "\t\t" . '"' . $empty_diff_parsing_properties . $and
-            . $last_empty_diff_parsing_property . '"' . "\n";
+            . $last_empty_diff_parsing_property . '"' . PHP_EOL;
         ;
       }
     }

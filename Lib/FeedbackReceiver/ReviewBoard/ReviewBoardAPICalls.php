@@ -152,7 +152,7 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
     // Retrieve the list of diffs of the review request
     $diff_list_url = $this->base_url . self::API_REVIEW_REQUEST
       . $review_request_id . self::DIFFS;
-    $amount_of_diffs = count($this->decodeJSON($this->executeCURLRequest($diff_list_url)));
+    $amount_of_diffs = $this->decodeJSON($this->executeCURLRequest($diff_list_url))->total_results;
 
     // If the length of the diff list is 0 it means that
     // the review request has no diffs so we throw an exception
@@ -292,11 +292,11 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
     } else {
       $progression_text = 'worse by adding ' . abs($progression) . ' new violations!';
     }
-    $body_top = "Static Code Quality feedback:\n\n";
+    $body_top = 'Static Code Quality feedback:' . PHP_EOL . PHP_EOL;
     $rb_review = new ReviewBoardReview('', '', true);
     if($violation_detected) {
       $rb_review->setBodyTop($body_top . "\tYour latest diff made the code quality "
-        . $progression_text . "\n\tThe next messages are all the violations detected in "
+        . $progression_text . PHP_EOL . "\tThe next messages are all the violations detected in "
         . 'all the files you modified with this diff.');
     } else {
       $rb_review->setBodyTop($body_top . "\tNo code quality violations found, good job!");

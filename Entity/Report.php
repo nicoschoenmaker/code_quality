@@ -149,11 +149,12 @@ class Report
   {
     $output = $this->getFile();
     if(count($this->getViolations()) == 0) {
-      $output .= "No violations for this file! \nKeep up the good work and make the dancing monkey proud!\n";
+      $output .= 'No violations for this file!' . PHP_EOL
+        . 'Keep up the good work and make the dancing monkey proud!' . PHP_EOL;
       $output .= file_get_contents(__DIR__ . '/../Resources/public/images/ascii/dancing_monkey.txt');
-      $output .= "\n";
+      $output .= PHP_EOL;
     } else {
-      $output .= implode("\n", $this->getViolations()->toArray());
+      $output .= implode(PHP_EOL, $this->getViolations()->toArray());
     }
 
     return $output;

@@ -183,11 +183,11 @@ class Violation
   {
     $output = $this->rule;
     if($this->begin_line == $this->end_line) {
-      $output .= 'At line ' . $this->begin_line . "\n";
+      $output .= 'At line ' . $this->begin_line . PHP_EOL;
     } else {
-      $output .= 'From lines ' . $this->begin_line . ' to ' . $this->end_line . "\n";
+      $output .= 'From lines ' . $this->begin_line . ' to ' . $this->end_line . PHP_EOL;
     }
-    $output .= $this->message . "\n";
+    $output .= $this->message . PHP_EOL;
 
     return $output;
   }

@@ -127,6 +127,6 @@ class Rule
    */
   public function __toString()
   {
-    return $this->getName() . "\n";
+    return $this->getName() . PHP_EOL;
   }
 }

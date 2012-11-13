@@ -334,7 +334,7 @@ class DiffFile
     foreach($lines_of_code as $key => $line_of_code) {
       $lines_of_code[$key] = substr($line_of_code, 1);
     }
-    $code = implode("\n", $lines_of_code);
+    $code = implode(PHP_EOL, $lines_of_code);
 
     $this->temp_diff_file_path = $this->createTempFile($temp_code_quality_dir_path, $code);
   }

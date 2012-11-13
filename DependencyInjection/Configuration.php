@@ -41,6 +41,8 @@ class Configuration implements ConfigurationInterface
         ->scalarNode('review_board_auto_shipit')
           ->defaultValue(false)
             ->end()
+        ->scalarNode('review_board_previous_process_date_file')
+          ->end()
       ->end();
 
     return $treeBuilder;

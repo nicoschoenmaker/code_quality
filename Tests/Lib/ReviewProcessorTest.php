@@ -24,6 +24,11 @@ class ReviewProcessorTest extends \PHPUnit_Framework_TestCase
   private $em;
 
   /**
+   * @var Monolog\Logger
+   */
+  private $logger;
+
+  /**
    * @var CommandLineUtility
    */
   private $clu;
@@ -58,6 +63,9 @@ class ReviewProcessorTest extends \PHPUnit_Framework_TestCase
     // Mock the EntityManager without calling the constructor, (the constructor is private)
     $path_to_em = 'Doctrine\ORM\EntityManager';
     $this->em = $this->getMock($path_to_em, array(), array(), '', false);
+    // Monolog Logger
+    $path_to_logger = 'Monolog\Logger';
+    $this->logger = $this->getMock($path_to_logger, array(), array(), '', false);
     // CommandLineUtility
     $this->clu = new CommandLineUtility($temp_cq_dir_name);
     // ParserFactory
@@ -90,7 +98,8 @@ class ReviewProcessorTest extends \PHPUnit_Framework_TestCase
     $this->pf->addParserInstance($pmd_xml_parser);
 
     $this->processor = new ReviewProcessor(
-      $this->em, $this->ef, $this->ofrf, $this->clu, $this->pf
+      $this->em, $this->logger, $this->ef,
+      $this->ofrf, $this->clu, $this->pf
     );
   }
 

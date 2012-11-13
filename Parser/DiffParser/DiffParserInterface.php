@@ -21,22 +21,4 @@ interface DiffParserInterface extends ParserInterface
    * @return Codefile array
    */
   public function parseDiff($diff);
-
-  /**
-   * Parse the diff header data
-   *
-   * @param DiffFile $diff_file
-   * @param String $header_string
-   * @return CodeFile
-   */
-  public function parseDiffHead(DiffFile $diff_file, $header_string);
-
-  /**
-   * Parse the diff body data, the actual modified code
-   *
-   * @param String $file_string
-   * @param String $body_string
-   * @return CodeBlock
-   */
-  public function parseDiffBody($file_string, $body_string);
 }

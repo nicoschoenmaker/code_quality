@@ -6,7 +6,7 @@ services:
 
   review_processor:
     class: Hostnet\HostnetCodeQualityBundle\Lib\ReviewProcessor
-    arguments: [@doctrine.orm.entity_manager, @entity_factory, @original_file_retrieval_factory, @command_line_utility, @parser_factory]
+    arguments: [@doctrine.orm.entity_manager, @logger, @entity_factory, @original_file_retrieval_factory, @command_line_utility, @parser_factory]
 
 ##############################
 # The Entity Factory service #

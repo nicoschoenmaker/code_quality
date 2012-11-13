@@ -2,6 +2,8 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Lib;
 
+use Monolog\Logger;
+
 use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\Filesystem\Exception\IOException;
@@ -29,6 +31,11 @@ class ReviewProcessor
   private $em;
 
   /**
+   * @var Logger
+   */
+  private $logger;
+
+  /**
    * @var OriginalFileRetrievalFactory
    */
   private $original_file_retrieval_factory;
@@ -48,11 +55,12 @@ class ReviewProcessor
    */
   private $ef;
 
-  public function __construct(EntityManager $em, EntityFactory $ef,
+  public function __construct(EntityManager $em, Logger $logger, EntityFactory $ef,
     OriginalFileRetrievalFactory $original_file_retrieval_factory,
     CommandLineUtility $clu, ParserFactory $pf)
   {
     $this->em = $em;
+    $this->logger = $logger;
     $this->ef = $ef;
     $this->original_file_retrieval_factory = $original_file_retrieval_factory;
     $this->clu = $clu;
@@ -126,12 +134,13 @@ class ReviewProcessor
             $review->getReports()->add($report);
           } else {
             // If the tool doesn't support the extension we report it to the user.
-            echo
+            $file_not_supported_info =
               "The file " . $diff_file->getName() . '.' . $diff_file->getExtension()
               . ' has the ' . $diff_file->getExtension()
               . ' extension, which is not supported by ' . $tool->getName() . ".\nIf "
               . $tool->getName() . ' should support the ' . $diff_file->getExtension()
               . ' extension you should contact your administrator to enable it.' . "\n\n";
+            $this->logger->info($file_not_supported_info);
           }
         }
       }

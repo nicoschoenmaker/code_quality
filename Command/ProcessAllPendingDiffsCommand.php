@@ -9,11 +9,13 @@ use Symfony\Component\Console\Command\Command,
     Symfony\Component\Console\Output\OutputInterface,
     Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\ReviewBoard\ReviewBoardOriginalFileRetrieverParams;
+use Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\ReviewBoard\ReviewBoardAPICalls,
+    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\ReviewBoard\ReviewBoardOriginalFileRetrieverParams;
 
 use Doctrine\Common\Collection;
 
-use InvalidArgumentException;
+use DateTime,
+    InvalidArgumentException;
 
 /**
  * Processes all the Review Board diffs that haven't been processed yet
@@ -50,21 +52,21 @@ class ProcessAllPendingDiffsCommand extends ContainerAwareCommand
   protected function execute(InputInterface $input, OutputInterface $output)
   {
     // Get the Review Board Api Calls service for all the requests
-    $rb_api_calls = $this->getContainer()->get('review_board_api_calls');
+    $rb_api_calls = $this->getReviewBoardAPICalls();
     // User CLI Input
     $line_cap = $input->getOption('line_cap');
 
     // Retrieve all the pending review requests
     // that haven't been processed yet
-    $current_timestamp = strtotime(date('Y-m-d H:i:s'));
+    $current_datetime = new DateTime();
+    $current_timestamp = $current_datetime->getTimestamp();
     // Retrieve the value of the temp
     // previously processed date file
-    $previous_process_date_file =
-      $this->getContainer()->getParameter('hostnet_code_quality.temp_cq_dir_name') . '/'
-        . $this->getContainer()->getParameter('hostnet_code_quality.review_board_previous_process_date_file');
+    $previous_process_date_file = $this->getPreviousProcessedDateFilename();
     $previous_process_timestamp = file_get_contents($previous_process_date_file);
     $review_requests = $rb_api_calls->retrievePendingReviewRequests();
     foreach($review_requests->review_requests as $review_request) {
+      var_dump($review_request->last_updated);
       // get the last updated value from each review request
       // (includes diffs and comments)
       $last_updated = $this->parseRBDateToTimestamp($review_request->last_updated);
@@ -94,6 +96,28 @@ class ProcessAllPendingDiffsCommand extends ContainerAwareCommand
   }
 
   /**
+   * Gets the Review Board API
+   *
+   * @return ReviewBoardAPICalls
+   */
+  private function getReviewBoardAPICalls()
+  {
+    return $this->getContainer()->get('review_board_api_calls');
+  }
+
+  /**
+   * Gets the previously processed date filename
+   * from the temp directory
+   *
+   * @return string
+   */
+  private function getPreviousProcessedDateFilename()
+  {
+    return $this->getContainer()->getParameter('hostnet_code_quality.temp_cq_dir_name') . '/'
+      . $this->getContainer()->getParameter('hostnet_code_quality.review_board_previous_process_date_file');
+  }
+
+  /**
    * Parses the Review Board date to a timestamp
    *
    * @param string $date
@@ -107,4 +131,6 @@ class ProcessAllPendingDiffsCommand extends ContainerAwareCommand
       strrpos($date, '.')
     )) + date('Z');
   }
+
+
 }

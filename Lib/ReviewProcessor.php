@@ -2,7 +2,7 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Lib;
 
-use Monolog\Logger;
+use Symfony\Component\HttpKernel\Log\LoggerInterface;
 
 use Doctrine\ORM\EntityManager;
 
@@ -55,7 +55,7 @@ class ReviewProcessor
    */
   private $ef;
 
-  public function __construct(EntityManager $em, Logger $logger, EntityFactory $ef,
+  public function __construct(EntityManager $em, LoggerInterface $logger, EntityFactory $ef,
     OriginalFileRetrievalFactory $original_file_retrieval_factory,
     CommandLineUtility $clu, ParserFactory $pf)
   {
@@ -93,6 +93,7 @@ class ReviewProcessor
     // Tell the Entity Factory whether we want to register the Review or not
     $this->ef->setRegister($register);
     $this->ef->persistAndFlush($review);
+
     foreach($diff_files as $diff_file) {
       if(!$diff_file->isRemoved()) {
         foreach($tools as $tool) {
@@ -136,10 +137,10 @@ class ReviewProcessor
             // If the tool doesn't support the extension we report it to the user.
             $file_not_supported_info =
               "The file " . $diff_file->getName() . '.' . $diff_file->getExtension()
-              . ' has the ' . $diff_file->getExtension()
-              . ' extension, which is not supported by ' . $tool->getName() . '.' . PHP_EOL
-              . 'If ' . $tool->getName() . ' should support the ' . $diff_file->getExtension()
-              . ' extension you should contact your administrator to enable it.' . PHP_EOL . PHP_EOL;
+                . ' has the ' . $diff_file->getExtension()
+                . ' extension, which is not supported by ' . $tool->getName() . '.' . PHP_EOL
+                . 'If ' . $tool->getName() . ' should support the ' . $diff_file->getExtension()
+                . ' extension you should contact your administrator to enable it.' . PHP_EOL . PHP_EOL;
             $this->logger->info($file_not_supported_info);
           }
         }

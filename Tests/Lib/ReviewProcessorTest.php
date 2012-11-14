@@ -2,11 +2,14 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Tests\Lib;
 
+use Symfony\Component\DependencyInjection\ContainerAware;
+
 use Hostnet\HostnetCodeQualityBundle\Entity\Tool,
     Hostnet\HostnetCodeQualityBundle\Entity\Ruleset,
     Hostnet\HostnetCodeQualityBundle\Entity\CodeLanguage,
     Hostnet\HostnetCodeQualityBundle\Lib\ReviewProcessor,
     Hostnet\HostnetCodeQualityBundle\Parser\CommandLineUtility,
+    Hostnet\HostnetCodeQualityBundle\Parser\EntityProviderInterface,
     Hostnet\HostnetCodeQualityBundle\Parser\ParserFactory,
     Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\GITDiffParser,
     Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\XML\PMDXMLParser,
@@ -14,9 +17,7 @@ use Hostnet\HostnetCodeQualityBundle\Entity\Tool,
     Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\CGIT\CGITOriginalFileRetrieverParams,
     Hostnet\HostnetCodeQualityBundle\Tests\Mock\MockEntityFactory;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\EntityProviderInterface;
-
-class ReviewProcessorTest extends \PHPUnit_Framework_TestCase
+class ReviewProcessorTest extends ContainerAware
 {
   /**
    * @var Doctrine\ORM\EntityManager
@@ -24,7 +25,7 @@ class ReviewProcessorTest extends \PHPUnit_Framework_TestCase
   private $em;
 
   /**
-   * @var Monolog\Logger
+   * @var Symfony\Component\HttpKernel\Log\LoggerInterface
    */
   private $logger;
 
@@ -63,8 +64,8 @@ class ReviewProcessorTest extends \PHPUnit_Framework_TestCase
     // Mock the EntityManager without calling the constructor, (the constructor is private)
     $path_to_em = 'Doctrine\ORM\EntityManager';
     $this->em = $this->getMock($path_to_em, array(), array(), '', false);
-    // Monolog Logger
-    $path_to_logger = 'Monolog\Logger';
+    // LoggerInterface
+    $path_to_logger = 'Symfony\Component\HttpKernel\Log\LoggerInterface';
     $this->logger = $this->getMock($path_to_logger, array(), array(), '', false);
     // CommandLineUtility
     $this->clu = new CommandLineUtility($temp_cq_dir_name);

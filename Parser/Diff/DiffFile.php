@@ -20,6 +20,8 @@ class DiffFile
   CONST DEV_NULL = '/dev/null';
   CONST ORIGINAL_EXTENSION = '.orig';
   CONST TEMP_DIFF_FILE_PREFIX = 'cq';
+  const TOOL_OUTPUT_POSTFIX = '-tool_output';
+  const COMPLETED_POSTFIX = '-completed';
 
   /**
    * An array of the properties that are required
@@ -451,12 +453,12 @@ class DiffFile
    */
   public function processFile(Tool $tool)
   {
-    $this->diff_output = $this->scanCode(
+    $this->scanCode(
       $tool,
       $this->temp_diff_file_path
     );
     if($this->hasParent()) {
-      $this->original_output = $this->scanCode(
+      $this->scanCode(
         $tool,
         $this->temp_diff_file_path . self::ORIGINAL_EXTENSION
       );
@@ -464,19 +466,18 @@ class DiffFile
   }
 
   /**
-   * Writes the code into a temp file to be able
-   * to scan it with the code quality tool
+   * Scans the code with the code quality tool.
+   * The scan process is done on the background
    *
    * @param Tool $tool
    * @param string $temp_file_path
-   * @return string
    */
   private function scanCode(Tool $tool, $temp_file_path)
   {
     // Let the temp file go through the Code Quality Tool scan process by
     // executing the following command line command
     $command =
-      $tool->getCallCommand() .                        ' ' .
+      '(' . $tool->getCallCommand() .                  ' ' .
       escapeshellarg($temp_file_path) .                ' ' .
       escapeshellarg(strtolower($tool->getFormat())) . ' '
     ;
@@ -485,23 +486,66 @@ class DiffFile
     foreach($tool->getArguments() as $argument) {
       $command .= escapeshellarg($argument->getName());
     }
-    // Execute the command
-    $process = new Process($command);
-    $process->run();
-    // Validate the returned exit code with the whitelist for the tool
-    // as some tools give different error codes for example violations.
+    $command .= ' > ' . $temp_file_path . self::TOOL_OUTPUT_POSTFIX
+      . '; touch ' . $temp_file_path . self::COMPLETED_POSTFIX . ')&';
+    // Execute the command and run the processes on the background
+    shell_exec($command);
     // Remove the temp file
     unlink($temp_file_path);
-    if(!in_array($process->getExitCode(), $tool->getWhitelistedExitCodes())) {
-      if($process->getErrorOutput() != '') {
-        throw new RuntimeException($process->getErrorOutput());
-      } else {
-        throw new RuntimeException($process->getExitCode() . ': ' . $process->getExitCodeText());
-      }
+  }
+
+  /**
+   * Checks if the diff file has been processed by the tool.
+   * If the temp 'completed' file exists then it's done processing
+   *
+   * @return boolean
+   */
+  public function isDoneProcessingDiff()
+  {
+    $diff_file_completed_path = $this->temp_diff_file_path . self::COMPLETED_POSTFIX;
+
+    return file_exists($diff_file_completed_path) ? true : false;
+  }
+
+  /**
+   * Checks if the original file has been processed by the tool.
+   * If the temp 'completed' file exists then it's done processing
+   *
+   * @return boolean
+   */
+  public function isDoneProcessingOriginal()
+  {
+    $original_file_completed_path = $this->temp_diff_file_path
+      . self::ORIGINAL_EXTENSION . self::COMPLETED_POSTFIX;
+
+    return file_exists($original_file_completed_path) ? true : false;
+  }
+
+  /**
+   * Retrieves the diff files procesed tool output from the temp files.
+   *
+   */
+  public function retrieveAndSetToolOutput()
+  {
+    $tool_diff_output_path = $this->temp_diff_file_path . self::TOOL_OUTPUT_POSTFIX;
+    $diff_file_completed_path = $this->temp_diff_file_path . self::COMPLETED_POSTFIX;
+    // Retrieve and set the tool output
+    $this->diff_output = file_get_contents($tool_diff_output_path);
+    // Remove the temp files afterwards
+    unlink($tool_diff_output_path);
+    unlink($diff_file_completed_path);
+
+    if($this->hasParent()) {
+      $tool_original_output_path = $this->temp_diff_file_path
+        . self::ORIGINAL_EXTENSION . self::TOOL_OUTPUT_POSTFIX;
+      $original_file_completed_path = $this->temp_diff_file_path
+        . self::ORIGINAL_EXTENSION . self::COMPLETED_POSTFIX;
+      // Retrieve and set the tool output
+      $this->original_output = file_get_contents($tool_original_output_path);
+      // Remove the temp files afterwards
+      unlink($tool_original_output_path);
+      unlink($original_file_completed_path);
     }
-
-
-    return $process->getOutput();
   }
 
   /**

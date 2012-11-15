@@ -95,16 +95,6 @@ class Tool
    */
   private $supported_languages;
 
-  /**
-   * The exit codes that should be
-   * whitelisted for the tool
-   *
-   * @var string
-   *
-   * @ORM\Column(name="whitelisted_exit_codes", type="string", length=255)
-   */
-  private $whitelisted_exit_codes;
-
 
   public function __construct($name, $path_to_tool, $call_command, $format)
   {
@@ -235,26 +225,6 @@ class Tool
   public function getSupportedLanguages()
   {
     return $this->supported_languages;
-  }
-
-  /**
-   * Gets the whitelisted exit codes
-   *
-   * @return string
-   */
-  public function getWhitelistedExitCodes()
-  {
-    return array_map('trim', explode(',', $this->whitelisted_exit_codes));
-  }
-
-  /**
-   * Sets the whitelisted exit codes
-   *
-   * @param string $whitelisted_exit_codes
-   */
-  public function setWhitelistedExitCodes($whitelisted_exit_codes)
-  {
-    $this->whitelisted_exit_codes = $whitelisted_exit_codes;
   }
 
   /**

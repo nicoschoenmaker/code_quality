@@ -10,6 +10,7 @@ use Symfony\Component\Console\Command\Command,
     Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 use Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\ReviewBoard\ReviewBoardAPICalls,
+    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\FeedbackReceiverInterface,
     Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\ReviewBoard\ReviewBoardOriginalFileRetrieverParams;
 
 use Doctrine\Common\Collection;
@@ -63,21 +64,24 @@ class ProcessAllPendingDiffsCommand extends ContainerAwareCommand
     // Retrieve the value of the temp
     // previously processed date file
     $previous_process_date_file = $this->getPreviousProcessedDateFilename();
+    // If this is the first call made we set the 0 timestamp
+    if(!file_exists($previous_process_date_file)) {
+      file_put_contents($previous_process_date_file, 0);
+    }
     $previous_process_timestamp = file_get_contents($previous_process_date_file);
     $review_requests = $rb_api_calls->retrievePendingReviewRequests();
     foreach($review_requests->review_requests as $review_request) {
-      var_dump($review_request->last_updated);
       // get the last updated value from each review request
       // (includes diffs and comments)
       $last_updated = $this->parseRBDateToTimestamp($review_request->last_updated);
       if($last_updated > $previous_process_timestamp) {
         $review_request_id = $review_request->id;
         // Check if the latest diff is already processed
-        $diff_object = json_decode($rb_api_calls->retrieveDiff($review_request_id, null, $rb_api_calls::RESULT_TYPE_JSON));
+        $diff_object = json_decode($rb_api_calls->retrieveDiff($review_request_id, null, FeedbackReceiverInterface::RESULT_TYPE_JSON));
         $diff_timestamp = $this->parseRBDateToTimestamp($diff_object->diff->timestamp);
         if($diff_timestamp > $previous_process_timestamp) {
           // Retrieve the latest diff based on the review request id
-          $diff = $rb_api_calls->retrieveDiff($review_request_id, null, $rb_api_calls::RESULT_TYPE_TEXT);
+          $diff = $rb_api_calls->retrieveDiff($review_request_id, null, FeedbackReceiverInterface::RESULT_TYPE_TEXT);
           // Pass the review request id wrapped in a OriginalFileRetrieverParams
           // in order to retrieve the original file
           $original_file_retrieval_params = new ReviewBoardOriginalFileRetrieverParams($review_request_id);
@@ -131,6 +135,4 @@ class ProcessAllPendingDiffsCommand extends ContainerAwareCommand
       strrpos($date, '.')
     )) + date('Z');
   }
-
-
 }

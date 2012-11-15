@@ -2,18 +2,18 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Lib;
 
-use Symfony\Component\HttpKernel\Log\LoggerInterface;
-
 use Doctrine\ORM\EntityManager;
-
-use Symfony\Component\Filesystem\Exception\IOException;
 
 use Hostnet\HostnetCodeQualityBundle\Entity\Review,
     Hostnet\HostnetCodeQualityBundle\Lib\EntityFactory,
+    Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile,
     Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalFactory,
     Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalParams,
     Hostnet\HostnetCodeQualityBundle\Parser\CommandLineUtility,
     Hostnet\HostnetCodeQualityBundle\Parser\ParserFactory;
+
+use Symfony\Component\HttpKernel\Log\LoggerInterface,
+    Symfony\Component\Filesystem\Exception\IOException;
 
 /**
  * The Review Processor processes the whole review.
@@ -93,7 +93,7 @@ class ReviewProcessor
     // Tell the Entity Factory whether we want to register the Review or not
     $this->ef->setRegister($register);
     $this->ef->persistAndFlush($review);
-
+    $to_be_processed_files_amount = 0;
     foreach($diff_files as $diff_file) {
       if(!$diff_file->isRemoved()) {
         foreach($tools as $tool) {
@@ -113,13 +113,32 @@ class ReviewProcessor
                 $this->clu->getTempCodeQualityDirPath(),
                 $this->pf->getSCM()
               );
+              // Register an original file that has to be processed
+              $to_be_processed_files_amount++;
             } else {
               $diff_file->createTempDiffFile($this->clu->getTempCodeQualityDirPath());
             }
+            // Register a diff file that has to be processed
+            $to_be_processed_files_amount++;
 
             // Let the file be processed by the given tool
             $diff_file->processFile($tool);
+          }
+        }
+      }
+    }
 
+    $this->waitTillAllFilesProcessed(
+      $diff_files,
+      $tools,
+      $to_be_processed_files_amount
+    );
+
+    foreach($diff_files as $diff_file) {
+      if(!$diff_file->isRemoved()) {
+        foreach($tools as $tool) {
+          if($tool->supports($diff_file->getExtension())) {
+            $diff_file->retrieveAndSetToolOutput();
             // Request the Tool Output Parser from the Factory
             $additional_tool_properties = array('format' => $tool->getFormat());
             $tool_output_parser = $this->pf->getToolOutputParserInstance(
@@ -137,10 +156,10 @@ class ReviewProcessor
             // If the tool doesn't support the extension we report it to the user.
             $file_not_supported_info =
               "The file " . $diff_file->getName() . '.' . $diff_file->getExtension()
-                . ' has the ' . $diff_file->getExtension()
-                . ' extension, which is not supported by ' . $tool->getName() . '.' . PHP_EOL
-                . 'If ' . $tool->getName() . ' should support the ' . $diff_file->getExtension()
-                . ' extension you should contact your administrator to enable it.' . PHP_EOL . PHP_EOL;
+              . ' has the ' . $diff_file->getExtension()
+              . ' extension, which is not supported by ' . $tool->getName() . '.' . PHP_EOL
+              . 'If ' . $tool->getName() . ' should support the ' . $diff_file->getExtension()
+              . ' extension you should contact your administrator to enable it.' . PHP_EOL . PHP_EOL;
             $this->logger->info($file_not_supported_info);
           }
         }
@@ -149,5 +168,45 @@ class ReviewProcessor
     $this->ef->persistAndFlush($review);
 
     return $review;
+  }
+
+  /**
+   * Waits until all the diff files
+   * are processed by the tools
+   *
+   * @param array $diff_files
+   * @param array $tools
+   * @param integer $to_be_processed_files_amount
+   */
+  public function waitTillAllFilesProcessed(
+    $diff_files, $tools, $to_be_processed_files_amount)
+  {
+    while(true) {
+      // Sleep so we don't overload the amount of calls
+      sleep(2);
+      // Reset the amount of processed files to 0 each iteration
+      $processed_files_amount = 0;
+      foreach($diff_files as $diff_file) {
+        if(!$diff_file->isRemoved()) {
+          foreach($tools as $tool) {
+            if($tool->supports($diff_file->getExtension())) {
+              // If the diff is processed we increment the processed amount
+              if($diff_file->isDoneProcessingDiff()) {
+                $processed_files_amount++;
+              }
+              // Same goes for the original file
+              if($diff_file->isDoneProcessingOriginal()) {
+                $processed_files_amount++;
+              }
+            }
+          }
+        }
+      }
+      // If the amount of diff files that should be processed
+      // have been processed we stop waiting.
+      if($processed_files_amount == $to_be_processed_files_amount) {
+        break;
+      }
+    }
   }
 }

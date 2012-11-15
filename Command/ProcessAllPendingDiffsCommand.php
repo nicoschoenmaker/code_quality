@@ -64,11 +64,13 @@ class ProcessAllPendingDiffsCommand extends ContainerAwareCommand
     // Retrieve the value of the temp
     // previously processed date file
     $previous_process_date_file = $this->getPreviousProcessedDateFilename();
-    // If this is the first call made we set the 0 timestamp
-    if(!file_exists($previous_process_date_file)) {
-      file_put_contents($previous_process_date_file, 0);
+    if(file_exists($previous_process_date_file)) {
+      $previous_process_timestamp = file_get_contents($previous_process_date_file);
+    } else {
+      // If this is the first call made we set the timestamp to 0
+      $previous_process_timestamp = 0;
     }
-    $previous_process_timestamp = file_get_contents($previous_process_date_file);
+
     $review_requests = $rb_api_calls->retrievePendingReviewRequests();
     foreach($review_requests->review_requests as $review_request) {
       // get the last updated value from each review request

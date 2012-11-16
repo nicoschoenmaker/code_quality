@@ -18,6 +18,9 @@ class CGITOriginalFileRetrieverParams extends OriginalFileRetrievalParams
    */
   private $repository;
 
+  /**
+   * @param string $repository
+   */
   public function __construct($repository)
   {
     $this->repository = $repository;

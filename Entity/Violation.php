@@ -61,7 +61,6 @@ class Violation
    */
   private $originated_from_diff;
 
-
   /**
    * @param Rule $rule
    * @param string $message

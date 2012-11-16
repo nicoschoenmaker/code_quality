@@ -40,6 +40,12 @@ class ReviewBoardReview
    */
   private $ship_it;
 
+  /**
+   * @param string $body_bottom
+   * @param string $body_top
+   * @param boolean $public
+   * @param boolean $ship_it
+   */
   public function __construct($body_bottom = '', $body_top = '', $public = false, $ship_it = false)
   {
     $this->body_bottom = '';

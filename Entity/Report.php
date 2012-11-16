@@ -45,7 +45,9 @@ class Report
    */
   private $violations;
 
-
+  /**
+   * @param File $file
+   */
   public function __construct(File $file)
   {
     $this->file = $file;

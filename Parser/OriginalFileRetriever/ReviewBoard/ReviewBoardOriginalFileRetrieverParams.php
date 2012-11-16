@@ -17,6 +17,9 @@ class ReviewBoardOriginalFileRetrieverParams extends OriginalFileRetrievalParams
    */
   private $review_request_id;
 
+  /**
+   * @param integer $review_request_id
+   */
   public function __construct($review_request_id)
   {
     $this->review_request_id = $review_request_id;

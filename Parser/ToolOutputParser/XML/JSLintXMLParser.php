@@ -35,6 +35,9 @@ class JSLintXMLParser extends AbstractToolOutputParser implements ToolOutputPars
    */
   protected $epi;
 
+  /**
+   * @param EntityProviderInterface $epi
+   */
   public function __construct(EntityProviderInterface $epi)
   {
     $this->resource = 'jslint';

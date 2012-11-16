@@ -59,8 +59,13 @@ class File
    */
   private $reports;
 
-
-  public function __construct($code_language, $name, $source, $destination)
+  /**
+   * @param CodeLanguage $code_language
+   * @param string $name
+   * @param string $source
+   * @param string $destination
+   */
+  public function __construct(CodeLanguage $code_language, $name, $source, $destination)
   {
     $this->code_language = $code_language;
     $this->name = $name;

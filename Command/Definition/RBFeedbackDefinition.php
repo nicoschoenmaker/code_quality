@@ -5,8 +5,17 @@ namespace Hostnet\HostnetCodeQualityBundle\Command\Definition;
 use Symfony\Component\Console\Input\InputDefinition,
     Symfony\Component\Console\Input\InputOption;
 
+/**
+ * The RBFeedbackDefinition class is used to add multiple used
+ * options to the command from one central spot which is this class.
+ *
+ * @author rprent
+ */
 class RBFeedbackDefinition extends InputDefinition
 {
+  /**
+   * @param array $input_definitions
+   */
   public function __construct(array $input_definitions = array())
   {
     array_push($input_definitions,

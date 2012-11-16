@@ -26,6 +26,9 @@ class ParserFactory
    */
   private $scm = '';
 
+  /**
+   * @param string $scm
+   */
   public function __construct($scm)
   {
     $this->scm = strtolower($scm);

@@ -8,6 +8,11 @@ use Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile,
 
 use InvalidArgumentException;
 
+/**
+ * The GIT diff parser that parses git diffs
+ *
+ * @author rprent
+ */
 class GITDiffParser extends GenericDiffParser implements DiffParserInterface
 {
   CONST T_DOUBLE_DOT = '..';

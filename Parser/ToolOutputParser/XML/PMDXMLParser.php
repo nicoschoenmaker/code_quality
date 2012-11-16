@@ -34,6 +34,9 @@ class PMDXMLParser extends AbstractToolOutputParser implements ToolOutputParserI
    */
   protected $epi;
 
+  /**
+   * @param EntityProviderInterface $epi
+   */
   public function __construct(EntityProviderInterface $epi)
   {
     $this->resource = 'pmd';

@@ -39,6 +39,12 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
    */
   private $auto_ship_it;
 
+  /**
+   * @param string $base_url
+   * @param string $username
+   * @param string $password
+   * @param boolean $auto_ship_it
+   */
   public function __construct($base_url, $username, $password, $auto_ship_it)
   {
     $this->auto_ship_it = $auto_ship_it;

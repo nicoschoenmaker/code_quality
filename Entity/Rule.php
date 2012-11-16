@@ -42,7 +42,11 @@ class Rule
    */
   private $enabled;
 
-
+  /**
+   * @param string $name
+   * @param integer $priority
+   * @param boolean $enabled
+   */
   public function __construct($name, $priority = 3, $enabled = true)
   {
     $this->name = $name;

@@ -5,6 +5,12 @@ namespace Hostnet\HostnetCodeQualityBundle\Parser\DiffParser;
 use Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffCodeBlock,
     Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile;
 
+/**
+ * The generic diff parser that abstracts
+ * the parseDiffHead and parseDiffBody functions
+ *
+ * @author rprent
+ */
 abstract class GenericDiffParser extends AbstractDiffParser
 {
   /**

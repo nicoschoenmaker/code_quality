@@ -55,6 +55,14 @@ class ReviewProcessor
    */
   private $ef;
 
+  /**
+   * @param EntityManager $em
+   * @param LoggerInterface $logger
+   * @param EntityFactory $ef
+   * @param OriginalFileRetrievalFactory $original_file_retrieval_factory
+   * @param CommandLineUtility $clu
+   * @param ParserFactory $pf
+   */
   public function __construct(EntityManager $em, LoggerInterface $logger, EntityFactory $ef,
     OriginalFileRetrievalFactory $original_file_retrieval_factory,
     CommandLineUtility $clu, ParserFactory $pf)

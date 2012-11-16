@@ -95,7 +95,12 @@ class Tool
    */
   private $supported_languages;
 
-
+  /**
+   * @param string $name
+   * @param string $path_to_tool
+   * @param string $call_command
+   * @param string $format
+   */
   public function __construct($name, $path_to_tool, $call_command, $format)
   {
     $this->name = $name;

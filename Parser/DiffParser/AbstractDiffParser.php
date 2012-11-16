@@ -6,6 +6,12 @@ use Hostnet\HostnetCodeQualityBundle\Parser\AbstractParser;
 
 use InvalidArgumentException;
 
+/**
+ * The abstract diff parser, all the diff parsers
+ * should extend this class
+ *
+ * @author rprent
+ */
 abstract class AbstractDiffParser extends AbstractParser
 {
   const T_SPACE_LENGTH = 1;

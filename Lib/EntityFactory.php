@@ -41,7 +41,9 @@ class EntityFactory implements EntityProviderInterface
    */
   private $register = false;
 
-
+  /**
+   * @param EntityManager $em
+   */
   public function __construct(EntityManager $em)
   {
     $this->em = $em;

@@ -26,7 +26,6 @@ class CodeLanguage
    */
   private $name;
 
-
   /**
    * @param String $name
    */

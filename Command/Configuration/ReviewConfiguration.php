@@ -31,6 +31,12 @@ class ReviewConfiguration
    */
   private $line_limit;
 
+  /**
+   * @param integer $review_request_id
+   * @param boolean $publish_empty
+   * @param integer $line_context
+   * @param integer $line_limit
+   */
   public function __construct($review_request_id, $publish_empty, $line_context, $line_limit)
   {
     $this->review_request_id = $review_request_id;

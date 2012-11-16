@@ -7,6 +7,12 @@ use Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile,
     Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\AbstractDiffParser,
     Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\DiffParserInterface;
 
+/**
+ * The SVN diff parser that parses SVN diffs
+ * (requires an update)
+ *
+ * @author rprent
+ */
 class SVNDiffParser extends AbstractDiffParser implements DiffParserInterface
 {
   CONST START_OF_FILE_PATTERN = 'Index: ';

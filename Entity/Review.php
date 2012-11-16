@@ -33,7 +33,6 @@ class Review
    */
   private $reports;
 
-
   public function __construct()
   {
     $this->created_at = new \DateTime();

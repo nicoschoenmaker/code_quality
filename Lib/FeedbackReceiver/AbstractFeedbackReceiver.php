@@ -35,6 +35,11 @@ abstract class AbstractFeedbackReceiver
    */
   private $login;
 
+  /**
+   * @param string $base_url
+   * @param string $username
+   * @param string $password
+   */
   public function __construct($base_url, $username, $password)
   {
     $this->base_url = $base_url;

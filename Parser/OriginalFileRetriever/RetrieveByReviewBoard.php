@@ -20,6 +20,9 @@ class RetrieveByReviewBoard implements OriginalFileRetrieverInterface
    */
   private $feedback_receiver;
 
+  /**
+   * @param FeedbackReceiverInterface $feedback_receiver
+   */
   public function __construct(FeedbackReceiverInterface $feedback_receiver)
   {
     $this->feedback_receiver = $feedback_receiver;

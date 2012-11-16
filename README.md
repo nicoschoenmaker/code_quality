@@ -10,28 +10,29 @@ Features:
 <br>In a Symfony2 project you can execute the following command:
 <br>Input:   php app/console cq:processDiff:localDiff path_to_diff repository
 <br>Example: php app/console cq:processDiff:localDiff path/to/diff repository
-<br>
+<p></p>
 - Process a Review Board review request based on the review request id and get feedback on the CLI.
 <br>Input:   php app/console cq:processDiff:RBDiff review_request_id [--diff_revision|-r]
 <br>Example: php app/console cq:processDiff:RBDiff        11                 -r 2
-<br>
+<p></p>
 - Process a Review Board review request based on the review request id and send the feedback to the review request on Review Board
   by adding a review with comments to the review request.
 <br>Input:   php app/console cq:processDiff:RBDiff review_request_id [--publish_empty|-p] [--line_context|-c] [--line_limit|-l]
 <br>Example: php app/console cq:processDiff:RBDiff       12345           -s true               -c 0               -l 25
-<br>
+<p></p>
 - Process all the pending review requests on Review Board and send the feedback to each review request by adding a review with
   comments to each review request. This command creates a temp file in the temp dir which holds the last process date.
 <br>Based on the date it checks which diffs already got processed and which didn't. Basically, if you automate this command with a cronjob
 	all the new diffs on Review Board will be processed.
 <br>Input:   php app/console cq:processAllNewDiffs [--publish_empty|-p] [--line_context|-c] [--line_limit|-l]
 <br>Example: php app/console cq:processAllNewDiffs       -s true               -c 0              -l 25
-<br>
+
 Requirements:
 -------------
 - Manual installation and configuration of code quality metric tools 
   like PMD, PHPMD and JSLint
 - Manual set the required settings in your own Symfony2 project's app/config parameters settings:
+<p></p>
   hostnet_code_quality:
     <br>scm:																			Which revision management system is used in order to parse the correct diff format.
     <br>temp_cq_dir_name:													The path of the directory where the temporary files are saved and deleted afterwards.
@@ -51,7 +52,7 @@ Future Features:
 - Possibility to import/process historical git logs
 - An overview of the past code quality results/grades
 - A top-score chart filterable on department/team/project
-
+<p></p>
 ##### Hostnet Recruitment ######
 Op zoek naar een baan in de Software Engineering?
 Hostnet is nog op zoek naar nieuwe ontwikkelaars.

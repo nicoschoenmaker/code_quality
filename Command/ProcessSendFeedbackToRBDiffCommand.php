@@ -5,11 +5,12 @@ namespace Hostnet\HostnetCodeQualityBundle\Command;
 use Symfony\Component\Console\Command\Command,
     Symfony\Component\Console\Input\InputArgument,
     Symfony\Component\Console\Input\InputInterface,
-    Symfony\Component\Console\Input\InputOption,
     Symfony\Component\Console\Output\OutputInterface,
     Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\FeedbackReceiverInterface,
+use Hostnet\HostnetCodeQualityBundle\Command\Configuration\ReviewConfiguration,
+    Hostnet\HostnetCodeQualityBundle\Command\Definition\RBFeedbackDefinition,
+    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\FeedbackReceiverInterface,
     Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\ReviewBoard\ReviewBoardOriginalFileRetrieverParams;
 
 use Doctrine\Common\Collection;
@@ -36,18 +37,9 @@ class ProcessSendFeedbackToRBDiffCommand extends ContainerAwareCommand
     $this
       ->setName('cq:processDiff:sendToRBDiff')
       ->setDescription('Scans the diff on the quality of the code and returns feedback.')
-      ->setDefinition(array(
-        new InputArgument('review_request_id', InputArgument::REQUIRED,
-          'The id of the review request to give feedback on.'),
-        new InputOption('publish_empty', 'p', InputOption::VALUE_REQUIRED,
-          "Sends a comment if there are no violations to display. This can be used in combination with "
-            . "the configurable auto_shipit setting to auto shipit if no violations found. "
-            . "Defaults to false", false),
-        new InputOption('line_context', 'c', InputOption::VALUE_REQUIRED,
-          "The amount of lines width around the violated line that should be shown as 'context'.", 1),
-        new InputOption('line_limit', 'l', InputOption::VALUE_REQUIRED,
-          'The maximum number of lines per violation to be shown. Imagine a class with 2000 lines '
-            . 'taking way too much space, therefore the default is at 5 lines.', 5)
+      ->setDefinition(new RBFeedbackDefinition(
+        array(new InputArgument('review_request_id', InputArgument::REQUIRED,
+          'The id of the review request to give feedback on.'))
       ))
     ;
   }
@@ -77,7 +69,8 @@ class ProcessSendFeedbackToRBDiffCommand extends ContainerAwareCommand
       $original_file_retrieval_params
     );
 
-    $rb_api_calls->sendFeedbackToRB($review_request_id, $review,
+    $review_configuration = new ReviewConfiguration($review_request_id,
       $publish_empty, $line_context, $line_limit);
+    $rb_api_calls->sendFeedbackToRB($review_configuration, $review);
   }
 }

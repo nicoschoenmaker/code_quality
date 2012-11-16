@@ -3,13 +3,13 @@
 namespace Hostnet\HostnetCodeQualityBundle\Command;
 
 use Symfony\Component\Console\Command\Command,
-    Symfony\Component\Console\Input\InputArgument,
     Symfony\Component\Console\Input\InputInterface,
-    Symfony\Component\Console\Input\InputOption,
     Symfony\Component\Console\Output\OutputInterface,
     Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
-use Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\ReviewBoard\ReviewBoardAPICalls,
+use Hostnet\HostnetCodeQualityBundle\Command\Configuration\ReviewConfiguration,
+    Hostnet\HostnetCodeQualityBundle\Command\Definition\RBFeedbackDefinition,
+    Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\ReviewBoard\ReviewBoardAPICalls,
     Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\FeedbackReceiverInterface,
     Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\ReviewBoard\ReviewBoardOriginalFileRetrieverParams;
 
@@ -38,18 +38,7 @@ class ProcessAllPendingDiffsCommand extends ContainerAwareCommand
       ->setName('cq:processAllPendingDiffs')
       ->setDescription('Scans all the pending review requests on their latest diff.'
         . ' It checks the quality of the code and returns feedback.')
-      ->setDefinition(array(
-        new InputOption('publish_empty', 'p', InputOption::VALUE_REQUIRED,
-          "Sends a comment if there are no violations to display. This can be used in combination with "
-            . "the configurable auto_shipit setting to auto shipit if no violations found. "
-            . "Defaults to false", false),
-        new InputOption('line_context', 'c', InputOption::VALUE_REQUIRED,
-          "The amount of lines width around the violated line that should be shown as 'context'.", 1),
-        new InputOption('line_limit', 'l', InputOption::VALUE_REQUIRED,
-          'The maximum number of lines per violation to be shown. Imagine a class with 2000 lines '
-            . 'taking way too much space, therefore the default is at 5 lines.', 5)
-      ))
-
+      ->setDefinition(new RBFeedbackDefinition())
     ;
   }
 
@@ -103,9 +92,9 @@ class ProcessAllPendingDiffsCommand extends ContainerAwareCommand
             $original_file_retrieval_params
           );
           // Send all the feedback to Review Board
-          $rb_api_calls->sendFeedbackToRB(
-            $review_request_id, $review, $publish_empty, $line_context, $line_limit
-          );
+          $review_configuration = new ReviewConfiguration($review_request_id,
+            $publish_empty, $line_context, $line_limit);
+          $rb_api_calls->sendFeedbackToRB($review_configuration, $review);
         }
       }
     }

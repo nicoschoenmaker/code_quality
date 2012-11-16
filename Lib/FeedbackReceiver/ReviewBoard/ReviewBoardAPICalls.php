@@ -2,7 +2,8 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\ReviewBoard;
 
-use Hostnet\HostnetCodeQualityBundle\Entity\Review,
+use Hostnet\HostnetCodeQualityBundle\Command\Configuration\ReviewConfiguration,
+    Hostnet\HostnetCodeQualityBundle\Entity\Review,
     Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\AbstractFeedbackReceiver,
     Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\ReviewBoard\ReviewBoardReview,
     Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\FeedbackReceiverInterface;
@@ -226,18 +227,14 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
   /**
    * Send the feedback to Review Board
    *
-   * @param integer $review_request_id
+   * @param ReviewConfiguration $review_configuration
    * @param Review $review
-   * @param boolean $publish_empty
-   * @param integer $line_context
-   * @param integer $line_limit
    */
-  public function sendFeedbackToRB($review_request_id, Review $review,
-    $publish_empty, $line_context, $line_limit)
+  public function sendFeedbackToRB(ReviewConfiguration $review_configuration, Review $review)
   {
     // Create a draft review
-    $new_review_id = $this->createReview($review_request_id);
-    $diff_files = $this->retrieveReviewRequestLastDiffFiles($review_request_id);
+    $new_review_id = $this->createReview($review_configuration->getReviewRequestId());
+    $diff_files = $this->retrieveReviewRequestLastDiffFiles($review_configuration->getReviewRequestId());
 
     $reports = $review->getReports();
     $violation_detected = false;
@@ -270,13 +267,14 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
           foreach($diff_violations as $violation) {
             // We set the first line based on the amount of context before it.
             // In case it would start below line number 0 we limit it to 0.
-            $first_line = ($violation->getBeginLine() - $line_context) < 0
-              ? 0 : $violation->getBeginLine() - $line_context;
+            $first_line = ($violation->getBeginLine() - $review_configuration->getLineContext()) < 0
+              ? 0 : $violation->getBeginLine() - $review_configuration->getLineContext();
             // Set the number of lines to post the comment on and add the number of context lines
-            $number_of_lines = $violation->getEndLine() + $line_context * 2
+            $number_of_lines = $violation->getEndLine() + $review_configuration->getLineContext() * 2
               + 1  - $violation->getBeginLine();
             // if it exceeds the limit we just take the limit
-            $number_of_lines = ($number_of_lines > $line_limit) ? $line_limit : $number_of_lines;
+            $number_of_lines = ($number_of_lines > $review_configuration->getLineLimit())
+              ? $review_configuration->getLineLimit() : $number_of_lines;
 
             $fields = array(
                 'filediff_id'      => $diff_file->id,
@@ -286,7 +284,7 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
                 'text'             => $violation->getMessage()
             );
             // Post the comment onto the draft review
-            $this->createComment($review_request_id, $new_review_id, $fields);
+            $this->createComment($review_configuration->getReviewRequestId(), $new_review_id, $fields);
           }
         }
       }
@@ -308,12 +306,12 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
         . $progression_text . PHP_EOL . "\tThe next messages are all the violations detected in "
         . 'all the files you modified with this diff.');
       // Publish the review
-      $this->createReview($review_request_id, $rb_review->toArray());
-    } else if($publish_empty) {
+      $this->createReview($review_configuration->getReviewRequestId(), $rb_review->toArray());
+    } else if($review_configuration->getPublishEmpty()) {
       $rb_review->setBodyTop($body_top . "\tNo code quality violations found, good job!");
       $rb_review->setShipIt($this->auto_ship_it);
       // Publish the review
-      $this->createReview($review_request_id, $rb_review->toArray());
+      $this->createReview($review_configuration->getReviewRequestId(), $rb_review->toArray());
     }
     // If violations are not detected and show success is false we just don't send anything!
   }

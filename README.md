@@ -1,6 +1,4 @@
-NOTE: Still on development! (Internship project :D)
-
-Hostnet Code Quality Review Platform.
+Hostnet's Code Quality Review Platform.
 This Symfony bundle can be used to check the code quality of a diff
 through code quality metric tools like PMD, PHPMD and JSLint.
 

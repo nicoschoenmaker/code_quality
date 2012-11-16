@@ -228,9 +228,10 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
    *
    * @param integer $review_request_id
    * @param Review $review
-   * @param integer $line_cap
+   * @param integer $line_limit
    */
-  public function sendFeedbackToRB($review_request_id, $review, $line_cap)
+  public function sendFeedbackToRB($review_request_id, $review,
+    $show_success, $line_context, $line_limit)
   {
     // Create a draft review
     $new_review_id = $this->createReview($review_request_id);
@@ -265,13 +266,19 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
           // If the reviewed file is the same as the RB diff file
           // we push all the violations for that file to RB
           foreach($diff_violations as $violation) {
-            // Set the number of lines to post the comment on,
-            // if it exceeds the cap we just take the cap
-            $number_of_lines = $violation->getEndLine() + 1 - $violation->getBeginLine();
-            $number_of_lines = ($number_of_lines > $line_cap) ? $line_cap : $number_of_lines;
+            // We set the first line based on the amount of context before it.
+            // In case it would start below line number 0 we limit it to 0.
+            $first_line = ($violation->getBeginLine() - $line_context) < 0
+              ? 0 : $violation->getBeginLine() - $line_context;
+            // Set the number of lines to post the comment on and add the number of context lines
+            $number_of_lines = $violation->getEndLine() + $line_context * 2
+              + 1  - $violation->getBeginLine();
+            // if it exceeds the limit we just take the limit
+            $number_of_lines = ($number_of_lines > $line_limit) ? $line_limit : $number_of_lines;
+
             $fields = array(
                 'filediff_id'      => $diff_file->id,
-                'first_line'       => $violation->getBeginLine(),
+                'first_line'       => $first_line,
                 'issue_opened'     => false,
                 'num_lines'        => $number_of_lines,
                 'text'             => $violation->getMessage()
@@ -298,11 +305,14 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
       $rb_review->setBodyTop($body_top . "\tYour latest diff made the code quality "
         . $progression_text . PHP_EOL . "\tThe next messages are all the violations detected in "
         . 'all the files you modified with this diff.');
-    } else {
+      // Publish the review
+      $this->createReview($review_request_id, $rb_review->toArray());
+    } else if($show_success) {
       $rb_review->setBodyTop($body_top . "\tNo code quality violations found, good job!");
       $rb_review->setShipIt($this->auto_ship_it);
+      // Publish the review
+      $this->createReview($review_request_id, $rb_review->toArray());
     }
-    // Publish the review
-    $this->createReview($review_request_id, $rb_review->toArray());
+    // If violations are not detected and show success is false we just don't send anything!
   }
 }

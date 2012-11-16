@@ -20,7 +20,8 @@ use DateTime,
 
 /**
  * Processes all the Review Board diffs that haven't been processed yet
- * Input:   php app/console cq:cq:processAllNewDiffs
+ * Input:   php app/console cq:processAllNewDiffs [--show_success|-s] [--line_context|-c] [--line_limit|-l]
+ * Example: php app/console cq:processAllNewDiffs       -s true               -c 0              -l 25
  *
  * @author rprent
  */
@@ -38,10 +39,17 @@ class ProcessAllPendingDiffsCommand extends ContainerAwareCommand
       ->setDescription('Scans all the pending review requests on their latest diff.'
         . ' It checks the quality of the code and returns feedback.')
       ->setDefinition(array(
-        new InputOption('line_cap', 'c', InputOption::VALUE_REQUIRED,
+        new InputOption('show_success', 'sc', InputOption::VALUE_REQUIRED,
+          "Sends a comment if there are no violations to display. This can be used in combination with "
+            . "the configurable auto_shipit setting to auto shipit if no violations found. "
+            . "Defaults to false", false),
+        new InputOption('line_context', 'c', InputOption::VALUE_REQUIRED,
+          "The amount of lines width around the violated line that should be shown as 'context'.", 1),
+        new InputOption('line_limit', 'l', InputOption::VALUE_REQUIRED,
           'The maximum number of lines per violation to be shown. Imagine a class with 2000 lines '
-          . 'taking way too much space, therefore the default is at 5 lines.', 5)
+            . 'taking way too much space, therefore the default is at 5 lines.', 5)
       ))
+
     ;
   }
 
@@ -55,7 +63,9 @@ class ProcessAllPendingDiffsCommand extends ContainerAwareCommand
     // Get the Review Board Api Calls service for all the requests
     $rb_api_calls = $this->getReviewBoardAPICalls();
     // User CLI Input
-    $line_cap = $input->getOption('line_cap');
+    $show_success = $input->getOption('show_success');
+    $line_context = $input->getOption('line_context');
+    $line_limit = $input->getOption('line_limit');
 
     // Retrieve all the pending review requests
     // that haven't been processed yet
@@ -93,7 +103,9 @@ class ProcessAllPendingDiffsCommand extends ContainerAwareCommand
             $original_file_retrieval_params
           );
           // Send all the feedback to Review Board
-          $rb_api_calls->sendFeedbackToRB($review_request_id, $review, $line_cap);
+          $rb_api_calls->sendFeedbackToRB(
+            $review_request_id, $review, $show_success, $line_context, $line_limit
+          );
         }
       }
     }

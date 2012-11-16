@@ -52,7 +52,7 @@ Future Features:
 - Possibility to import/process historical git logs
 - An overview of the past code quality results/grades
 - A top-score chart filterable on department/team/project
-<p></p>
+
 ##### Hostnet Recruitment ######
 Op zoek naar een baan in de Software Engineering?
 Hostnet is nog op zoek naar nieuwe ontwikkelaars.

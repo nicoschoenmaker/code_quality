@@ -20,7 +20,7 @@ use DateTime,
 
 /**
  * Processes all the Review Board diffs that haven't been processed yet
- * Input:   php app/console cq:processAllNewDiffs [--show_success|-s] [--line_context|-c] [--line_limit|-l]
+ * Input:   php app/console cq:processAllNewDiffs [--publish_empty|-p] [--line_context|-c] [--line_limit|-l]
  * Example: php app/console cq:processAllNewDiffs       -s true               -c 0              -l 25
  *
  * @author rprent
@@ -39,7 +39,7 @@ class ProcessAllPendingDiffsCommand extends ContainerAwareCommand
       ->setDescription('Scans all the pending review requests on their latest diff.'
         . ' It checks the quality of the code and returns feedback.')
       ->setDefinition(array(
-        new InputOption('show_success', 'sc', InputOption::VALUE_REQUIRED,
+        new InputOption('publish_empty', 'p', InputOption::VALUE_REQUIRED,
           "Sends a comment if there are no violations to display. This can be used in combination with "
             . "the configurable auto_shipit setting to auto shipit if no violations found. "
             . "Defaults to false", false),
@@ -63,7 +63,7 @@ class ProcessAllPendingDiffsCommand extends ContainerAwareCommand
     // Get the Review Board Api Calls service for all the requests
     $rb_api_calls = $this->getReviewBoardAPICalls();
     // User CLI Input
-    $show_success = $input->getOption('show_success');
+    $publish_empty = $input->getOption('publish_empty') !== false ? true : false;
     $line_context = $input->getOption('line_context');
     $line_limit = $input->getOption('line_limit');
 
@@ -104,7 +104,7 @@ class ProcessAllPendingDiffsCommand extends ContainerAwareCommand
           );
           // Send all the feedback to Review Board
           $rb_api_calls->sendFeedbackToRB(
-            $review_request_id, $review, $show_success, $line_context, $line_limit
+            $review_request_id, $review, $publish_empty, $line_context, $line_limit
           );
         }
       }

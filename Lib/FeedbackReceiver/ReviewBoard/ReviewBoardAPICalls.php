@@ -228,10 +228,12 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
    *
    * @param integer $review_request_id
    * @param Review $review
+   * @param boolean $publish_empty
+   * @param integer $line_context
    * @param integer $line_limit
    */
-  public function sendFeedbackToRB($review_request_id, $review,
-    $show_success, $line_context, $line_limit)
+  public function sendFeedbackToRB($review_request_id, Review $review,
+    $publish_empty, $line_context, $line_limit)
   {
     // Create a draft review
     $new_review_id = $this->createReview($review_request_id);
@@ -307,7 +309,7 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
         . 'all the files you modified with this diff.');
       // Publish the review
       $this->createReview($review_request_id, $rb_review->toArray());
-    } else if($show_success) {
+    } else if($publish_empty) {
       $rb_review->setBodyTop($body_top . "\tNo code quality violations found, good job!");
       $rb_review->setShipIt($this->auto_ship_it);
       // Publish the review

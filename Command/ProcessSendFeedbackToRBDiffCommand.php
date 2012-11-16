@@ -19,7 +19,7 @@ use InvalidArgumentException;
 /**
  * Processes the Review Board diff based on the given review_request_id
  * by calling the cq:processDiff:RBDiff command on the CLI.
- * Input:   php app/console cq:processDiff:RBDiff review_request_id [--show_success|-s] [--line_context|-c] [--line_limit|-l]
+ * Input:   php app/console cq:processDiff:RBDiff review_request_id [--publish_empty|-p] [--line_context|-c] [--line_limit|-l]
  * Example: php app/console cq:processDiff:RBDiff       12345           -s true               -c 0               -l 25
  *
  * @author rprent
@@ -39,7 +39,7 @@ class ProcessSendFeedbackToRBDiffCommand extends ContainerAwareCommand
       ->setDefinition(array(
         new InputArgument('review_request_id', InputArgument::REQUIRED,
           'The id of the review request to give feedback on.'),
-        new InputOption('show_success', 'sc', InputOption::VALUE_REQUIRED,
+        new InputOption('publish_empty', 'p', InputOption::VALUE_REQUIRED,
           "Sends a comment if there are no violations to display. This can be used in combination with "
             . "the configurable auto_shipit setting to auto shipit if no violations found. "
             . "Defaults to false", false),
@@ -63,7 +63,9 @@ class ProcessSendFeedbackToRBDiffCommand extends ContainerAwareCommand
     $rb_api_calls = $this->getContainer()->get('review_board_api_calls');
     // User CLI Input
     $review_request_id = $input->getArgument('review_request_id');
-    $line_cap = $input->getOption('line_cap');
+    $publish_empty = $input->getOption('publish_empty') !== false ? true : false;
+    $line_context = $input->getOption('line_context');
+    $line_limit = $input->getOption('line_limit');
 
     $original_file_retrieval_params = new ReviewBoardOriginalFileRetrieverParams($review_request_id);
     $diff = $rb_api_calls->retrieveDiff($review_request_id, null,
@@ -75,6 +77,7 @@ class ProcessSendFeedbackToRBDiffCommand extends ContainerAwareCommand
       $original_file_retrieval_params
     );
 
-    $rb_api_calls->sendFeedbackToRB($review_request_id, $review, $line_cap);
+    $rb_api_calls->sendFeedbackToRB($review_request_id, $review,
+      $publish_empty, $line_context, $line_limit);
   }
 }

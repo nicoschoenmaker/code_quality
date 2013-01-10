@@ -48,7 +48,7 @@ class CommandLineUtility
   {
     clearstatcache();
     if(!is_file($this->temp_code_quality_dir_path)) {
-      if(!mkdir($this->temp_code_quality_dir_path, 0777, true)) {
+      if(@mkdir($this->temp_code_quality_dir_path, 0777, true) === false) {
         throw new IOException('Failed to create the Code Quality Temp directory at '
           . $this->temp_code_quality_dir_path);
       }

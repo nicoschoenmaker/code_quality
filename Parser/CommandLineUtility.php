@@ -24,7 +24,7 @@ class CommandLineUtility
   {
     $this->temp_code_quality_dir_path = $temp_cq_dir_name;
     if(realpath($this->temp_code_quality_dir_path) === false) {
-      $this->createTempDir($temp_cq_dir_name);
+      $this->createTempDir();
     }
   }
 

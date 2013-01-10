@@ -20,8 +20,8 @@ use InvalidArgumentException;
 /**
  * Processes the Review Board diff based on the given review_request_id
  * by calling the cq:processDiff:RBDiff command on the CLI.
- * Input:   php app/console cq:processDiff:RBDiff review_request_id [--publish_empty|-p] [--line_context|-c] [--line_limit|-l]
- * Example: php app/console cq:processDiff:RBDiff       12345           -s true               -c 0               -l 25
+ * Input:   php app/console cq:processDiff:sendToRBDiff review_request_id [--publish_empty|-p] [--line_context|-c] [--line_limit|-l]
+ * Example: php app/console cq:processDiff:sendToRBDiff       12345           -s true               -c 0               -l 25
  *
  * @author rprent
  */

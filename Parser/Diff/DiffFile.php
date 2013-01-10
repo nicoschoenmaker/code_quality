@@ -489,6 +489,7 @@ class DiffFile
     $command .= ' > ' . $temp_file_path . self::TOOL_OUTPUT_POSTFIX
       . '; touch ' . $temp_file_path . self::COMPLETED_POSTFIX . ')&';
     // Execute the command and run the processes on the background
+var_dump($command);
     shell_exec($command);
     // Remove the temp file
     unlink($temp_file_path);

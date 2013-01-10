@@ -22,8 +22,10 @@ class CommandLineUtility
 
   public function __construct($temp_cq_dir_name)
   {
-    $this->temp_code_quality_dir_path = $temp_cq_dir_name;
-    $this->createTempDir();
+    $this->temp_code_quality_dir_path = realpath($temp_cq_dir_name);
+    if($this->temp_code_quality_dir_path === false) {
+      $this->createTempDir();
+    }
   }
 
   /**
@@ -45,16 +47,14 @@ class CommandLineUtility
   private function createTempDir()
   {
     clearstatcache();
-    if(!(is_dir($this->temp_code_quality_dir_path))) {
-      if(!is_file($this->temp_code_quality_dir_path)) {
-        if(!mkdir($this->temp_code_quality_dir_path, 0777, true)) {
-          throw new IOException('Failed to create the Code Quality Temp directory at '
-            . $this->temp_code_quality_dir_path);
-        }
-      } else {
-        throw new IOException("The Code Quality Temp directory at " . $this->temp_code_quality_dir_path
-          . " couldn't be created because a file already exists at the given path.");
+    if(!is_file($this->temp_code_quality_dir_path)) {
+      if(!mkdir($this->temp_code_quality_dir_path, 0777, true)) {
+        throw new IOException('Failed to create the Code Quality Temp directory at '
+          . $this->temp_code_quality_dir_path);
       }
+    } else {
+      throw new IOException("The Code Quality Temp directory at " . $this->temp_code_quality_dir_path
+        . " couldn't be created because a file already exists at the given path.");
     }
   }
 }

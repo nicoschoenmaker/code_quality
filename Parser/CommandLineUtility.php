@@ -22,9 +22,9 @@ class CommandLineUtility
 
   public function __construct($temp_cq_dir_name)
   {
-    $this->temp_code_quality_dir_path = realpath($temp_cq_dir_name);
-    if($this->temp_code_quality_dir_path === false) {
-      $this->createTempDir();
+    $this->temp_code_quality_dir_path = $temp_cq_dir_name;
+    if(realpath($this->temp_code_quality_dir_path) === false) {
+      $this->createTempDir($temp_cq_dir_name);
     }
   }
 

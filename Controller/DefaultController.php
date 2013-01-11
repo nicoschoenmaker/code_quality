@@ -19,7 +19,7 @@ use Hostnet\HostnetCodeQualityBundle\Entity\Tool;
 class DefaultController extends Controller
 {
   /**
-   * @Route("/index", name="index")
+   * @Route("/", name="index")
    * @Template
    */
   public function indexAction()

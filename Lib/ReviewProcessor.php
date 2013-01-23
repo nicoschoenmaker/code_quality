@@ -106,6 +106,7 @@ class ReviewProcessor
     // Tell the Entity Factory whether we want to register the Review or not
     $this->ef->setRegister($register);
     $this->ef->persistAndFlush($review);
+    /* @var $diff_file DiffFile */
     foreach($diff_files as $key => $diff_file) {
       if(!$diff_file->isRemoved()) {
         $success = $this->processDiffFile($diff_file, $tools,
@@ -170,7 +171,6 @@ class ReviewProcessor
     OriginalFileRetrievalParams $original_file_retrieval_params,
     OriginalFileRetrieverInterface $original_file_retriever)
   {
-    /* @var $diff_file DiffFile */
     foreach($tools as $tool) {
       if($tool->supports($diff_file->getExtension())) {
         // Check if the diff file is new. If it exists we retrieve the original file

@@ -325,11 +325,17 @@ class DiffFile
    *
    * @param boolean $rejected
    */
-  public function setRejected($rejected)
+  private function setRejected($rejected)
   {
     $this->rejected = $rejected;
   }
 
+  /**
+   * Checks if the DiffFile got rejected
+   * during the patching process.
+   *
+   * @return boolean
+   */
   public function isRejected()
   {
     return $this->rejected;

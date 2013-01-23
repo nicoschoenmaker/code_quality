@@ -142,10 +142,11 @@ class EntityFactory implements EntityProviderInterface
    */
   public function retrieveFile(DiffFile $diff_file)
   {
-    $file = $this->em
-      ->getRepository('HostnetCodeQualityBundle:File')
-      ->findOneByName($diff_file->getName())
-    ;
+    $repo = $this->em
+      ->getRepository('HostnetCodeQualityBundle:File');
+
+    $file = $diff_file->hasParent() ?
+      $repo->findOneBySource($diff_file->getSource()) : $repo->findOneByDestination($diff_file->getDestination());
 
     // If file is null we create it
     if(!$file) {

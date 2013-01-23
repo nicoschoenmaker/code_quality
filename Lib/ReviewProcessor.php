@@ -8,6 +8,7 @@ use Hostnet\HostnetCodeQualityBundle\Entity\Review,
     Hostnet\HostnetCodeQualityBundle\Lib\EntityFactory,
     Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile,
     Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalFactory,
+    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrieverInterface,
     Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalParams,
     Hostnet\HostnetCodeQualityBundle\Parser\CommandLineUtility,
     Hostnet\HostnetCodeQualityBundle\Parser\ParserFactory;
@@ -56,6 +57,11 @@ class ReviewProcessor
   private $ef;
 
   /**
+   * @var integer
+   */
+  private $to_be_processed_files_amount = 0;
+
+  /**
    * @param EntityManager $em
    * @param LoggerInterface $logger
    * @param EntityFactory $ef
@@ -81,7 +87,6 @@ class ReviewProcessor
    * @param string $diff
    * @param boolean $register
    * @param OriginalFileRetrievalParams $original_file_retrieval_params
-   * @throws IOException
    * @return Review
    */
   public function processReview($diff, $register,
@@ -101,49 +106,22 @@ class ReviewProcessor
     // Tell the Entity Factory whether we want to register the Review or not
     $this->ef->setRegister($register);
     $this->ef->persistAndFlush($review);
-    $to_be_processed_files_amount = 0;
-    foreach($diff_files as $diff_file) {
+    foreach($diff_files as $key => $diff_file) {
       if(!$diff_file->isRemoved()) {
-        foreach($tools as $tool) {
-          if($tool->supports($diff_file->getExtension())) {
-            // Check if the diff file is new. If it exists we retrieve the original file
-            // and merge it. If it's new we don't have to retrieve the original
-            // as there is none, so we just insert the whole diff code
-            if($diff_file->hasParent()) {
-              $original_file_retrieval_params->setDiffFile($diff_file);
-              // Retrieves the original file based on the configured retrieval method
-              $diff_file->setOriginalFile(
-                $original_file_retriever->retrieveOriginalFile($original_file_retrieval_params)
-              );
-              // Merge the diff with the original in order to be able
-              // to scan all the changes made in the actual code
-              $diff_file->mergeDiffWithOriginal(
-                $this->clu->getTempCodeQualityDirPath(),
-                $this->pf->getSCM()
-              );
-              // Register an original file that has to be processed
-              $to_be_processed_files_amount++;
-            } else {
-              $diff_file->createTempDiffFile($this->clu->getTempCodeQualityDirPath());
-            }
-            // Register a diff file that has to be processed
-            $to_be_processed_files_amount++;
-
-            // Let the file be processed by the given tool
-            $diff_file->processFile($tool);
-          }
+        $success = $this->processDiffFile($diff_file, $tools,
+          $original_file_retrieval_params, $original_file_retriever);
+        // If the diff file failes to be processed
+        // we just skip it in the following process.
+        if(!$success) {
+          unset($diff_files[$key]);
         }
       }
     }
 
-    $this->waitTillAllFilesProcessed(
-      $diff_files,
-      $tools,
-      $to_be_processed_files_amount
-    );
+    $this->waitTillAllFilesProcessed($diff_files, $tools);
 
     foreach($diff_files as $diff_file) {
-      if(!$diff_file->isRemoved()) {
+      if(!$diff_file->isRemoved() && !$diff_file->isRejected()) {
         foreach($tools as $tool) {
           if($tool->supports($diff_file->getExtension())) {
             $diff_file->retrieveAndSetToolOutput();
@@ -179,15 +157,65 @@ class ReviewProcessor
   }
 
   /**
+   * Processes the DiffFile and returns
+   * the result of the processing.
+   *
+   * @param DiffFile $diff_file
+   * @param array $tools
+   * @param OriginalFileRetrievalParams $original_file_retrieval_params
+   * @param OriginalFileRetrieverInterface $original_file_retriever
+   * @return boolean
+   */
+  private function processDiffFile(DiffFile $diff_file, $tools,
+    OriginalFileRetrievalParams $original_file_retrieval_params,
+    OriginalFileRetrieverInterface $original_file_retriever)
+  {
+    /* @var $diff_file DiffFile */
+    foreach($tools as $tool) {
+      if($tool->supports($diff_file->getExtension())) {
+        // Check if the diff file is new. If it exists we retrieve the original file
+        // and merge it. If it's new we don't have to retrieve the original
+        // as there is none, so we just insert the whole diff code
+        if($diff_file->hasParent()) {
+          $original_file_retrieval_params->setDiffFile($diff_file);
+          // Retrieves the original file based on the configured retrieval method
+          $diff_file->setOriginalFile(
+            $original_file_retriever->retrieveOriginalFile($original_file_retrieval_params)
+          );
+          // Merge the diff with the original in order to be able
+          // to scan all the changes made in the actual code
+          $diff_file->mergeDiffWithOriginal(
+            $this->clu->getTempCodeQualityDirPath(),
+            $this->pf->getSCM()
+          );
+          if($diff_file->isRejected()) {
+            return false;
+          }
+          // Register an original file that has to be processed
+          $this->to_be_processed_files_amount++;
+        } else {
+          $diff_file->createTempDiffFile($this->clu->getTempCodeQualityDirPath());
+        }
+        // Register a diff file that has to be processed
+        $this->to_be_processed_files_amount++;
+
+        // Let the file be processed by the given tool
+        $diff_file->processFile($tool);
+
+        return true;
+      }
+    }
+  }
+
+  /**
    * Waits until all the diff files
    * are processed by the tools
    *
    * @param array $diff_files
    * @param array $tools
-   * @param integer $to_be_processed_files_amount
    */
-  public function waitTillAllFilesProcessed(
-    $diff_files, $tools, $to_be_processed_files_amount)
+  private function waitTillAllFilesProcessed(
+    $diff_files, $tools)
   {
     while(true) {
       // Sleep so we don't overload the amount of calls
@@ -212,7 +240,7 @@ class ReviewProcessor
       }
       // If the amount of diff files that should be processed
       // have been processed we stop waiting.
-      if($processed_files_amount == $to_be_processed_files_amount) {
+      if($processed_files_amount == $this->to_be_processed_files_amount) {
         break;
       }
     }

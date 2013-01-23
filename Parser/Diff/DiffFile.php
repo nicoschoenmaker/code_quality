@@ -19,6 +19,7 @@ class DiffFile
 {
   CONST DEV_NULL = '/dev/null';
   CONST ORIGINAL_EXTENSION = '.orig';
+  CONST REJECTED_EXTENSION = '.rej';
   CONST TEMP_DIFF_FILE_PREFIX = 'cq';
   const TOOL_OUTPUT_POSTFIX = '-tool_output';
   const COMPLETED_POSTFIX = '-completed';
@@ -103,6 +104,14 @@ class DiffFile
    * @var string
    */
   private $original_output;
+
+  /**
+   * If the diff file has been rejected during
+   * patching or not.
+   *
+   * @var boolean
+   */
+  private $rejected = false;
 
 
   /**
@@ -312,6 +321,21 @@ class DiffFile
   }
 
   /**
+   * Sets the rejected property
+   *
+   * @param boolean $rejected
+   */
+  public function setRejected($rejected)
+  {
+    $this->rejected = $rejected;
+  }
+
+  public function isRejected()
+  {
+    return $this->rejected;
+  }
+
+  /**
    * Returns all the code in a diff file
    *
    * @return string
@@ -414,7 +438,7 @@ class DiffFile
     $strip = '';
     switch($scm) {
       case 'git':
-        // 'b/path/to/file'  so strip b/ and
+        // 'b/path/to/file' so strip b/ and
         // keep the rest of the path
         $strip = escapeshellarg('-p1');
         break;
@@ -422,11 +446,14 @@ class DiffFile
       // if scm is set to 'svn'
     }
     $patch_command =
-      escapeshellarg('patch') .                        ' ' .
-      $strip .                                         ' ' .
+      escapeshellarg('patch') .                    ' ' .
+      $strip .                                     ' ' .
       // The -b option creates a backup which is used to
       // throw the original file through a specified tool
-      escapeshellarg('-b') .                           ' ' .
+      escapeshellarg('-b') .                       ' ' .
+      // The -r- option and value makes sure that the
+      // rejected file won't be created
+      escapeshellarg('-r-') .                      ' ' .
       escapeshellarg($this->temp_diff_file_path) . ' ' .
       escapeshellarg($temp_diff_file)
     ;
@@ -435,14 +462,12 @@ class DiffFile
     $process->run();
     // Remove the temp file
     unlink($temp_diff_file);
+    // If the process was unsuccessful and therefore
+    // the diff file got rejected we remove the rejected
+    // files and set the DiffFile to rejected.
     if(!$process->isSuccessful()) {
       unlink($this->temp_diff_file_path);
-      unlink($this->temp_diff_file_path . self::ORIGINAL_EXTENSION);
-      if($process->getErrorOutput() != '') {
-        throw new RuntimeException($process->getErrorOutput());
-      } else {
-        throw new RuntimeException($process->getExitCode() . ': ' . $process->getExitCodeText());
-      }
+      $this->setRejected(true);
     }
   }
 

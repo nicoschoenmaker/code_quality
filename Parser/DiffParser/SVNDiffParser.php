@@ -59,7 +59,6 @@ class SVNDiffParser extends AbstractDiffParser implements DiffParserInterface
       $diff_file->setDiffCodeBlocks($diff_diff_code_blocks);
       $diff_files[] = $diff_file;
     }
-    $this->checkIfDiffParsedCleanly($diff_files);
 
     return $diff_files;
   }

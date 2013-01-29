@@ -372,30 +372,6 @@ class DiffFile
   }
 
   /**
-   * Returns an array with all the diff properties that haven't been parsed properly
-   *
-   * @return array
-   */
-  public function returnEmptyDiffParsingProperties()
-  {
-    $empty_diff_parsing_properties = array();
-    foreach($this->required_diff_parsing_properties as $property) {
-      if($this->$property == '') {
-        $empty_diff_parsing_properties[$property] = $property;
-      }
-    }
-    foreach($this->diff_code_blocks as $diff_code_block) {
-      $empty_diff_parsing_properties =
-        array_merge(
-          $empty_diff_parsing_properties,
-          $diff_code_block->returnEmptyDiffParsingProperties()
-        );
-    }
-
-    return $empty_diff_parsing_properties;
-  }
-
-  /**
    * If the diff file has a parent source
    *
    * @return boolean

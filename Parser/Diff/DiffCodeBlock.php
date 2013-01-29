@@ -93,22 +93,4 @@ class DiffCodeBlock
   {
     return $this->code;
   }
-
-  /**
-   * Returns all the diff code block parsing properties that
-   * are required but turn out to be empty
-   *
-   * @return array
-   */
-  public function returnEmptyDiffParsingProperties()
-  {
-    $empty_diff_parsing_properties = array();
-    foreach($this->required_diff_parsing_properties as $property) {
-      if($this->$property == '') {
-        $empty_diff_parsing_properties[$property] = $property;
-      }
-    }
-
-    return $empty_diff_parsing_properties;
-  }
 }

@@ -64,38 +64,4 @@ abstract class AbstractDiffParser extends AbstractParser
   {
     return (bool)preg_match(self::FILE_TYPE_PATTERN, $file_path);
   }
-
-  /**
-   * Check if the whole diff parsed cleanly
-   *
-   * @param array $diff_files
-   * @throws InvalidArgumentException
-   */
-  protected function checkIfDiffParsedCleanly($diff_files)
-  {
-    $diff_parsed_uncleanly = false;
-    $parsing_exception = "The following diff components didn't get parsed correctly:"
-      . PHP_EOL . PHP_EOL;
-
-    foreach($diff_files as $diff_file) {
-      $empty_diff_parsing_properties = $diff_file->returnEmptyDiffParsingProperties();
-      // If a property didn't get parsed correctly we start the exception throwing process
-      if(count($empty_diff_parsing_properties) > 0) {
-        $diff_parsed_uncleanly = true;
-        $last_empty_diff_parsing_property = array_pop($empty_diff_parsing_properties);
-        $empty_diff_parsing_properties = implode(', ', $empty_diff_parsing_properties);
-        // Add all the failed parsing components of the diff file
-        $and = (count($empty_diff_parsing_properties) > 1) ? ' and ' : ', ';
-        $parsing_exception .=
-        "\t" . $diff_file->getName() . ':' . PHP_EOL
-          . "\t\t" . '"' . $empty_diff_parsing_properties . $and
-            . $last_empty_diff_parsing_property . '"' . PHP_EOL;
-        ;
-      }
-    }
-
-    if($diff_parsed_uncleanly) {
-      throw new InvalidArgumentException($parsing_exception);
-    }
-  }
 }

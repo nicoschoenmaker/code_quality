@@ -30,6 +30,7 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
   const DIFF_COMMENTS = '/diff-comments/';
   const ORIGINAL_FILE = '/original-file/';
   const AFTER_FIRST_BACKSLASH_POS = 1;
+  const UNLIMITED = 999999;
 
   /**
    * If the review should contain an auto ship it
@@ -82,7 +83,7 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
   public function retrievePendingReviewRequests()
   {
     $review_requests_url = $this->base_url . self::API_REVIEW_REQUEST
-      . '?status=pending&max-results=999999';
+      . '?status=pending&max-results=' . self::UNLIMITED;
     $headers = array(self::RESULT_TYPE_JSON);
 
     return $this->decodeJSON($this->executeCURLRequest($review_requests_url, $headers));
@@ -142,7 +143,7 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
   {
     $last_diff_revision = $this->retrieveAmountOfDiffs($review_request_id);
     $diff_files_url = $this->base_url . self::API_REVIEW_REQUEST . $review_request_id
-      . self::DIFFS . $last_diff_revision . self::FILES;
+      . self::DIFFS . $last_diff_revision . self::FILES . '?max-results=' . self::UNLIMITED;
 
     return $this->decodeJSON($this->executeCURLRequest($diff_files_url));
   }

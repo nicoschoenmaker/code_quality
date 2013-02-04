@@ -2,10 +2,6 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Lib;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\CGIT\CGITOriginalFileRetrieverParams;
-
-use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\RetrieveByCGIT;
-
 use Doctrine\ORM\EntityManager;
 
 use Hostnet\HostnetCodeQualityBundle\Entity\Review,

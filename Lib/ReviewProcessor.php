@@ -2,6 +2,10 @@
 
 namespace Hostnet\HostnetCodeQualityBundle\Lib;
 
+use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\CGIT\CGITOriginalFileRetrieverParams;
+
+use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\RetrieveByCGIT;
+
 use Doctrine\ORM\EntityManager;
 
 use Hostnet\HostnetCodeQualityBundle\Entity\Review,
@@ -179,9 +183,15 @@ class ReviewProcessor
         if($diff_file->hasParent()) {
           $original_file_retrieval_params->setDiffFile($diff_file);
           // Retrieves the original file based on the configured retrieval method
-          $diff_file->setOriginalFile(
-            $original_file_retriever->retrieveOriginalFile($original_file_retrieval_params)
-          );
+          $original_file = $original_file_retriever->retrieveOriginalFile($original_file_retrieval_params);
+
+          if($original_file === false) {
+            // Original file retrieval failed
+            $this->logger->info('The file ' . $diff_file->getName() . '.' . $diff_file->getExtension()
+              . ' has a source filled in but it was not possible to retrieve it. External project? ');
+            return false;
+          }
+          $diff_file->setOriginalFile($original_file);
           // Merge the diff with the original in order to be able
           // to scan all the changes made in the actual code
           $diff_file->mergeDiffWithOriginal(

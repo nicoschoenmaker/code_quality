@@ -67,7 +67,11 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
       retrieveReviewRequestLastDiffFiles($review_request_id);
     foreach($files->files as $file) {
       if(substr($source_file, self::AFTER_FIRST_BACKSLASH_POS) == $file->source_file) {
-        $original_file_url = $file->links->original_file->href;
+        if(property_exists($file->links, 'original_file')) {
+          $original_file_url = $file->links->original_file->href;
+        } else {
+          return false;
+        }
       }
     }
     $headers = array(self::RESULT_TYPE_TEXT);
@@ -247,6 +251,26 @@ class ReviewBoardAPICalls extends AbstractFeedbackReceiver implements FeedbackRe
     $violation_detected = false;
     $total_original_violations_amount = 0;
     $total_diff_violations_amount = 0;
+var_dump($reports); die();
+    foreach($reports as $report) {
+      $diff_violations = $report->getDiffViolations()->toArray();
+      $original_violations = $report->getOriginalViolations()->toArray();
+
+      $original_violation_messages = array();
+      foreach($original_violations as $original_violation) {
+        $original_violation_messages[] = $original_violation->getMessage();
+      }
+
+      $diff_violation_messages = array();
+      foreach($diff_violations as $diff_violation) {
+        $diff_violation_messages[] = $diff_violation->getMessage();
+      }
+
+      $differences = array_diff($original_violation_messages, $diff_violation_messages);
+      $new_violations = array_intersect($diff_violation_messages, $differences);
+var_dump($report->getDiffViolations()->count(), $report->getOriginalViolations()->count(), $new_violations); die();
+    }
+
     foreach($reports as $report) {
       $file = $report->getFile();
       $diff_violations = $report->getDiffViolations();

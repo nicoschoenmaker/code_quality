@@ -33,6 +33,7 @@ class RetrieveByReviewBoard implements OriginalFileRetrieverInterface
    *
    * @param OriginalFileRetrievalParams $original_file_retrieval_params
    * @see \Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrieverInterface::retrieveOriginalFile()
+   * @return mixed
    */
   public function retrieveOriginalFile(OriginalFileRetrievalParams $original_file_retrieval_params)
   {

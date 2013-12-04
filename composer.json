@@ -1,0 +1,24 @@
+{
+    "name": "hostnet/hostnet-codequality-bundle",
+    "description": "The Hostnet Code Quality Review Platform which can be used to add code quality metric tools to the platform and throw diffs through those tools in order to receive feedback on the code.",
+    "license": "EPL-1.0",
+    "require": {
+        "php": ">=5.3"
+    },
+    "minimum-stability": "stable",
+    "repositories": [
+        {
+            "type":"composer",
+            "url": "http://packagist.hostnetbv.nl"
+        }
+    ],
+    "authors": [
+        {
+            "name": "Rick Prent",
+            "email": "rprent@hostnet.nl"
+        }
+    ],
+    "autoload": {
+        "psr-0": { "Hostnet\\Bundle\\HostnetCodeQuality": "src"}
+    }
+}

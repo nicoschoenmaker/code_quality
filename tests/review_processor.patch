@@ -4,11 +4,11 @@ index dfe8f137c82651e6f2140563203d28e89807db09..c2aa4095f9fbd87216e6e7d6e40af038
 +++ b/Lib/ReviewProcessor.php
 @@ -8,6 +8,7 @@ use Symfony\Component\Filesystem\Exception\IOException;
  
- use Hostnet\HostnetCodeQualityBundle\Entity\Review,
-     Hostnet\HostnetCodeQualityBundle\Lib\EntityFactory,
-+    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalFactory,
-     Hostnet\HostnetCodeQualityBundle\Parser\CommandLineUtility,
-     Hostnet\HostnetCodeQualityBundle\Parser\ParserFactory;
+ use Hostnet\CodeQualityBundle\Entity\Review,
+     Hostnet\CodeQualityBundle\Lib\EntityFactory,
++    Hostnet\CodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalFactory,
+     Hostnet\CodeQualityBundle\Parser\CommandLineUtility,
+     Hostnet\CodeQualityBundle\Parser\ParserFactory;
  
 @@ -27,6 +28,11 @@ class ReviewProcessor
    private $em;

@@ -1,11 +1,11 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Tests\Parser\ToolOutputParser;
+namespace Hostnet\CodeQualityBundle\Tests\Parser\ToolOutputParser;
 
-use Hostnet\HostnetCodeQualityBundle\Entity\File,
-    Hostnet\HostnetCodeQualityBundle\Parser\ParserFactory,
-    Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\XML\PMDXMLParser,
-    Hostnet\HostnetCodeQualityBundle\Tests\Mock\MockEntityFactory;
+use Hostnet\CodeQualityBundle\Entity\File,
+    Hostnet\CodeQualityBundle\Parser\ParserFactory,
+    Hostnet\CodeQualityBundle\Parser\ToolOutputParser\XML\PMDXMLParser,
+    Hostnet\CodeQualityBundle\Tests\Mock\MockEntityFactory;
 
 class PMDXMLParserTest extends \PHPUnit_Framework_TestCase
 {
@@ -35,7 +35,7 @@ class PMDXMLParserTest extends \PHPUnit_Framework_TestCase
     $tool_output = file_get_contents($tool_output_path);
 
     // Using a mock object for the diff file as the diff_output property gets set in a dependent class.
-    $diff_file = $this->getMock('Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile');
+    $diff_file = $this->getMock('Hostnet\CodeQualityBundle\Parser\Diff\DiffFile');
     $diff_file
       ->expects($this->any())
       ->method('getName')

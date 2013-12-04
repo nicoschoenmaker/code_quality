@@ -1,16 +1,16 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Tests\Mock;
+namespace Hostnet\CodeQualityBundle\Tests\Mock;
 
-use Hostnet\HostnetCodeQualityBundle\Entity\CodeLanguage,
-    Hostnet\HostnetCodeQualityBundle\Entity\File,
-    Hostnet\HostnetCodeQualityBundle\Entity\Rule,
-    Hostnet\HostnetCodeQualityBundle\Entity\Argument,
-    Hostnet\HostnetCodeQualityBundle\Entity\Tool,
-    Hostnet\HostnetCodeQualityBundle\Entity\Violation,
-    Hostnet\HostnetCodeQualityBundle\Lib\EntityFactory,
-    Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile,
-    Hostnet\HostnetCodeQualityBundle\Parser\EntityProviderInterface;
+use Hostnet\CodeQualityBundle\Entity\CodeLanguage,
+    Hostnet\CodeQualityBundle\Entity\File,
+    Hostnet\CodeQualityBundle\Entity\Rule,
+    Hostnet\CodeQualityBundle\Entity\Argument,
+    Hostnet\CodeQualityBundle\Entity\Tool,
+    Hostnet\CodeQualityBundle\Entity\Violation,
+    Hostnet\CodeQualityBundle\Lib\EntityFactory,
+    Hostnet\CodeQualityBundle\Parser\Diff\DiffFile,
+    Hostnet\CodeQualityBundle\Parser\EntityProviderInterface;
 
 
 class MockEntityFactory extends EntityFactory implements EntityProviderInterface

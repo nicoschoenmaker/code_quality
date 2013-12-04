@@ -1,21 +1,21 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Tests\Lib;
+namespace Hostnet\CodeQualityBundle\Tests\Lib;
 
 use Symfony\Component\DependencyInjection\ContainerAware;
 
-use Hostnet\HostnetCodeQualityBundle\Entity\Tool,
-    Hostnet\HostnetCodeQualityBundle\Entity\Ruleset,
-    Hostnet\HostnetCodeQualityBundle\Entity\CodeLanguage,
-    Hostnet\HostnetCodeQualityBundle\Lib\ReviewProcessor,
-    Hostnet\HostnetCodeQualityBundle\Parser\CommandLineUtility,
-    Hostnet\HostnetCodeQualityBundle\Parser\EntityProviderInterface,
-    Hostnet\HostnetCodeQualityBundle\Parser\ParserFactory,
-    Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\GITDiffParser,
-    Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\XML\PMDXMLParser,
-    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalFactory,
-    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\CGIT\CGITOriginalFileRetrieverParams,
-    Hostnet\HostnetCodeQualityBundle\Tests\Mock\MockEntityFactory;
+use Hostnet\CodeQualityBundle\Entity\Tool,
+    Hostnet\CodeQualityBundle\Entity\Ruleset,
+    Hostnet\CodeQualityBundle\Entity\CodeLanguage,
+    Hostnet\CodeQualityBundle\Lib\ReviewProcessor,
+    Hostnet\CodeQualityBundle\Parser\CommandLineUtility,
+    Hostnet\CodeQualityBundle\Parser\EntityProviderInterface,
+    Hostnet\CodeQualityBundle\Parser\ParserFactory,
+    Hostnet\CodeQualityBundle\Parser\DiffParser\GITDiffParser,
+    Hostnet\CodeQualityBundle\Parser\ToolOutputParser\XML\PMDXMLParser,
+    Hostnet\CodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalFactory,
+    Hostnet\CodeQualityBundle\Parser\OriginalFileRetriever\CGIT\CGITOriginalFileRetrieverParams,
+    Hostnet\CodeQualityBundle\Tests\Mock\MockEntityFactory;
 
 class ReviewProcessorTest extends ContainerAware
 {
@@ -79,7 +79,7 @@ class ReviewProcessorTest extends ContainerAware
     $original_file_retrieval_method = 'cgit';
     $this->ofrf = new OriginalFileRetrievalFactory($original_file_retrieval_method);
     $retrieve_by_cgit_class_path =
-      'Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\RetrieveByCGIT';
+      'Hostnet\CodeQualityBundle\Parser\OriginalFileRetriever\RetrieveByCGIT';
     $retrieve_by_cgit = $this->getMock($retrieve_by_cgit_class_path, array(), array('', ''));
     $path_to_original_file = __DIR__ . '/../ReviewProcessorOriginal.php';
     $retrieve_by_cgit

@@ -1,10 +1,10 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Tests\Parser;
+namespace Hostnet\CodeQualityBundle\Tests\Parser;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\ParserFactory,
-    Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\GITDiffParser,
-    Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\XML\PMDXMLParser;
+use Hostnet\CodeQualityBundle\Parser\ParserFactory,
+    Hostnet\CodeQualityBundle\Parser\DiffParser\GITDiffParser,
+    Hostnet\CodeQualityBundle\Parser\ToolOutputParser\XML\PMDXMLParser;
 
 class ParserFactoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -47,7 +47,7 @@ class ParserFactoryTest extends \PHPUnit_Framework_TestCase
     $path_to_em = 'Doctrine\ORM\EntityManager';
     $this->em = $this->getMock($path_to_em, array(), array(), '', false);
     $this->pf = new ParserFactory($this->scm);
-    $path_to_ef = 'Hostnet\HostnetCodeQualityBundle\Lib\EntityFactory';
+    $path_to_ef = 'Hostnet\CodeQualityBundle\Lib\EntityFactory';
     $this->ef = $this->getMock($path_to_ef, array(), array($this->em));
 
     // Instantiate the Parsers, non-abstract classes had to be used as the

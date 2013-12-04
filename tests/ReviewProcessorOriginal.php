@@ -1,15 +1,15 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Lib;
+namespace Hostnet\CodeQualityBundle\Lib;
 
 use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\Filesystem\Exception\IOException;
 
-use Hostnet\HostnetCodeQualityBundle\Entity\Review,
-    Hostnet\HostnetCodeQualityBundle\Lib\EntityFactory,
-    Hostnet\HostnetCodeQualityBundle\Parser\CommandLineUtility,
-    Hostnet\HostnetCodeQualityBundle\Parser\ParserFactory;
+use Hostnet\CodeQualityBundle\Entity\Review,
+    Hostnet\CodeQualityBundle\Lib\EntityFactory,
+    Hostnet\CodeQualityBundle\Parser\CommandLineUtility,
+    Hostnet\CodeQualityBundle\Parser\ParserFactory;
 
 /**
  * The Review Processor processes the whole review.
@@ -65,7 +65,7 @@ class ReviewProcessor
    * @param string $diff
    * @param boolean $register
    * @throws IOException
-   * @return \Hostnet\HostnetCodeQualityBundle\Entity\Review
+   * @return \Hostnet\CodeQualityBundle\Entity\Review
    */
   public function processReview($diff, $register)
   {

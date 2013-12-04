@@ -1,8 +1,8 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Tests\Parser\DiffParser;
+namespace Hostnet\CodeQualityBundle\Tests\Parser\DiffParser;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\SVNDiffParser;
+use Hostnet\CodeQualityBundle\Parser\DiffParser\SVNDiffParser;
 
 class SVNDiffParserTest extends \PHPUnit_Framework_TestCase
 {

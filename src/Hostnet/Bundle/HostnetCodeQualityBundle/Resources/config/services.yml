@@ -5,7 +5,7 @@ services:
 #############################################
 
   review_processor:
-    class: Hostnet\HostnetCodeQualityBundle\Lib\ReviewProcessor
+    class: Hostnet\Bundle\HostnetCodeQualityBundle\Lib\ReviewProcessor
     arguments: [@doctrine.orm.entity_manager, @logger, @entity_factory, @original_file_retrieval_factory, @command_line_utility, @parser_factory]
 
 ##############################
@@ -13,7 +13,7 @@ services:
 ##############################
 
   entity_factory:
-    class: Hostnet\HostnetCodeQualityBundle\Lib\EntityFactory
+    class: Hostnet\Bundle\HostnetCodeQualityBundle\Lib\EntityFactory
     arguments: [@doctrine.orm.entity_manager]
 
 ########################################
@@ -21,17 +21,17 @@ services:
 ########################################
 
   original_file_retrieval_factory:
-    class: Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalFactory
+    class: Hostnet\Bundle\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalFactory
     calls:
       - [ addOriginalFileRetrieverInstance, [@original_file_retriever.retrieve_by_cgit] ]
       - [ addOriginalFileRetrieverInstance, [@original_file_retriever.retrieve_by_review_board] ]
 
   original_file_retriever.retrieve_by_cgit:
-    class: Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\RetrieveByCGIT
+    class: Hostnet\Bundle\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\RetrieveByCGIT
     arguments: [%hostnet_code_quality.raw_file_url_mask_1%, %hostnet_code_quality.raw_file_url_mask_2%]
 
   original_file_retriever.retrieve_by_review_board:
-    class: Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\RetrieveByReviewBoard
+    class: Hostnet\Bundle\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\RetrieveByReviewBoard
     arguments: [@review_board_api_calls]
 
 ####################################
@@ -39,7 +39,7 @@ services:
 ####################################
 
   command_line_utility:
-    class: Hostnet\HostnetCodeQualityBundle\Parser\CommandLineUtility
+    class: Hostnet\Bundle\HostnetCodeQualityBundle\Parser\CommandLineUtility
     arguments: [%hostnet_code_quality.temp_cq_dir_name%]
 
 #######################
@@ -47,7 +47,7 @@ services:
 #######################
 
   parser_factory:
-    class: Hostnet\HostnetCodeQualityBundle\Parser\ParserFactory
+    class: Hostnet\Bundle\HostnetCodeQualityBundle\Parser\ParserFactory
     arguments: [%hostnet_code_quality.scm%]
     calls:
       - [ addParserInstance, [@diff_parser.git_diff_parser] ]
@@ -56,17 +56,17 @@ services:
       - [ addParserInstance, [@tool_output_parser.xml.jslint_xml_parser] ]
 
   diff_parser.git_diff_parser:
-    class: Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\GITDiffParser
+    class: Hostnet\Bundle\HostnetCodeQualityBundle\Parser\DiffParser\GITDiffParser
 
   diff_parser.svn_diff_parser:
-    class: Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\SVNDiffParser
+    class: Hostnet\Bundle\HostnetCodeQualityBundle\Parser\DiffParser\SVNDiffParser
 
   tool_output_parser.xml.pmd_xml_parser:
-    class: Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\XML\PMDXMLParser
+    class: Hostnet\Bundle\HostnetCodeQualityBundle\Parser\ToolOutputParser\XML\PMDXMLParser
     arguments: [@entity_factory]
 
   tool_output_parser.xml.jslint_xml_parser:
-    class: Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\XML\JSLintXMLParser
+    class: Hostnet\Bundle\HostnetCodeQualityBundle\Parser\ToolOutputParser\XML\JSLintXMLParser
     arguments: [@entity_factory]
 
 ##############################
@@ -74,5 +74,5 @@ services:
 ##############################
 
   review_board_api_calls:
-    class: Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\ReviewBoard\ReviewBoardAPICalls
+    class: Hostnet\Bundle\HostnetCodeQualityBundle\Lib\FeedbackReceiver\ReviewBoard\ReviewBoardAPICalls
     arguments: [%hostnet_code_quality.review_board_base_url%, %hostnet_code_quality.review_board_username%, %hostnet_code_quality.review_board_password%, %hostnet_code_quality.review_board_auto_shipit%]

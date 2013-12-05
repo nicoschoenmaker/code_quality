@@ -1,12 +1,12 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Parser\Diff;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Parser\Diff;
 
 use Symfony\Component\Process\Process;
 
-use Hostnet\HostnetCodeQualityBundle\Entity\CodeLanguage,
-    Hostnet\HostnetCodeQualityBundle\Entity\File,
-    Hostnet\HostnetCodeQualityBundle\Entity\Tool;
+use Hostnet\Bundle\HostnetCodeQualityBundle\Entity\CodeLanguage,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Entity\File,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Entity\Tool;
 
 use RuntimeException;
 

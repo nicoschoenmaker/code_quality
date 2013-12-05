@@ -1,10 +1,10 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Entity;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Hostnet\HostnetCodeQualityBundle\Entity\Tool;
+use Hostnet\Bundle\HostnetCodeQualityBundle\Entity\Tool;
 
 /**
  * @ORM\Table(name="rule")

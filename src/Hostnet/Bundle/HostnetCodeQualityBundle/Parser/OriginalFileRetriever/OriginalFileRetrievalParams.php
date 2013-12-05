@@ -1,8 +1,8 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Parser\OriginalFileRetriever;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile;
+use Hostnet\Bundle\HostnetCodeQualityBundle\Parser\Diff\DiffFile;
 
 /**
  *

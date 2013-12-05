@@ -1,10 +1,10 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Parser\DiffParser;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Parser\DiffParser;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\ParserInterface;
+use Hostnet\Bundle\HostnetCodeQualityBundle\Parser\ParserInterface;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile;
+use Hostnet\Bundle\HostnetCodeQualityBundle\Parser\Diff\DiffFile;
 
 /**
  * The DiffParserInterface is implemented

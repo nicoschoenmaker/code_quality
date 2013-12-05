@@ -1,6 +1,6 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Parser\Diff;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Parser\Diff;
 
 /**
  * This object contains all the blocks of code of the parsed Diff.

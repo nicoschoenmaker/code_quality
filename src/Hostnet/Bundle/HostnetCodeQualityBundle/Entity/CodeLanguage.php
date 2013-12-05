@@ -1,6 +1,6 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Entity;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 

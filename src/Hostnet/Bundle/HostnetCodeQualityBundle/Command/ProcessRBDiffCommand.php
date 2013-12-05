@@ -1,6 +1,6 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Command;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand,
     Symfony\Component\Console\Command\Command,
@@ -9,8 +9,8 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand,
     Symfony\Component\Console\Input\InputOption,
     Symfony\Component\Console\Output\OutputInterface;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\FeedbackReceiverInterface,
-    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\ReviewBoard\ReviewBoardOriginalFileRetrieverParams;
+use Hostnet\Bundle\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\FeedbackReceiverInterface,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\ReviewBoard\ReviewBoardOriginalFileRetrieverParams;
 
 use InvalidArgumentException;
 

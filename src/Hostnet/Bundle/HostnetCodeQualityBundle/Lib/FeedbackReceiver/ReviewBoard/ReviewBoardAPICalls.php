@@ -1,12 +1,12 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\ReviewBoard;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Lib\FeedbackReceiver\ReviewBoard;
 
-use Hostnet\HostnetCodeQualityBundle\Command\Configuration\ReviewConfiguration,
-    Hostnet\HostnetCodeQualityBundle\Entity\Review,
-    Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\AbstractFeedbackReceiver,
-    Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\ReviewBoard\ReviewBoardReview,
-    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\FeedbackReceiverInterface;
+use Hostnet\Bundle\HostnetCodeQualityBundle\Command\Configuration\ReviewConfiguration,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Entity\Review,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Lib\FeedbackReceiver\AbstractFeedbackReceiver,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Lib\FeedbackReceiver\ReviewBoard\ReviewBoardReview,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\FeedbackReceiverInterface;
 
 use InvalidArgumentException;
 

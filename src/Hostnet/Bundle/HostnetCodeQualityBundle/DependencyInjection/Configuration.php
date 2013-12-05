@@ -1,6 +1,6 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\DependencyInjection;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder,
     Symfony\Component\Config\Definition\ConfigurationInterface;

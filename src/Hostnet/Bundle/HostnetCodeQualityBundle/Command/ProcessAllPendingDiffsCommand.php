@@ -1,17 +1,17 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Command;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Command;
 
 use Symfony\Component\Console\Command\Command,
     Symfony\Component\Console\Input\InputInterface,
     Symfony\Component\Console\Output\OutputInterface,
     Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
-use Hostnet\HostnetCodeQualityBundle\Command\Configuration\ReviewConfiguration,
-    Hostnet\HostnetCodeQualityBundle\Command\Definition\RBFeedbackDefinition,
-    Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\ReviewBoard\ReviewBoardAPICalls,
-    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\FeedbackReceiverInterface,
-    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\ReviewBoard\ReviewBoardOriginalFileRetrieverParams;
+use Hostnet\Bundle\HostnetCodeQualityBundle\Command\Configuration\ReviewConfiguration,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Command\Definition\RBFeedbackDefinition,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Lib\FeedbackReceiver\ReviewBoard\ReviewBoardAPICalls,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\FeedbackReceiverInterface,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\ReviewBoard\ReviewBoardOriginalFileRetrieverParams;
 
 use Doctrine\Common\Collection;
 

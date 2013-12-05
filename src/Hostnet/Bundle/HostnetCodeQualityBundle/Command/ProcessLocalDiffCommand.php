@@ -1,8 +1,8 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Command;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Command;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\CGIT\CGITOriginalFileRetrieverParams;
+use Hostnet\Bundle\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\CGIT\CGITOriginalFileRetrieverParams;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand,
     Symfony\Component\Console\Command\Command,

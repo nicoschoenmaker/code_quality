@@ -1,8 +1,8 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Parser\ToolOutputParser;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\AbstractParser;
+use Hostnet\Bundle\HostnetCodeQualityBundle\Parser\AbstractParser;
 
 /**
  * An abstract tool output parser class which

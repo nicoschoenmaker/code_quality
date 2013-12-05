@@ -1,6 +1,6 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Parser\OriginalFileRetriever;
 
 /**
  * The Feedback Receiver Interface

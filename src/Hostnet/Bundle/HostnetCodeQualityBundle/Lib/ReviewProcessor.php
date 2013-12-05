@@ -1,17 +1,17 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Lib;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Lib;
 
 use Doctrine\ORM\EntityManager;
 
-use Hostnet\HostnetCodeQualityBundle\Entity\Review,
-    Hostnet\HostnetCodeQualityBundle\Lib\EntityFactory,
-    Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile,
-    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalFactory,
-    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrieverInterface,
-    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalParams,
-    Hostnet\HostnetCodeQualityBundle\Parser\CommandLineUtility,
-    Hostnet\HostnetCodeQualityBundle\Parser\ParserFactory;
+use Hostnet\Bundle\HostnetCodeQualityBundle\Entity\Review,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Lib\EntityFactory,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\Diff\DiffFile,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalFactory,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrieverInterface,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalParams,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\CommandLineUtility,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\ParserFactory;
 
 use Symfony\Component\HttpKernel\Log\LoggerInterface,
     Symfony\Component\Filesystem\Exception\IOException;

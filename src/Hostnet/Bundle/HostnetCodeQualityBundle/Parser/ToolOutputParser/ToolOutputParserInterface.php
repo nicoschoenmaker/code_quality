@@ -1,9 +1,9 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Parser\ToolOutputParser;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\ParserInterface,
-    Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile;
+use Hostnet\Bundle\HostnetCodeQualityBundle\Parser\ParserInterface,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\Diff\DiffFile;
 
 /**
  * A tool output parser interface which

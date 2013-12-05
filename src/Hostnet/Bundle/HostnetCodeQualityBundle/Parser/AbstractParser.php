@@ -1,6 +1,6 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Parser;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Parser;
 
 /**
  * An abstract parser class which

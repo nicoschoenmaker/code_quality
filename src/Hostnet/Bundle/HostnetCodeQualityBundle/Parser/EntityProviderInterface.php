@@ -1,9 +1,9 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Parser;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Parser;
 
-use Hostnet\HostnetCodeQualityBundle\Entity\CodeLanguage,
-    Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile;
+use Hostnet\Bundle\HostnetCodeQualityBundle\Entity\CodeLanguage,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\Diff\DiffFile;
 
 /**
  * The Entity Provider Interface is implemented

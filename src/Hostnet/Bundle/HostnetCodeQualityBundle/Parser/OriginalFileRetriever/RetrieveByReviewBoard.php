@@ -1,11 +1,11 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Parser\OriginalFileRetriever;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalParams,
-    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\FeedbackReceiverInterface,
-    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrieverInterface,
-    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\ReviewBoard\ReviewBoardOriginalFileRetrieverParams;
+use Hostnet\Bundle\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalParams,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\FeedbackReceiverInterface,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrieverInterface,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\ReviewBoard\ReviewBoardOriginalFileRetrieverParams;
 
 /**
  * The Review Board implementation of retrieving the original file
@@ -32,7 +32,7 @@ class RetrieveByReviewBoard implements OriginalFileRetrieverInterface
    * Retrieves the original file of a diff
    *
    * @param OriginalFileRetrievalParams $original_file_retrieval_params
-   * @see \Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrieverInterface::retrieveOriginalFile()
+   * @see \Hostnet\Bundle\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrieverInterface::retrieveOriginalFile()
    * @return mixed
    */
   public function retrieveOriginalFile(OriginalFileRetrievalParams $original_file_retrieval_params)

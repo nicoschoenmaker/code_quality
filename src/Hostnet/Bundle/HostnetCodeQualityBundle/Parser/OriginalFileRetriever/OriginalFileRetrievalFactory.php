@@ -1,9 +1,9 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Parser\OriginalFileRetriever;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalParams,
-    Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrieverInterface;
+use Hostnet\Bundle\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalParams,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrieverInterface;
 
 use InvalidArgumentException;
 

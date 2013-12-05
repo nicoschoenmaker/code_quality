@@ -1,6 +1,6 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Controller;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller,
     Symfony\Component\HttpFoundation\Request,
@@ -9,7 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller,
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route,
     Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-use Hostnet\HostnetCodeQualityBundle\Entity\Tool;
+use Hostnet\Bundle\HostnetCodeQualityBundle\Entity\Tool;
 
 /**
  * The Default Controller

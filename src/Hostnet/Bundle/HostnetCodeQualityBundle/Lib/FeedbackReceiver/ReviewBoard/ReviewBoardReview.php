@@ -1,6 +1,6 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver\ReviewBoard;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Lib\FeedbackReceiver\ReviewBoard;
 
 /**
  * The Review Board Review object.

@@ -1,8 +1,8 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\CGIT;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\CGIT;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalParams;
+use Hostnet\Bundle\HostnetCodeQualityBundle\Parser\OriginalFileRetriever\OriginalFileRetrievalParams;
 
 /**
  * The CGIT original file retrieval parameters

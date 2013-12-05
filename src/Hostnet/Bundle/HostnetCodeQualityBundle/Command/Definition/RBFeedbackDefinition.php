@@ -1,6 +1,6 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Command\Definition;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Command\Definition;
 
 use Symfony\Component\Console\Input\InputDefinition,
     Symfony\Component\Console\Input\InputOption;

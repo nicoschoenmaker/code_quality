@@ -1,9 +1,9 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Parser\DiffParser;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Parser\DiffParser;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffCodeBlock,
-    Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile;
+use Hostnet\Bundle\HostnetCodeQualityBundle\Parser\Diff\DiffCodeBlock,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\Diff\DiffFile;
 
 /**
  * The generic diff parser that abstracts
@@ -45,7 +45,7 @@ abstract class GenericDiffParser extends AbstractDiffParser
    * @param string $file_string
    * @param string $body_string
    * @return DiffCodeBlock
-   * @see \Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\DiffParserInterface::parseDiffBody()
+   * @see \Hostnet\Bundle\HostnetCodeQualityBundle\Parser\DiffParser\DiffParserInterface::parseDiffBody()
    */
   protected function parseDiffBody($file_string, $body_string)
   {

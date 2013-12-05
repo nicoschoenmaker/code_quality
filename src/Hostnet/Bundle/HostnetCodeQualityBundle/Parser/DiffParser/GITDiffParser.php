@@ -1,10 +1,10 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Parser\DiffParser;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Parser\DiffParser;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile,
-    Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\GenericDiffParser,
-    Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\DiffParserInterface;
+use Hostnet\Bundle\HostnetCodeQualityBundle\Parser\Diff\DiffFile,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\DiffParser\GenericDiffParser,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\DiffParser\DiffParserInterface;
 
 use InvalidArgumentException;
 
@@ -29,7 +29,7 @@ class GITDiffParser extends GenericDiffParser implements DiffParserInterface
    *
    * @param string $diff
    * @return array
-   * @see \Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\DiffParserInterface::parseDiff()
+   * @see \Hostnet\Bundle\HostnetCodeQualityBundle\Parser\DiffParser\DiffParserInterface::parseDiff()
    */
   public function parseDiff($diff)
   {

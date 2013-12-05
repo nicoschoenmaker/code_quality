@@ -1,10 +1,10 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Entity;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Hostnet\HostnetCodeQualityBundle\Entity\CodeLanguage;
+use Hostnet\Bundle\HostnetCodeQualityBundle\Entity\CodeLanguage;
 
 /**
  * @ORM\Table(name="file")

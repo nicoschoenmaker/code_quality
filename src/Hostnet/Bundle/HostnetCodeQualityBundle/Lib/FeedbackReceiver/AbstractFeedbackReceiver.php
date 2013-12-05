@@ -1,6 +1,6 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Lib\FeedbackReceiver;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Lib\FeedbackReceiver;
 
 use RuntimeException,
     InvalidArgumentException;

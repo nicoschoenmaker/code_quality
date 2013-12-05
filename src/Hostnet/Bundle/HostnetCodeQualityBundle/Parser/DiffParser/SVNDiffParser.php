@@ -1,11 +1,11 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Parser\DiffParser;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Parser\DiffParser;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile,
-    Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffCodeBlock,
-    Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\AbstractDiffParser,
-    Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\DiffParserInterface;
+use Hostnet\Bundle\HostnetCodeQualityBundle\Parser\Diff\DiffFile,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\Diff\DiffCodeBlock,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\DiffParser\AbstractDiffParser,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\DiffParser\DiffParserInterface;
 
 /**
  * The SVN diff parser that parses SVN diffs
@@ -28,7 +28,7 @@ class SVNDiffParser extends AbstractDiffParser implements DiffParserInterface
    *
    * @param String $diff
    * @return DiffFile array
-   * @see \Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\DiffParserInterface::parseDiff()
+   * @see \Hostnet\Bundle\HostnetCodeQualityBundle\Parser\DiffParser\DiffParserInterface::parseDiff()
    */
   public function parseDiff($diff)
   {
@@ -68,7 +68,7 @@ class SVNDiffParser extends AbstractDiffParser implements DiffParserInterface
    *
    * @param DiffFile $diff_file
    * @param String $header_string
-   * @see \Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\DiffParserInterface::parseDiffHead()
+   * @see \Hostnet\Bundle\HostnetCodeQualityBundle\Parser\DiffParser\DiffParserInterface::parseDiffHead()
    */
   public function parseDiffHead(DiffFile $diff_file, $header_string)
   {
@@ -126,7 +126,7 @@ class SVNDiffParser extends AbstractDiffParser implements DiffParserInterface
    * @param String $file_string
    * @param String $body_string
    * @return DiffCodeBlock
-   * @see \Hostnet\HostnetCodeQualityBundle\Parser\DiffParser\DiffParserInterface::parseDiffBody()
+   * @see \Hostnet\Bundle\HostnetCodeQualityBundle\Parser\DiffParser\DiffParserInterface::parseDiffBody()
    */
   public function parseDiffBody($file_string, $body_string)
   {

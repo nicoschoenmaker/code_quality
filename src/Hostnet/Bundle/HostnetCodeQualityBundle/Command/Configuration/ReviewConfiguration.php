@@ -1,6 +1,6 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Command\Configuration;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Command\Configuration;
 
 /**
  * The ReviewConfiguration is used to pass CLI args

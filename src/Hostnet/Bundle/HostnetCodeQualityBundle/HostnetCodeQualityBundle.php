@@ -1,6 +1,6 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Parser;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Parser;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\ParserInterface;
+use Hostnet\Bundle\HostnetCodeQualityBundle\Parser\ParserInterface;
 
 /**
  * The Parser Factory holds and creates parsers.

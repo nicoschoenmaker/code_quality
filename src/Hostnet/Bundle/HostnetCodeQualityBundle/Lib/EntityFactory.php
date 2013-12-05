@@ -1,12 +1,12 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Lib;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Lib;
 
-use Hostnet\HostnetCodeQualityBundle\Entity\File,
-    Hostnet\HostnetCodeQualityBundle\Entity\Rule,
-    Hostnet\HostnetCodeQualityBundle\Entity\CodeLanguage,
-    Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile,
-    Hostnet\HostnetCodeQualityBundle\Parser\EntityProviderInterface;
+use Hostnet\Bundle\HostnetCodeQualityBundle\Entity\File,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Entity\Rule,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Entity\CodeLanguage,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\Diff\DiffFile,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\EntityProviderInterface;
 
 use Doctrine\ORM\EntityManager,
     Doctrine\Common\Collection;

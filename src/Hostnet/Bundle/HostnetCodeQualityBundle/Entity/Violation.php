@@ -1,11 +1,11 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Entity;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Hostnet\HostnetCodeQualityBundle\Entity\Rule,
-    Hostnet\HostnetCodeQualityBundle\Entity\Report;
+use Hostnet\Bundle\HostnetCodeQualityBundle\Entity\Rule,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Entity\Report;
 
 /**
  * @ORM\Table(name="violation")

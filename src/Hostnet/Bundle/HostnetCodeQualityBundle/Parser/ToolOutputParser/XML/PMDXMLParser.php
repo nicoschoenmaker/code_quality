@@ -1,17 +1,17 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\XML;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Parser\ToolOutputParser\XML;
 
 use Doctrine\Common\Collections\Collection;
 
 use JMS\SerializerBundle\Exception\XmlErrorException;
 
-use Hostnet\HostnetCodeQualityBundle\Entity\Report,
-    Hostnet\HostnetCodeQualityBundle\Entity\Violation,
-    Hostnet\HostnetCodeQualityBundle\Parser\Diff\DiffFile,
-    Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\ToolOutputParserInterface,
-    Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\AbstractToolOutputParser,
-    Hostnet\HostnetCodeQualityBundle\Parser\EntityProviderInterface;
+use Hostnet\Bundle\HostnetCodeQualityBundle\Entity\Report,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Entity\Violation,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\Diff\DiffFile,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\ToolOutputParser\ToolOutputParserInterface,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\ToolOutputParser\AbstractToolOutputParser,
+    Hostnet\Bundle\HostnetCodeQualityBundle\Parser\EntityProviderInterface;
 
 use DomDocument;
 
@@ -50,7 +50,7 @@ class PMDXMLParser extends AbstractToolOutputParser implements ToolOutputParserI
    *
    * @param DiffFile $diff_file
    * @return Review
-   * @see \Hostnet\HostnetCodeQualityBundle\Parser\ToolOutputParser\ToolOutputParserInterface::parseToolOutput()
+   * @see \Hostnet\Bundle\HostnetCodeQualityBundle\Parser\ToolOutputParser\ToolOutputParserInterface::parseToolOutput()
    */
   public function parseToolOutput(DiffFile $diff_file)
   {

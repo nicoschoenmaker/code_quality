@@ -1,8 +1,8 @@
 <?php
 
-namespace Hostnet\HostnetCodeQualityBundle\Parser\DiffParser;
+namespace Hostnet\Bundle\HostnetCodeQualityBundle\Parser\DiffParser;
 
-use Hostnet\HostnetCodeQualityBundle\Parser\AbstractParser;
+use Hostnet\Bundle\HostnetCodeQualityBundle\Parser\AbstractParser;
 
 use InvalidArgumentException;
 

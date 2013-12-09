@@ -19,6 +19,6 @@
         }
     ],
     "autoload": {
-        "psr-0": { "Hostnet\\Bundle\\HostnetCodeQuality\\": "src/"}
+        "psr-0": { "Hostnet\\Bundle\\HostnetCodeQuality": "src"}
     }
 }
